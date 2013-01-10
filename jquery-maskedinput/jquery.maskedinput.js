@@ -1,4 +1,4 @@
-define(function () {
+define(['jquery'], function (jQuery) {
 /*
 	Masked Input plugin for jQuery
 	Copyright (c) 2007-2011 Josh Bush (digitalbush.com)
