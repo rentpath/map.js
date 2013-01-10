@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', 'underscore'], function ($, _) {
   var imageServerCount = 2;
   var nextImageServer = 0;
 
