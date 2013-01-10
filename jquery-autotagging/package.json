@@ -1,0 +1,25 @@
+{
+  "name": "jquery-autotagging",
+  "version": "0.0.1",
+  "description": "Primedia autotagging plugin",
+  "homepage": "https://github.com/primedia/preserves",
+  "jam": {
+    "dependencies": {
+      "jquery": null
+    },
+    "main": "jquery.autotagging.js",
+    "include": [
+      "jquery.autotagging.js"
+    ]
+  },
+  "author": {
+    "name": "Primedia"
+  },
+  "repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/primedia/preserves.git"
+    }
+  ],
+  "github": "https://github.com/primedia/preserves.git"
+}
