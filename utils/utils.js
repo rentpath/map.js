@@ -589,9 +589,8 @@ define(['jquery', 'underscore'], function ($, _) {
   };
 
   var showDfp = function() {
-    var now = new Date(), cutover = new Date(2013, 1, 1);
-        return now >= cutover;
-    };
+    return $('meta[name="show_dfp"]').attr('content') === 'true' ? true : false;
+  };
 
   var isSem = function() {
     return (localStorage.getItem("campaign_id") || localStorage.getItem("blthmpg")) ? true : false;
