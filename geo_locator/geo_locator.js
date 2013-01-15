@@ -82,7 +82,7 @@
           _this = this;
         $deferred = new $.Deferred();
         urlOptions = (options != null) && (options.urlParameters != null) ? this.makeUrl(options.urlParameters) : '';
-        url = '/meta/geo' + urlOptions;
+        url = 'http://www.apartmentguide.com/meta/geo' + urlOptions;
         $.when(this.fetchData(url)).done(function(response) {
           var geoDataResponse;
           geoDataResponse = _this.processGeoDataResponse(response);
