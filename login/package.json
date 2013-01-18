@@ -1,0 +1,27 @@
+{
+  "name": "login",
+  "version": "0.0.1",
+  "description": "JS Login",
+  "homepage": "https://github.com/primedia/preserves",
+  "jam": {
+    "dependencies": {
+      "jquery": null,
+      "jquery-cookie-rjs": null,
+      "jquery-prmdialog": null
+    },
+    "main": "login.js",
+    "include": [
+      "login.js"
+    ]
+  },
+  "author": {
+    "name": "Primedia"
+  },
+  "repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/primedia/preserves.git"
+    }
+  ],
+  "github": "https://github.com/primedia/preserves.git"
+}
