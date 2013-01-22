@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+source 'http://gemserver01.nor.primedia.com/'
+
+gem 'jasmine'
+gem 'rake'
