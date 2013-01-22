@@ -12,7 +12,6 @@
 #
 src_files:
     - vendor/**/*.js
-    - jquery.autotagging.js
 
 # stylesheets
 #

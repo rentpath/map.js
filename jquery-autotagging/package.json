@@ -4,8 +4,9 @@
   "description": "Primedia autotagging plugin",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
+    "packageDir": "vendor",
     "dependencies": {
-      "jquery": null
+      "jquery": "1.8.3"
     },
     "main": "jquery.autotagging.js",
     "include": [
