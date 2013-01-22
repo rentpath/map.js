@@ -1,4 +1,4 @@
-class this.WH
+class WH
   cacheBuster:  0
   domain:       ''
   firstVisit:   null

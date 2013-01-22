@@ -1,4 +1,4 @@
-define(['../jquery.autotagging', function(WH) {
+define(['../jquery.autotagging'], function(WH) {
   beforeEach(function() {
     wh = new WH();
   });
@@ -6,6 +6,7 @@ define(['../jquery.autotagging', function(WH) {
   it("should return a string for dimensions", function() {
     expect(wh.determineWindowDimensions({width: '100px', height: '100px'})).toEqual('');
   });
+});
 
   // it("should be able to play a Song", function() {
   //   player.play(song);
