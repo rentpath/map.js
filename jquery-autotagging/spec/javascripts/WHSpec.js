@@ -1,10 +1,12 @@
-define(['../jquery.autotagging'], function(WH) {
-  beforeEach(function() {
-    wh = new WH();
-  });
+require(['../../jquery.autotagging'], function(WH) {
+  describe("something", function() {
+    beforeEach(function() {
+      wh = new WH();
+    });
 
-  it("should return a string for dimensions", function() {
-    expect(wh.determineWindowDimensions({width: '100px', height: '100px'})).toEqual('');
+    it("should return a string for dimensions", function() {
+      expect(wh.determineWindowDimensions({width: '100px', height: '100px'})).toEqual('');
+    });
   });
 });
 
@@ -56,4 +58,3 @@ define(['../jquery.autotagging'], function(WH) {
   //     }).toThrow("song is already playing");
   //   });
   // });
-});
