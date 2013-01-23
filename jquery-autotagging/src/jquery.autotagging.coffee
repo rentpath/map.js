@@ -45,7 +45,7 @@ define ['jquery', './browserdetect'], ($, browserdetect) ->
       WH.browserDimensions = "#{doc.width()}x#{doc.height()}"
 
     determinePlatform: ->
-      WH.platform = WH.BrowserDetect.init()
+      WH.platform = browserdetect.init()
 
     elemClicked: (e, opts={}) ->
       domTarget = e.target
