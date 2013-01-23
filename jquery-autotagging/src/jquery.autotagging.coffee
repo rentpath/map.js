@@ -1,4 +1,4 @@
-define ['jquery', './browserdetect'], ($, browserdetect) ->
+define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
   class WH
     cacheBuster:  0
     domain:       ''
@@ -26,7 +26,7 @@ define ['jquery', './browserdetect'], ($, browserdetect) ->
       WH.determinePlatform()
 
       $ ->
-        WH.metaData = WH.getDataFromMetaTags()
+        WH.metaData = WH.getDataFromMetaTags(document)
         WH.firePageViewTag()
         WH.bindBodyClicked()
 
@@ -136,20 +136,10 @@ define ['jquery', './browserdetect'], ($, browserdetect) ->
       return unless klasses = elem.attr('class')
       klasses.split(' ')[0]
 
-    getMetaAttr: (name) ->
-      if name
-        selector = 'meta[name="' + name + '"]'
-        meta = $(selector)
-        if meta[0]
-          content = meta.attr('content')
-          if content
-            return content
-          else
-            return undefined
-
-    getDataFromMetaTags: ->
+    getDataFromMetaTags: (obj) ->
       retObj = { cg: '' }
-      metas = $('meta')
+      metas = $(obj).find('meta')
+
       for metaTag in metas
         metaTag = $(metaTag)
         if metaTag.attr('name') and metaTag.attr('name').indexOf('WH.') is 0

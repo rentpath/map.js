@@ -1,78 +1,35 @@
-  describe("Autotagging Suite", function() {
-    var wh;
+describe("Autotagging Suite", function() {
+  var wh, testWindow;
 
-    beforeEach(function() {
-      var ready = false;
+  beforeEach(function() {
+    var ready = false;
+    testWindow = $('<div></div>');
 
-      require(['../../jquery.autotagging'], function(WH) {
-        wh = new WH();
-        ready = true;
-      });
-
-      waitsFor(function() {
-        return ready;
-      });
+    require(['../../jquery.autotagging'], function(WH) {
+      wh = new WH();
+      ready = true;
     });
 
-    it("should return a string for dimensions", function() {
-      fakeWin = {
-        width: function() {
-          return '100';
-        },
-        height: function() {
-          return '100';
-        }
-      };
-
-      expect(wh.determineWindowDimensions(fakeWin)).toEqual('100x100');
+    waitsFor(function(){
+      return ready;
     });
   });
 
-  // it("should be able to play a Song", function() {
-  //   player.play(song);
-  //   expect(player.currentlyPlayingSong).toEqual(song);
+  describe("Instance Methods", function() {
+    it('returns a string for window dimensions', function() {
+      testWindow.width(100).height(100);
+      expect(wh.determineWindowDimensions(testWindow)).toEqual('100x100');
+    });
 
-  //   //demonstrates use of custom matcher
-  //   expect(player).toBePlaying(song);
-  // });
+    it('returns a string for document dimensions', function() {
+      testWindow.width(100).height(100);
+      expect(wh.determineWindowDimensions(testWindow)).toEqual('100x100');
+    });
 
-  // describe("when song has been paused", function() {
-  //   beforeEach(function() {
-  //     player.play(song);
-  //     player.pause();
-  //   });
-
-  //   it("should indicate that the song is currently paused", function() {
-  //     expect(player.isPlaying).toBeFalsy();
-
-  //     // demonstrates use of 'not' with a custom matcher
-  //     expect(player).not.toBePlaying(song);
-  //   });
-
-  //   it("should be possible to resume", function() {
-  //     player.resume();
-  //     expect(player.isPlaying).toBeTruthy();
-  //     expect(player.currentlyPlayingSong).toEqual(song);
-  //   });
-  // });
-
-  // // demonstrates use of spies to intercept and test method calls
-  // it("tells the current song if the user has made it a favorite", function() {
-  //   spyOn(song, 'persistFavoriteStatus');
-
-  //   player.play(song);
-  //   player.makeFavorite();
-
-  //   expect(song.persistFavoriteStatus).toHaveBeenCalledWith(true);
-  // });
-
-  // //demonstrates use of expected exceptions
-  // describe("#resume", function() {
-  //   it("should throw an exception if song is already playing", function() {
-  //     player.play(song);
-
-  //     expect(function() {
-  //       player.resume();
-  //     }).toThrow("song is already playing");
-  //   });
-  // });
+    it('extracts WH meta tags', function() {
+      testDoc = $("<div><meta name='WH.test' content='dummy'/><meta name='WH.quiz' content='placeholder'</div>");
+      result = { cg : '', test : 'dummy', quiz : 'placeholder' };
+      expect(wh.getDataFromMetaTags(testDoc)).toEqual(result);
+    });
+  });
+});

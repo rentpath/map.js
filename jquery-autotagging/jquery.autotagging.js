@@ -43,7 +43,7 @@
         WH.determineWindowDimensions(window);
         WH.determinePlatform();
         return $(function() {
-          WH.metaData = WH.getDataFromMetaTags();
+          WH.metaData = WH.getDataFromMetaTags(document);
           WH.firePageViewTag();
           return WH.bindBodyClicked();
         });
@@ -69,9 +69,7 @@
       };
 
       WH.prototype.determineDocumentDimensions = function(obj) {
-        var doc;
-        doc = $(obj);
-        return WH.browserDimensions = "" + (doc.width()) + "x" + (doc.height());
+        return WH.browserDimensions = "" + (obj.width()) + "x" + (obj.height());
       };
 
       WH.prototype.determinePlatform = function() {
@@ -194,28 +192,12 @@
         return klasses.split(' ')[0];
       };
 
-      WH.prototype.getMetaAttr = function(name) {
-        var content, meta, selector;
-        if (name) {
-          selector = 'meta[name="' + name + '"]';
-          meta = $(selector);
-          if (meta[0]) {
-            content = meta.attr('content');
-            if (content) {
-              return content;
-            } else {
-              return void 0;
-            }
-          }
-        }
-      };
-
-      WH.prototype.getDataFromMetaTags = function() {
+      WH.prototype.getDataFromMetaTags = function(obj) {
         var metaTag, metas, name, retObj, _i, _len;
         retObj = {
           cg: ''
         };
-        metas = $('meta');
+        metas = $(obj).find('meta');
         for (_i = 0, _len = metas.length; _i < _len; _i++) {
           metaTag = metas[_i];
           metaTag = $(metaTag);
