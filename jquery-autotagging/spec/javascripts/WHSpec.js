@@ -2,14 +2,29 @@
     var wh;
 
     beforeEach(function() {
+      var ready = false;
+
       require(['../../jquery.autotagging'], function(WH) {
-        wh = WH;
-        alert(wh);
+        wh = new WH();
+        ready = true;
+      });
+
+      waitsFor(function() {
+        return ready;
       });
     });
 
     it("should return a string for dimensions", function() {
-      expect(wh.determineWindowDimensions({width: '100px', height: '100px'})).toEqual('');
+      fakeWin = {
+        width: function() {
+          return '100';
+        },
+        height: function() {
+          return '100';
+        }
+      };
+
+      expect(wh.determineWindowDimensions(fakeWin)).toEqual('100x100');
     });
   });
 

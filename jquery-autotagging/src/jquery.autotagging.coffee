@@ -37,12 +37,10 @@ define ['jquery', './browserdetect'], ($, browserdetect) ->
         return WH.firstClass($(el)) if el.tagName.toLowerCase().match(WH.parentTagsAllowed)
 
     determineWindowDimensions: (obj) ->
-      win = $(obj)
-      WH.windowDimensions = "#{win.width()}x#{win.height()}"
+      WH.windowDimensions = "#{obj.width()}x#{obj.height()}"
 
     determineDocumentDimensions: (obj) ->
-      doc = $(obj)
-      WH.browserDimensions = "#{doc.width()}x#{doc.height()}"
+      WH.browserDimensions = "#{obj.width()}x#{obj.height()}"
 
     determinePlatform: ->
       WH.platform = browserdetect.init()

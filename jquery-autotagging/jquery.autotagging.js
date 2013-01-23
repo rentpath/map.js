@@ -65,9 +65,7 @@
       };
 
       WH.prototype.determineWindowDimensions = function(obj) {
-        var win;
-        win = $(obj);
-        return WH.windowDimensions = "" + (win.width()) + "x" + (win.height());
+        return WH.windowDimensions = "" + (obj.width()) + "x" + (obj.height());
       };
 
       WH.prototype.determineDocumentDimensions = function(obj) {
