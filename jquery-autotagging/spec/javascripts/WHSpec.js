@@ -32,4 +32,10 @@ describe("Autotagging Suite", function() {
       expect(wh.getDataFromMetaTags(testDoc)).toEqual(result);
     });
   });
+
+  describe("Support for Callbacks", function() {
+    it('is called after fire', function() {
+
+    });
+  });
 });

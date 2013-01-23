@@ -3,46 +3,65 @@
 
   define(function() {
     var BrowserDetect;
-    BrowserDetect = (function() {
+    return BrowserDetect = (function() {
 
       function BrowserDetect() {}
 
-      BrowserDetect.prototype.init = function() {
-        this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
-        this.version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion) || "an unknown version";
-        this.OS = this.searchString(this.dataOS) || "an unknown OS";
-        return this;
+      BrowserDetect.platform = function(win) {
+        var browserName, browserVersion, os, result, versionLabel;
+        os = BrowserDetect.searchString(BrowserDetect.dataOS) || "an unknown OS";
+        result = BrowserDetect.searchString(BrowserDetect.dataBrowser);
+        browserName = result.identity || "An unknown browser";
+        versionLabel = result.version;
+        browserVersion = BrowserDetect.searchVersion(versionLabel, win.navigator.userAgent) || BrowserDetect.searchVersion(versionLabel, win.navigator.appVersion) || "an unknown version";
+        return {
+          browser: browserName,
+          version: browserVersion,
+          OS: os
+        };
+        return {
+          browser: BrowserDetect.searchString(BrowserDetect.dataBrowser) || "An unknown browser",
+          version: BrowserDetect.searchVersion(win.navigator.userAgent) || BrowserDetect.searchVersion(win.navigator.appVersion) || "an unknown version",
+          OS: BrowserDetect.searchString(BrowserDetect.dataOS) || "an unknown OS"
+        };
       };
 
-      BrowserDetect.prototype.searchString = function(data) {
-        var dataProp, dataString, datum, _i, _len, _results;
-        _results = [];
+      BrowserDetect.searchString = function(data) {
+        var dataProp, dataString, datum, _i, _len;
         for (_i = 0, _len = data.length; _i < _len; _i++) {
           datum = data[_i];
           dataString = datum.string;
           dataProp = datum.prop;
-          this.versionSearchString = datum.versionSearch || datum.identity;
           if (dataString) {
             if (dataString.indexOf(datum.subString) !== -1) {
-              return datum.identity;
+              return {
+                identity: datum.identity,
+                version: datum.versionSearch || datum.identity
+              };
             }
           } else if (dataProp) {
-            return datum.identity;
+            return {
+              identity: datum.identity,
+              version: datum.versionSearch || datum.identity
+            };
           }
         }
-        return _results;
+        return {
+          identity: '',
+          version: ''
+        };
       };
 
-      BrowserDetect.prototype.searchVersion = function(dataString) {
+      BrowserDetect.searchVersion = function(versionLabel, dataString) {
         var index;
-        index = dataString.indexOf(this.versionSearchString);
+        index = dataString.indexOf(versionLabel);
         if (index === -1) {
           return;
         }
-        return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+        return parseFloat(dataString.substring(index + versionLabel.length + 1));
       };
 
-      BrowserDetect.prototype.dataBrowser = [
+      BrowserDetect.dataBrowser = [
         {
           string: navigator.userAgent,
           subString: "Chrome",
@@ -98,7 +117,7 @@
         }
       ];
 
-      BrowserDetect.prototype.dataOS = [
+      BrowserDetect.dataOS = [
         {
           string: navigator.platform,
           subString: "Win",
@@ -121,7 +140,6 @@
       return BrowserDetect;
 
     })();
-    return BrowserDetect;
   });
 
 }).call(this);

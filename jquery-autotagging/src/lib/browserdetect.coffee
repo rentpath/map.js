@@ -1,30 +1,39 @@
 define ->
   class BrowserDetect
-    init: ->
-      this.browser = this.searchString(this.dataBrowser) or "An unknown browser"
-      this.version = this.searchVersion(navigator.userAgent) or this.searchVersion(navigator.appVersion) or "an unknown version"
-      this.OS = this.searchString(this.dataOS) or "an unknown OS"
-      this
+    @platform: (win) ->
+      os             = BrowserDetect.searchString(BrowserDetect.dataOS) or "an unknown OS"
+      result         = BrowserDetect.searchString(BrowserDetect.dataBrowser)
+      browserName    = result.identity or "An unknown browser"
+      versionLabel   = result.version
+      browserVersion = BrowserDetect.searchVersion(versionLabel, win.navigator.userAgent) or
+        BrowserDetect.searchVersion(versionLabel, win.navigator.appVersion) or
+          "an unknown version"
 
-    searchString: (data) ->
-      _results = []
+      return {browser: browserName, version: browserVersion, OS: os}
+      {
+        browser: BrowserDetect.searchString(BrowserDetect.dataBrowser) or "An unknown browser",
+        version: BrowserDetect.searchVersion(win.navigator.userAgent) or
+          BrowserDetect.searchVersion(win.navigator.appVersion) or "an unknown version"
+        OS:      BrowserDetect.searchString(BrowserDetect.dataOS) or "an unknown OS"
+      }
+
+    @searchString: (data) ->
       for datum in data
         dataString = datum.string
         dataProp = datum.prop
-        this.versionSearchString = datum.versionSearch or datum.identity
         if dataString
           if dataString.indexOf(datum.subString) != -1
-            return datum.identity
+            return {identity: datum.identity, version: datum.versionSearch or datum.identity}
         else if dataProp
-          return datum.identity
-      return _results
+          return {identity: datum.identity, version: datum.versionSearch or datum.identity}
+      return {identity: '', version: ''}
 
-    searchVersion: (dataString) ->
-      index = dataString.indexOf(this.versionSearchString)
+    @searchVersion: (versionLabel, dataString) ->
+      index = dataString.indexOf(versionLabel)
       return if index == -1
-      return parseFloat(dataString.substring(index+this.versionSearchString.length+1))
+      return parseFloat(dataString.substring(index + versionLabel.length + 1))
 
-    dataBrowser: [
+    @dataBrowser: [
       {
         string: `navigator.userAgent`,
         subString: "Chrome",
@@ -92,7 +101,7 @@ define ->
       }
     ]
 
-    dataOS: [
+    @dataOS: [
       {
         string: `navigator.platform`,
         subString: "Win",
@@ -114,5 +123,3 @@ define ->
         identity: "Linux"
       }
     ]
-
-  return(BrowserDetect)

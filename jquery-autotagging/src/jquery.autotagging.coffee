@@ -10,48 +10,48 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
     warehouseTag: null
 
     init: (opts={}) ->
-      WH.clickBindSelector = opts.clickBindSelector
-      WH.clickBindSelector = WH.clickBindSelector.
+      @clickBindSelector = opts.clickBindSelector
+      @clickBindSelector = @clickBindSelector.
         replace(/,\s+/g, ":not(#{opts.exclusions}), ") if opts.exclusions?
-      WH.domain            = document.location.host
-      WH.exclusionList     = opts.exclusionList || []
-      WH.fireCallback      = opts.fireCallback
-      WH.parentTagsAllowed = opts.parentTagsAllowed or /div|ul/
-      WH.path              = "#{document.location.pathname}#{document.location.search}"
-      WH.warehouseURL      = opts.warehouseURL
+      @domain            = document.location.host
+      @exclusionList     = opts.exclusionList || []
+      @fireCallback      = opts.fireCallback
+      @parentTagsAllowed = opts.parentTagsAllowed or /div|ul/
+      @path              = "#{document.location.pathname}#{document.location.search}"
+      @warehouseURL      = opts.warehouseURL
 
-      WH.setCookies()
-      WH.determineDocumentDimensions(document)
-      WH.determineWindowDimensions(window)
-      WH.determinePlatform()
+      setCookies()
+      determineDocumentDimensions(document)
+      determineWindowDimensions(window)
+      determinePlatform()
 
       $ ->
-        WH.metaData = WH.getDataFromMetaTags(document)
-        WH.firePageViewTag()
-        WH.bindBodyClicked()
+        @metaData = getDataFromMetaTags(document)
+        firePageViewTag()
+        bindBodyClicked()
 
-    bindBodyClicked: -> $(document).on 'click', WH.clickBindSelector, WH.elemClicked
+    bindBodyClicked (doc): -> $(doc).on 'click', @clickBindSelector, elemClicked
 
     determineParent: (elem) ->
       for el in elem.parents()
-        return WH.firstClass($(el)) if el.tagName.toLowerCase().match(WH.parentTagsAllowed)
+        return firstClass($(el)) if el.tagName.toLowerCase().match(@parentTagsAllowed)
 
     determineWindowDimensions: (obj) ->
-      WH.windowDimensions = "#{obj.width()}x#{obj.height()}"
+      @windowDimensions = "#{obj.width()}x#{obj.height()}"
 
     determineDocumentDimensions: (obj) ->
-      WH.browserDimensions = "#{obj.width()}x#{obj.height()}"
+      @browserDimensions = "#{obj.width()}x#{obj.height()}"
 
     determinePlatform: ->
-      WH.platform = browserdetect.init()
+      @platform = browserdetect.platform()
 
     elemClicked: (e, opts={}) ->
       domTarget = e.target
       jQTarget = $(e.target)
       attrs = domTarget.attributes
 
-      item = WH.firstClass(jQTarget) or ''
-      subGroup = WH.determineParent(jQTarget) or ''
+      item = firstClass(jQTarget) or ''
+      subGroup = determineParent(jQTarget) or ''
       value = jQTarget.text() or ''
 
       trackingData = {
@@ -64,31 +64,31 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
         y:      e.clientY}
 
       for attr in attrs
-        if attr.name.indexOf('data-') == 0 and attr.name not in WH.exclusionList
+        if attr.name.indexOf('data-') == 0 and attr.name not in @exclusionList
           realName = attr.name.replace('data-', '')
           trackingData[realName] = attr.value
 
       href = jQTarget.attr('href')
       if href and opts.followHref? and opts.followHref
-        WH.lastLinkClicked = href
+        @lastLinkClicked = href
         e.preventDefault()
 
-      WH.fire trackingData
+      fire trackingData
       e.stopPropagation()
 
     fire: (obj) ->
-      obj.cb                      = WH.cacheBuster++
-      obj.sess                    = "#{WH.userID}.#{WH.sessionID}"
-      obj.fpc                     = WH.userID
-      obj.site                    = WH.domain
-      obj.path                    = WH.path
+      obj.cb                      = @cacheBuster++
+      obj.sess                    = "#{@userID}.#{@sessionID}"
+      obj.fpc                     = @userID
+      obj.site                    = @domain
+      obj.path                    = @path
       obj.title                   = $('title').text()
-      obj.bs                      = WH.windowDimensions
-      obj.sr                      = WH.browserDimensions
-      obj.os                      = WH.platform.OS
-      obj.browser                 = WH.platform.browser
-      obj.ver                     = WH.platform.version
-      obj.ref                     = document.referrer
+      obj.bs                      = @windowDimensions
+      obj.sr                      = @browserDimensions
+      obj.os                      = @platform.OS
+      obj.browser                 = @platform.browser
+      obj.ver                     = @platform.version
+      obj.ref                     = doc.referrer
       obj.registration            = $.cookie('sgn') ? 1 : 0
       obj.person_id               = $.cookie('zid')
       obj.email_registration      = ($.cookie('provider') == 'identity') ? 1 : 0
@@ -96,41 +96,42 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
       obj.googleplus_registration = ($.cookie('provider') == 'google_oauth2') ? 1 : 0
       obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 :  0
 
-      if WH.firstVisit
-        obj.firstVisit = WH.firstVisit
-        WH.firstVisit = null
+      if @firstVisit
+        obj.firstVisit = @firstVisit
+        @firstVisit = null
 
-      if WH.fireCallback
-        WH.fireCallback(obj)
+      if @fireCallback
+        @fireCallback(obj)
 
-      WH.obj2query($.extend(obj, WH.metaData), (query) ->
-        requestURL = WH.warehouseURL + query
+      obj2query($.extend(obj, @metaData), (query) ->
+        requestURL = @warehouseURL + query
 
         # handle IE url length limit
         if requestURL.length > 2048 and navigator.userAgent.indexOf('MSIE') >= 0
           requestURL = requestURL.substring(0,2043) + "&tu=1"
 
-        if WH.warehouseTag
-          WH.warehouseTag[0].src = requestURL
+        if @warehouseTag
+          @warehouseTag[0].src = requestURL
         else
-          WH.warehouseTag = $('<img/>', {id:'PRMWarehouseTag', border:'0', width:'1', height:'1', src: requestURL })
+          @warehouseTag = $('<img/>',
+            {id:'PRMWarehouseTag', border:'0', width:'1', height:'1', src: requestURL })
 
-        WH.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type)
-        WH.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
+        @warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type)
+        @warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
 
-        if WH.lastLinkClicked
-          lastLinkRedirect = (e) ->
+        if @lastLinkClicked
+          @lastLinkRedirect = (e) ->
             # ignore obtrusive JS in an href attribute
-            document.location = WH.lastLinkClicked if WH.lastLinkClicked.indexOf('javascript:') == -1
+            document.location = @lastLinkClicked if @lastLinkClicked.indexOf('javascript:') == -1
 
-          WH.warehouseTag.unbind('load').unbind('error').
+          @warehouseTag.unbind('load').unbind('error').
             bind('load',  lastLinkRedirect).
             bind('error', lastLinkRedirect))
 
       return
 
     firePageViewTag: ->
-      WH.fire { type: 'pageview' }
+      fire { type: 'pageview' }
 
     firstClass: (elem) ->
       return unless klasses = elem.attr('class')
