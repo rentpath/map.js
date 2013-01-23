@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 source 'http://gemserver01.nor.primedia.com/'
 
+gem 'debugger'
 gem 'jasmine'
 gem 'rake'

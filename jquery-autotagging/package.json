@@ -6,7 +6,7 @@
   "jam": {
     "packageDir": "vendor",
     "dependencies": {
-      "jquery": "1.8.3"
+      "jquery": "1.8.3-rjs"
     },
     "main": "jquery.autotagging.js",
     "include": [

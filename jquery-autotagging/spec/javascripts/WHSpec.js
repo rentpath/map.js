@@ -1,14 +1,17 @@
-require(['../../jquery.autotagging'], function(WH) {
-  describe("something", function() {
+  describe("Autotagging Suite", function() {
+    var wh;
+
     beforeEach(function() {
-      wh = new WH();
+      require(['../../jquery.autotagging'], function(WH) {
+        wh = WH;
+        alert(wh);
+      });
     });
 
     it("should return a string for dimensions", function() {
       expect(wh.determineWindowDimensions({width: '100px', height: '100px'})).toEqual('');
     });
   });
-});
 
   // it("should be able to play a Song", function() {
   //   player.play(song);
