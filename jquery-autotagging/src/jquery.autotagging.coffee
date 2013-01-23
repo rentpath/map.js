@@ -23,7 +23,7 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
       setCookies()
       determineDocumentDimensions(document)
       determineWindowDimensions(window)
-      determinePlatform()
+      determinePlatform(window)
 
       $ ->
         @metaData = getDataFromMetaTags(document)
@@ -42,8 +42,8 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
     determineDocumentDimensions: (obj) ->
       @browserDimensions = "#{obj.width()}x#{obj.height()}"
 
-    determinePlatform: ->
-      @platform = browserdetect.platform()
+    determinePlatform (win): ->
+      @platform = browserdetect.platform(win)
 
     elemClicked: (e, opts={}) ->
       domTarget = e.target

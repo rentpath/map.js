@@ -1,31 +1,29 @@
 define ->
   class BrowserDetect
-    @platform: (win) ->
-      os             = BrowserDetect.searchString(BrowserDetect.dataOS) or "an unknown OS"
-      result         = BrowserDetect.searchString(BrowserDetect.dataBrowser)
+    @platform: (dataOS, dataBrowser) ->
+      os             = BrowserDetect.searchString(dataOS || BrowserDetect.dataOS()) or "an unknown OS"
+
+      result         = BrowserDetect.searchString(dataBrowser || BrowserDetect.dataBrowser())
       browserName    = result.identity or "An unknown browser"
       versionLabel   = result.version
-      browserVersion = BrowserDetect.searchVersion(versionLabel, win.navigator.userAgent) or
-        BrowserDetect.searchVersion(versionLabel, win.navigator.appVersion) or
+
+      browserVersion = BrowserDetect.searchVersion(versionLabel, navigator.userAgent) or
+        BrowserDetect.searchVersion(versionLabel, navigator.appVersion) or
           "an unknown version"
 
       return {browser: browserName, version: browserVersion, OS: os}
-      {
-        browser: BrowserDetect.searchString(BrowserDetect.dataBrowser) or "An unknown browser",
-        version: BrowserDetect.searchVersion(win.navigator.userAgent) or
-          BrowserDetect.searchVersion(win.navigator.appVersion) or "an unknown version"
-        OS:      BrowserDetect.searchString(BrowserDetect.dataOS) or "an unknown OS"
-      }
 
     @searchString: (data) ->
       for datum in data
         dataString = datum.string
-        dataProp = datum.prop
+        dataProp   = datum.prop
+
         if dataString
           if dataString.indexOf(datum.subString) != -1
             return {identity: datum.identity, version: datum.versionSearch or datum.identity}
         else if dataProp
           return {identity: datum.identity, version: datum.versionSearch or datum.identity}
+
       return {identity: '', version: ''}
 
     @searchVersion: (versionLabel, dataString) ->
@@ -33,93 +31,95 @@ define ->
       return if index == -1
       return parseFloat(dataString.substring(index + versionLabel.length + 1))
 
-    @dataBrowser: [
-      {
-        string: `navigator.userAgent`,
-        subString: "Chrome",
-        identity: "Chrome"
-      },
-      {
-        string: `navigator.userAgent`,
-        subString: "OmniWeb",
-        versionSearch: "OmniWeb/",
-        identity: "OmniWeb"
-      },
-      {
-        string: `navigator.vendor`,
-        subString: "Apple",
-        identity: "Safari",
-        versionSearch: "Version"
-      },
-      {
-        prop: `window.opera`,
-        identity: "Opera"
-      },
-      {
-        string: `navigator.vendor`,
-        subString: "iCab",
-        identity: "iCab"
-      },
-      {
-        string: `navigator.vendor`,
-        subString: "KDE",
-        identity: "Konqueror"
-      },
-      {
-        string: `navigator.userAgent`,
-        subString: "Firefox",
-        identity: "Firefox"
-      },
-      {
-        string: `navigator.vendor`,
-        subString: "Camino",
-        identity: "Camino"
-      },
-      {  # for newer Netscapes (6+)
-        string: `navigator.userAgent`,
-        subString: "Netscape",
-        identity: "Netscape"
-      },
-      {
-        string: `navigator.userAgent`,
-        subString: "MSIE",
-        identity: "Explorer",
-        versionSearch: "MSIE"
-      },
-      {
-        string: `navigator.userAgent`,
-        subString: "Gecko",
-        identity: "Mozilla",
-        versionSearch: "rv"
-      },
-      {
-        # for older Netscapes (4-)
-        string: `navigator.userAgent`,
-        subString: "Mozilla",
-        identity: "Netscape",
-        versionSearch: "Mozilla"
-      }
-    ]
+    @dataBrowser: (data) ->
+      data || [
+        {
+          string: navigator.userAgent,
+          subString: "Chrome",
+          identity: "Chrome"
+        },
+        {
+          string: navigator.userAgent,
+          subString: "OmniWeb",
+          versionSearch: "OmniWeb/",
+          identity: "OmniWeb"
+        },
+        {
+          string: navigator.vendor,
+          subString: "Apple",
+          identity: "Safari",
+          versionSearch: "Version"
+        },
+        {
+          prop: window.opera,
+          identity: "Opera"
+        },
+        {
+          string: navigator.vendor,
+          subString: "iCab",
+          identity: "iCab"
+        },
+        {
+          string: navigator.vendor,
+          subString: "KDE",
+          identity: "Konqueror"
+        },
+        {
+          string: navigator.userAgent,
+          subString: "Firefox",
+          identity: "Firefox"
+        },
+        {
+          string: navigator.vendor,
+          subString: "Camino",
+          identity: "Camino"
+        },
+        {  # for newer Netscapes (6+)
+          string: navigator.userAgent,
+          subString: "Netscape",
+          identity: "Netscape"
+        },
+        {
+          string: navigator.userAgent,
+          subString: "MSIE",
+          identity: "Explorer",
+          versionSearch: "MSIE"
+        },
+        {
+          string: navigator.userAgent,
+          subString: "Gecko",
+          identity: "Mozilla",
+          versionSearch: "rv"
+        },
+        {
+          # for older Netscapes (4-)
+          string: navigator.userAgent,
+          subString: "Mozilla",
+          identity: "Netscape",
+          versionSearch: "Mozilla"
+        }
+      ]
 
-    @dataOS: [
-      {
-        string: `navigator.platform`,
-        subString: "Win",
-        identity: "Windows"
-      },
-      {
-        string: `navigator.platform`,
-        subString: "Mac",
-        identity: "Mac"
-      },
-      {
-         string: `navigator.userAgent`,
-         subString: "iPhone",
-         identity: "iPhone/iPod"
-      },
-      {
-        string: `navigator.platform`
-        subString: "Linux",
-        identity: "Linux"
-      }
-    ]
+    @dataOS: (data) ->
+      data || [
+        {
+          string: navigator.platform,
+          subString: "Win",
+          identity: "Windows"
+        },
+        {
+          string: navigator.platform,
+          subString: "Mac",
+          identity: "Mac"
+        },
+        {
+           string: navigator.userAgent,
+           subString: "iPhone",
+           identity: "iPhone/iPod"
+        },
+        {
+          string: navigator.platform
+          subString: "Linux",
+          identity: "Linux"
+        }
+      ]

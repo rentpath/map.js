@@ -33,9 +33,9 @@ describe("Autotagging Suite", function() {
     });
   });
 
-  describe("Support for Callbacks", function() {
-    it('is called after fire', function() {
+  // describe("Support for Callbacks", function() {
+  //   it('is called after fire', function() {
 
-    });
-  });
+  //   });
+  // });
 });

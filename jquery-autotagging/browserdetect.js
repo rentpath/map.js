@@ -7,22 +7,17 @@
 
       function BrowserDetect() {}
 
-      BrowserDetect.platform = function(win) {
+      BrowserDetect.platform = function(dataOS, dataBrowser) {
         var browserName, browserVersion, os, result, versionLabel;
-        os = BrowserDetect.searchString(BrowserDetect.dataOS) || "an unknown OS";
-        result = BrowserDetect.searchString(BrowserDetect.dataBrowser);
+        os = BrowserDetect.searchString(dataOS || BrowserDetect.dataOS()) || "an unknown OS";
+        result = BrowserDetect.searchString(dataBrowser || BrowserDetect.dataBrowser());
         browserName = result.identity || "An unknown browser";
         versionLabel = result.version;
-        browserVersion = BrowserDetect.searchVersion(versionLabel, win.navigator.userAgent) || BrowserDetect.searchVersion(versionLabel, win.navigator.appVersion) || "an unknown version";
+        browserVersion = BrowserDetect.searchVersion(versionLabel, navigator.userAgent) || BrowserDetect.searchVersion(versionLabel, navigator.appVersion) || "an unknown version";
         return {
           browser: browserName,
           version: browserVersion,
           OS: os
-        };
-        return {
-          browser: BrowserDetect.searchString(BrowserDetect.dataBrowser) || "An unknown browser",
-          version: BrowserDetect.searchVersion(win.navigator.userAgent) || BrowserDetect.searchVersion(win.navigator.appVersion) || "an unknown version",
-          OS: BrowserDetect.searchString(BrowserDetect.dataOS) || "an unknown OS"
         };
       };
 
@@ -61,81 +56,85 @@
         return parseFloat(dataString.substring(index + versionLabel.length + 1));
       };
 
-      BrowserDetect.dataBrowser = [
-        {
-          string: navigator.userAgent,
-          subString: "Chrome",
-          identity: "Chrome"
-        }, {
-          string: navigator.userAgent,
-          subString: "OmniWeb",
-          versionSearch: "OmniWeb/",
-          identity: "OmniWeb"
-        }, {
-          string: navigator.vendor,
-          subString: "Apple",
-          identity: "Safari",
-          versionSearch: "Version"
-        }, {
-          prop: window.opera,
-          identity: "Opera"
-        }, {
-          string: navigator.vendor,
-          subString: "iCab",
-          identity: "iCab"
-        }, {
-          string: navigator.vendor,
-          subString: "KDE",
-          identity: "Konqueror"
-        }, {
-          string: navigator.userAgent,
-          subString: "Firefox",
-          identity: "Firefox"
-        }, {
-          string: navigator.vendor,
-          subString: "Camino",
-          identity: "Camino"
-        }, {
-          string: navigator.userAgent,
-          subString: "Netscape",
-          identity: "Netscape"
-        }, {
-          string: navigator.userAgent,
-          subString: "MSIE",
-          identity: "Explorer",
-          versionSearch: "MSIE"
-        }, {
-          string: navigator.userAgent,
-          subString: "Gecko",
-          identity: "Mozilla",
-          versionSearch: "rv"
-        }, {
-          string: navigator.userAgent,
-          subString: "Mozilla",
-          identity: "Netscape",
-          versionSearch: "Mozilla"
-        }
-      ];
+      BrowserDetect.dataBrowser = function(data) {
+        return data || [
+          {
+            string: navigator.userAgent,
+            subString: "Chrome",
+            identity: "Chrome"
+          }, {
+            string: navigator.userAgent,
+            subString: "OmniWeb",
+            versionSearch: "OmniWeb/",
+            identity: "OmniWeb"
+          }, {
+            string: navigator.vendor,
+            subString: "Apple",
+            identity: "Safari",
+            versionSearch: "Version"
+          }, {
+            prop: window.opera,
+            identity: "Opera"
+          }, {
+            string: navigator.vendor,
+            subString: "iCab",
+            identity: "iCab"
+          }, {
+            string: navigator.vendor,
+            subString: "KDE",
+            identity: "Konqueror"
+          }, {
+            string: navigator.userAgent,
+            subString: "Firefox",
+            identity: "Firefox"
+          }, {
+            string: navigator.vendor,
+            subString: "Camino",
+            identity: "Camino"
+          }, {
+            string: navigator.userAgent,
+            subString: "Netscape",
+            identity: "Netscape"
+          }, {
+            string: navigator.userAgent,
+            subString: "MSIE",
+            identity: "Explorer",
+            versionSearch: "MSIE"
+          }, {
+            string: navigator.userAgent,
+            subString: "Gecko",
+            identity: "Mozilla",
+            versionSearch: "rv"
+          }, {
+            string: navigator.userAgent,
+            subString: "Mozilla",
+            identity: "Netscape",
+            versionSearch: "Mozilla"
+          }
+        ];
+      };
 
-      BrowserDetect.dataOS = [
-        {
-          string: navigator.platform,
-          subString: "Win",
-          identity: "Windows"
-        }, {
-          string: navigator.platform,
-          subString: "Mac",
-          identity: "Mac"
-        }, {
-          string: navigator.userAgent,
-          subString: "iPhone",
-          identity: "iPhone/iPod"
-        }, {
-          string: navigator.platform,
-          subString: "Linux",
-          identity: "Linux"
-        }
-      ];
+      BrowserDetect.dataOS = function(data) {
+        return data || [
+          {
+            string: navigator.platform,
+            subString: "Win",
+            identity: "Windows"
+          }, {
+            string: navigator.platform,
+            subString: "Mac",
+            identity: "Mac"
+          }, {
+            string: navigator.userAgent,
+            subString: "iPhone",
+            identity: "iPhone/iPod"
+          }, {
+            string: navigator.platform,
+            subString: "Linux",
+            identity: "Linux"
+          }
+        ];
+      };
 
       return BrowserDetect;
 
