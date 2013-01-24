@@ -125,7 +125,6 @@
         obj.browser = this.platform.browser;
         obj.ver = this.platform.version;
         obj.ref = document.referrer;
-        console.log($.cookie);
         obj.registration = (_ref = $.cookie('sgn')) != null ? _ref : {
           1: 0
         };
@@ -142,10 +141,15 @@
         obj.twitter_registration = (_ref4 = $.cookie('provider') === 'twitter') != null ? _ref4 : {
           1: 0
         };
+        console.log(this.fireCallback);
+        if (typeof this.fireCallback === "function") {
+          this.fireCallback(obj);
+        }
         if (this.firstVisit) {
           obj.firstVisit = this.firstVisit;
           this.firstVisit = null;
         }
+        return;
         this.obj2query($.extend(obj, this.metaData), function(query) {
           var requestURL;
           requestURL = this.warehouseURL + query;
@@ -174,9 +178,6 @@
             return this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
           }
         });
-        if (typeof this.fireCallback === "function") {
-          this.fireCallback(obj);
-        }
       };
 
       WH.prototype.firePageViewTag = function() {

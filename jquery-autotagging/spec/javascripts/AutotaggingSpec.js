@@ -38,10 +38,13 @@ describe("Autotagging Suite", function() {
     });
 
     describe("#fire", function() {
+      var callback;
+
       beforeEach(function() {
         callback = {
           fightFire: function(obj) {
             obj.blaze = true;
+            return obj;
           }
         };
 
@@ -51,7 +54,9 @@ describe("Autotagging Suite", function() {
       });
 
       it('calls the given callback', function () {
-        wh.fire({});
+        obj = {};
+        wh.fire(obj);
+        expect(obj.blaze).toEqual(true);
         expect(callback.fightFire).toHaveBeenCalled();
       });
     });

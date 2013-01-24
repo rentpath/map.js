@@ -89,7 +89,6 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       obj.browser                 = @platform.browser
       obj.ver                     = @platform.version
       obj.ref                     = document.referrer
-      console.log($.cookie)
       obj.registration            = $.cookie('sgn') ? 1 : 0
       obj.person_id               = $.cookie('zid')
       obj.email_registration      = ($.cookie('provider') == 'identity') ? 1 : 0
@@ -97,9 +96,14 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       obj.googleplus_registration = ($.cookie('provider') == 'google_oauth2') ? 1 : 0
       obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 :  0
 
+      console.log(@fireCallback)
+      @fireCallback?(obj)
+
       if @firstVisit
         obj.firstVisit = @firstVisit
         @firstVisit = null
+
+      return
 
       this.obj2query($.extend(obj, @metaData), (query) ->
         requestURL = @warehouseURL + query
@@ -125,8 +129,6 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
           @warehouseTag.unbind('load').unbind('error').
             bind('load',  lastLinkRedirect).
             bind('error', lastLinkRedirect))
-
-        @fireCallback?(obj)
 
       return
 
