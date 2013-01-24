@@ -11,7 +11,7 @@ describe("Autotagging Suite", function() {
       }
     };
 
-    require(['../../browserdetect'], function(BD) {
+    require(['../../lib/browserdetect'], function(BD) {
       bd = BD;
       ready = true;
     });

@@ -12,7 +12,8 @@
     },
     "main": "jquery.autotagging.js",
     "include": [
-      "jquery.autotagging.js"
+      "jquery.autotagging.js",
+      "lib/browserdetect.js"
     ]
   },
 

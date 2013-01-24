@@ -3,10 +3,10 @@ describe("Autotagging Suite", function() {
 
   beforeEach(function() {
     var ready = false;
-    testWindow = $('<div></div>');
 
     require(['../../jquery.autotagging'], function(WH) {
       wh = new WH();
+      testWindow = $('<div></div>');
       ready = true;
     });
 
