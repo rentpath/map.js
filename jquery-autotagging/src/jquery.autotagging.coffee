@@ -96,16 +96,13 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       obj.googleplus_registration = ($.cookie('provider') == 'google_oauth2') ? 1 : 0
       obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 :  0
 
-      console.log(@fireCallback)
       @fireCallback?(obj)
 
       if @firstVisit
         obj.firstVisit = @firstVisit
         @firstVisit = null
 
-      return
-
-      this.obj2query($.extend(obj, @metaData), (query) ->
+      @obj2query($.extend(obj, @metaData), (query) ->
         requestURL = @warehouseURL + query
 
         # handle IE url length limit
@@ -122,7 +119,7 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
         @warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
 
         if @lastLinkClicked
-          @lastLinkRedirect = (e) ->
+          lastLinkRedirect = (e) ->
             # ignore obtrusive JS in an href attribute
             document.location = @lastLinkClicked if @lastLinkClicked.indexOf('javascript:') == -1
 

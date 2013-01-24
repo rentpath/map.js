@@ -141,7 +141,6 @@
         obj.twitter_registration = (_ref4 = $.cookie('provider') === 'twitter') != null ? _ref4 : {
           1: 0
         };
-        console.log(this.fireCallback);
         if (typeof this.fireCallback === "function") {
           this.fireCallback(obj);
         }
@@ -149,9 +148,8 @@
           obj.firstVisit = this.firstVisit;
           this.firstVisit = null;
         }
-        return;
         this.obj2query($.extend(obj, this.metaData), function(query) {
-          var requestURL;
+          var lastLinkRedirect, requestURL;
           requestURL = this.warehouseURL + query;
           if (requestURL.length > 2048 && navigator.userAgent.indexOf('MSIE') >= 0) {
             requestURL = requestURL.substring(0, 2043) + "&tu=1";
@@ -170,7 +168,7 @@
           this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
           this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
           if (this.lastLinkClicked) {
-            this.lastLinkRedirect = function(e) {
+            lastLinkRedirect = function(e) {
               if (this.lastLinkClicked.indexOf('javascript:') === -1) {
                 return document.location = this.lastLinkClicked;
               }

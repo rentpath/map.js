@@ -39,6 +39,7 @@ describe("Autotagging Suite", function() {
 
     describe("#fire", function() {
       var callback;
+      var obj = {};
 
       beforeEach(function() {
         callback = {
@@ -50,14 +51,14 @@ describe("Autotagging Suite", function() {
 
         wh.fireCallback = callback.fightFire;
         wh.platform = {OS: 'OS', browser: 'dummy', version: ''};
-        spyOn(callback, 'fightFire');
+        spyOn(wh, 'fireCallback').andCallThrough();
       });
 
       it('calls the given callback', function () {
-        obj = {};
         wh.fire(obj);
+
         expect(obj.blaze).toEqual(true);
-        expect(callback.fightFire).toHaveBeenCalled();
+        expect(wh.fireCallback).toHaveBeenCalled();
       });
     });
   });
