@@ -1,4 +1,4 @@
-define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
+define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect) ->
   class WH
     cacheBuster:  0
     domain:       ''
@@ -28,9 +28,9 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
       $ ->
         @metaData = getDataFromMetaTags(document)
         firePageViewTag()
-        bindBodyClicked()
+        bindBodyClicked(document)
 
-    bindBodyClicked (doc): -> $(doc).on 'click', @clickBindSelector, elemClicked
+    bindBodyClicked: (doc) -> $(doc).on 'click', @clickBindSelector, elemClicked
 
     determineParent: (elem) ->
       for el in elem.parents()
@@ -42,7 +42,7 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
     determineDocumentDimensions: (obj) ->
       @browserDimensions = "#{obj.width()}x#{obj.height()}"
 
-    determinePlatform (win): ->
+    determinePlatform: (win) ->
       @platform = browserdetect.platform(win)
 
     elemClicked: (e, opts={}) ->
@@ -88,7 +88,8 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
       obj.os                      = @platform.OS
       obj.browser                 = @platform.browser
       obj.ver                     = @platform.version
-      obj.ref                     = doc.referrer
+      obj.ref                     = document.referrer
+      console.log($.cookie)
       obj.registration            = $.cookie('sgn') ? 1 : 0
       obj.person_id               = $.cookie('zid')
       obj.email_registration      = ($.cookie('provider') == 'identity') ? 1 : 0
@@ -100,10 +101,7 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
         obj.firstVisit = @firstVisit
         @firstVisit = null
 
-      if @fireCallback
-        @fireCallback(obj)
-
-      obj2query($.extend(obj, @metaData), (query) ->
+      this.obj2query($.extend(obj, @metaData), (query) ->
         requestURL = @warehouseURL + query
 
         # handle IE url length limit
@@ -127,6 +125,8 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
           @warehouseTag.unbind('load').unbind('error').
             bind('load',  lastLinkRedirect).
             bind('error', lastLinkRedirect))
+
+        @fireCallback?(obj)
 
       return
 
@@ -166,10 +166,8 @@ define ['jquery', 'lib/browserdetect'], ($, browserdetect) ->
 
       unless sessionID
         sessionID = timestamp
-        WH.firstVisit = timestamp
+        @firstVisit = timestamp
         $.cookie('WHSessionID', sessionID, { path: '/' })
 
-      WH.sessionID = sessionID
-      WH.userID = userID
-
-  return(WH)
+      @sessionID = sessionID
+      @userID = userID

@@ -2,9 +2,9 @@
 (function() {
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  define(['jquery', './browserdetect'], function($, browserdetect) {
+  define(['jquery', 'lib/browserdetect', 'jquery-cookie-rjs'], function($, browserdetect) {
     var WH;
-    WH = (function() {
+    return WH = (function() {
 
       function WH() {}
 
@@ -28,29 +28,29 @@
         if (opts == null) {
           opts = {};
         }
-        WH.clickBindSelector = opts.clickBindSelector;
+        this.clickBindSelector = opts.clickBindSelector;
         if (opts.exclusions != null) {
-          WH.clickBindSelector = WH.clickBindSelector.replace(/,\s+/g, ":not(" + opts.exclusions + "), ");
+          this.clickBindSelector = this.clickBindSelector.replace(/,\s+/g, ":not(" + opts.exclusions + "), ");
         }
-        WH.domain = document.location.host;
-        WH.exclusionList = opts.exclusionList || [];
-        WH.fireCallback = opts.fireCallback;
-        WH.parentTagsAllowed = opts.parentTagsAllowed || /div|ul/;
-        WH.path = "" + document.location.pathname + document.location.search;
-        WH.warehouseURL = opts.warehouseURL;
-        WH.setCookies();
-        WH.determineDocumentDimensions(document);
-        WH.determineWindowDimensions(window);
-        WH.determinePlatform();
+        this.domain = document.location.host;
+        this.exclusionList = opts.exclusionList || [];
+        this.fireCallback = opts.fireCallback;
+        this.parentTagsAllowed = opts.parentTagsAllowed || /div|ul/;
+        this.path = "" + document.location.pathname + document.location.search;
+        this.warehouseURL = opts.warehouseURL;
+        setCookies();
+        determineDocumentDimensions(document);
+        determineWindowDimensions(window);
+        determinePlatform(window);
         return $(function() {
-          WH.metaData = WH.getDataFromMetaTags(document);
-          WH.firePageViewTag();
-          return WH.bindBodyClicked();
+          this.metaData = getDataFromMetaTags(document);
+          firePageViewTag();
+          return bindBodyClicked(document);
         });
       };
 
-      WH.prototype.bindBodyClicked = function() {
-        return $(document).on('click', WH.clickBindSelector, WH.elemClicked);
+      WH.prototype.bindBodyClicked = function(doc) {
+        return $(doc).on('click', this.clickBindSelector, elemClicked);
       };
 
       WH.prototype.determineParent = function(elem) {
@@ -58,22 +58,22 @@
         _ref = elem.parents();
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           el = _ref[_i];
-          if (el.tagName.toLowerCase().match(WH.parentTagsAllowed)) {
-            return WH.firstClass($(el));
+          if (el.tagName.toLowerCase().match(this.parentTagsAllowed)) {
+            return firstClass($(el));
           }
         }
       };
 
       WH.prototype.determineWindowDimensions = function(obj) {
-        return WH.windowDimensions = "" + (obj.width()) + "x" + (obj.height());
+        return this.windowDimensions = "" + (obj.width()) + "x" + (obj.height());
       };
 
       WH.prototype.determineDocumentDimensions = function(obj) {
-        return WH.browserDimensions = "" + (obj.width()) + "x" + (obj.height());
+        return this.browserDimensions = "" + (obj.width()) + "x" + (obj.height());
       };
 
-      WH.prototype.determinePlatform = function() {
-        return WH.platform = browserdetect.init();
+      WH.prototype.determinePlatform = function(win) {
+        return this.platform = browserdetect.platform(win);
       };
 
       WH.prototype.elemClicked = function(e, opts) {
@@ -84,8 +84,8 @@
         domTarget = e.target;
         jQTarget = $(e.target);
         attrs = domTarget.attributes;
-        item = WH.firstClass(jQTarget) || '';
-        subGroup = WH.determineParent(jQTarget) || '';
+        item = firstClass(jQTarget) || '';
+        subGroup = determineParent(jQTarget) || '';
         value = jQTarget.text() || '';
         trackingData = {
           sg: subGroup,
@@ -97,34 +97,35 @@
         };
         for (_i = 0, _len = attrs.length; _i < _len; _i++) {
           attr = attrs[_i];
-          if (attr.name.indexOf('data-') === 0 && (_ref = attr.name, __indexOf.call(WH.exclusionList, _ref) < 0)) {
+          if (attr.name.indexOf('data-') === 0 && (_ref = attr.name, __indexOf.call(this.exclusionList, _ref) < 0)) {
             realName = attr.name.replace('data-', '');
             trackingData[realName] = attr.value;
           }
         }
         href = jQTarget.attr('href');
         if (href && (opts.followHref != null) && opts.followHref) {
-          WH.lastLinkClicked = href;
+          this.lastLinkClicked = href;
           e.preventDefault();
         }
-        WH.fire(trackingData);
+        fire(trackingData);
         return e.stopPropagation();
       };
 
       WH.prototype.fire = function(obj) {
         var _ref, _ref1, _ref2, _ref3, _ref4;
-        obj.cb = WH.cacheBuster++;
-        obj.sess = "" + WH.userID + "." + WH.sessionID;
-        obj.fpc = WH.userID;
-        obj.site = WH.domain;
-        obj.path = WH.path;
+        obj.cb = this.cacheBuster++;
+        obj.sess = "" + this.userID + "." + this.sessionID;
+        obj.fpc = this.userID;
+        obj.site = this.domain;
+        obj.path = this.path;
         obj.title = $('title').text();
-        obj.bs = WH.windowDimensions;
-        obj.sr = WH.browserDimensions;
-        obj.os = WH.platform.OS;
-        obj.browser = WH.platform.browser;
-        obj.ver = WH.platform.version;
+        obj.bs = this.windowDimensions;
+        obj.sr = this.browserDimensions;
+        obj.os = this.platform.OS;
+        obj.browser = this.platform.browser;
+        obj.ver = this.platform.version;
         obj.ref = document.referrer;
+        console.log($.cookie);
         obj.registration = (_ref = $.cookie('sgn')) != null ? _ref : {
           1: 0
         };
@@ -141,23 +142,20 @@
         obj.twitter_registration = (_ref4 = $.cookie('provider') === 'twitter') != null ? _ref4 : {
           1: 0
         };
-        if (WH.firstVisit) {
-          obj.firstVisit = WH.firstVisit;
-          WH.firstVisit = null;
+        if (this.firstVisit) {
+          obj.firstVisit = this.firstVisit;
+          this.firstVisit = null;
         }
-        if (WH.fireCallback) {
-          WH.fireCallback(obj);
-        }
-        WH.obj2query($.extend(obj, WH.metaData), function(query) {
-          var lastLinkRedirect, requestURL;
-          requestURL = WH.warehouseURL + query;
+        this.obj2query($.extend(obj, this.metaData), function(query) {
+          var requestURL;
+          requestURL = this.warehouseURL + query;
           if (requestURL.length > 2048 && navigator.userAgent.indexOf('MSIE') >= 0) {
             requestURL = requestURL.substring(0, 2043) + "&tu=1";
           }
-          if (WH.warehouseTag) {
-            WH.warehouseTag[0].src = requestURL;
+          if (this.warehouseTag) {
+            this.warehouseTag[0].src = requestURL;
           } else {
-            WH.warehouseTag = $('<img/>', {
+            this.warehouseTag = $('<img/>', {
               id: 'PRMWarehouseTag',
               border: '0',
               width: '1',
@@ -165,21 +163,24 @@
               src: requestURL
             });
           }
-          WH.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
-          WH.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
-          if (WH.lastLinkClicked) {
-            lastLinkRedirect = function(e) {
-              if (WH.lastLinkClicked.indexOf('javascript:') === -1) {
-                return document.location = WH.lastLinkClicked;
+          this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
+          this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
+          if (this.lastLinkClicked) {
+            this.lastLinkRedirect = function(e) {
+              if (this.lastLinkClicked.indexOf('javascript:') === -1) {
+                return document.location = this.lastLinkClicked;
               }
             };
-            return WH.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
+            return this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
           }
         });
+        if (typeof this.fireCallback === "function") {
+          this.fireCallback(obj);
+        }
       };
 
       WH.prototype.firePageViewTag = function() {
-        return WH.fire({
+        return fire({
           type: 'pageview'
         });
       };
@@ -234,19 +235,18 @@
         }
         if (!sessionID) {
           sessionID = timestamp;
-          WH.firstVisit = timestamp;
+          this.firstVisit = timestamp;
           $.cookie('WHSessionID', sessionID, {
             path: '/'
           });
         }
-        WH.sessionID = sessionID;
-        return WH.userID = userID;
+        this.sessionID = sessionID;
+        return this.userID = userID;
       };
 
       return WH;
 
     })();
-    return WH;
   });
 
 }).call(this);
