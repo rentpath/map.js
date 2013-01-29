@@ -1,4 +1,4 @@
-define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect) ->
+define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect) ->
   class WH
     cacheBuster:  0
     domain:       ''
