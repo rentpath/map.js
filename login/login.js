@@ -19,7 +19,7 @@
           zid: $.cookie('zid'),
           session: $.cookie("sgn") === "temp" || $.cookie("sgn") === "perm",
           currentUrl: window.location.href,
-          popupTypes: ["login", "register", "account", "reset"]
+          popupTypes: ["login", "register", "account", "reset", "confirm"]
         };
         $(document).ready(function() {
           $('body').bind('new_zid_obtained', function() {
@@ -85,8 +85,11 @@
         $('#zutron_login_form form').submit(function(e) {
           return _this._submitLogin($(e.target));
         });
-        return $('#zutron_reset_form form').submit(function(e) {
+        $('#zutron_reset_form form').submit(function(e) {
           return _this._submitPasswordReset($(e.target));
+        });
+        return $('#zutron_confirm_form form').submit(function(e) {
+          return _this._submitPasswordConfirm($(e.target));
         });
       };
 
@@ -175,16 +178,58 @@
       };
 
       Login.prototype._submitPasswordReset = function($form) {
-        var $confirmation_box, msg;
-        $confirmation_box = $form.parent().empty();
-        msg = "An email has been sent to the email address you entered with password reset instructions.";
-        return $confirmation_box.html("<p class='resetConfirmation'>" + msg + "</p>");
+        var _this = this;
+        console.log('submit');
+        return $.ajax({
+          type: 'POST',
+          data: $form.serialize(),
+          url: "" + zutron_host + "/password_reset",
+          beforeSend: function(xhr) {
+            xhr.overrideMimeType("text/json");
+            return xhr.setRequestHeader("Accept", "application/json");
+          },
+          success: function() {
+            $form.parent().empty();
+            return $('.reset_success').show();
+          },
+          error: function(errors) {
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+          }
+        });
+      };
+
+      Login.prototype._submitPasswordConfirm = function($form) {
+        var _this = this;
+        return $.ajax({
+          type: 'PUT',
+          data: $form.serialize(),
+          url: "" + zutron_host + "/password_reset",
+          beforeSend: function(xhr) {
+            xhr.overrideMimeType("text/json");
+            return xhr.setRequestHeader("Accept", "application/json");
+          },
+          success: function(data) {
+            var error;
+            if ((data != null) && data.error) {
+              error = {
+                'error': data.error
+              };
+              return _this._generateErrors(error, $form.parent().find(".errors"));
+            } else {
+              return $form.empty().find('#reset_success').html(data.success).show();
+            }
+          },
+          error: function(errors) {
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+          }
+        });
       };
 
       Login.prototype._clearInputs = function(formID) {
         var $inputs, $labels;
         $inputs = $(formID + ' input[type="email"]').add($(formID + ' input[type="password"]'));
         $labels = $("#z_form_labels label");
+        console.log($inputs);
         return $inputs.each(function(index, elem) {
           $(elem).focus(function() {
             return $($labels[index]).hide();
@@ -265,10 +310,10 @@
         if (this.my.session) {
           $changeLink.parent().removeClass('hidden');
           $regLink.parent().addClass('hidden');
-          return $logLink.attr("class", "logout").text("Logout");
+          return $logLink.attr("class", "logout").text('Logout');
         } else {
           $regLink.parent().removeClass('hidden');
-          return $logLink.attr("class", "login").text("Login");
+          return $logLink.attr("class", "login").text('Login');
         }
       };
 
@@ -276,7 +321,7 @@
         var formID,
           _this = this;
         formID = "#zutron_" + type + "_form";
-        if (this.IS_MOBILE) {
+        if (this.MOBILE) {
           this.wireupSocialLinks($(formID));
         }
         this._clearInputs(formID);
@@ -347,12 +392,12 @@
       };
 
       Login.prototype._overrideDependencies = function() {
-        this.IS_MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/) != null;
-        this.IS_BIGWEB = !this.IS_MOBILE;
-        if (this.IS_BIGWEB) {
+        this.MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/) != null;
+        this.BIGWEB = !this.MOBILE;
+        if (this.BIGWEB) {
           this._clearInputs = function() {};
         }
-        if (this.IS_MOBILE) {
+        if (this.MOBILE) {
           $.fn.prm_dialog_close = function() {};
           $.fn.prm_dialog_open = function() {};
           return this._triggerModal = function() {};

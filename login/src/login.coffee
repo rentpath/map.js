@@ -125,10 +125,11 @@ define ['jquery'], ($) ->
         beforeSend: (xhr) ->
           xhr.overrideMimeType "text/json"
           xhr.setRequestHeader "Accept", "application/json"
-
-      $confirmation_box = $form.parent().empty()
-      msg =  "An email has been sent to the email address you entered with password reset instructions."
-      $confirmation_box.html "<p class='resetConfirmation'>#{msg}</p>"
+        success: ->
+          $form.parent().empty()
+          $('.reset_success').show()
+        error: (errors) =>
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
     _submitPasswordConfirm: ($form) ->
       $.ajax
@@ -138,11 +139,19 @@ define ['jquery'], ($) ->
         beforeSend: (xhr) ->
           xhr.overrideMimeType "text/json"
           xhr.setRequestHeader "Accept", "application/json"
-
+        success: (data) =>
+          if data? and data.error # IE8 XDR Fallback
+            error = {'error': data.error}
+            @_generateErrors error, $form.parent().find ".errors"
+          else
+            $form.empty().find('#reset_success').html(data.success).show()
+        error: (errors) =>
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
     _clearInputs: (formID) ->
-      $inputs = $(formID + ' input[type="email"]').add($(formID + ' input[type="password"]'))
+      $inputs = $(formID + ' input[type="email"]').add $(formID + ' input[type="password"]')
       $labels = $("#z_form_labels label")
+      console.log($inputs)
       $inputs.each (index, elem) ->
         $(elem).focus ->
           $($labels[index]).hide()
@@ -189,16 +198,16 @@ define ['jquery'], ($) ->
       if @my.session
         $changeLink.parent().removeClass 'hidden'
         $regLink.parent().addClass 'hidden'
-        $logLink.attr("class", "logout").text "Logout"
+        $logLink.attr("class", "logout").text 'Logout'
       else
-        $regLink.parent().removeClass('hidden')
-        $logLink.attr("class", "login").text "Login"
+        $regLink.parent().removeClass 'hidden'
+        $logLink.attr("class", "login").text 'Login'
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"
 
       # TODO move dependencies to bottom of page
-      if @IS_MOBILE
+      if @MOBILE
         @wireupSocialLinks $(formID)
 
       @_clearInputs formID
@@ -252,11 +261,11 @@ define ['jquery'], ($) ->
       $form.find("input#origin").val @my.currentUrl
 
     _overrideDependencies: ->
-      @IS_MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/)?
-      @IS_BIGWEB = not @IS_MOBILE
-      if @IS_BIGWEB
+      @MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/)?
+      @BIGWEB = not @MOBILE
+      if @BIGWEB
         @_clearInputs = ->
-      if @IS_MOBILE
+      if @MOBILE
         $.fn.prm_dialog_close = ->
         $.fn.prm_dialog_open  = ->
         @_triggerModal = ->
