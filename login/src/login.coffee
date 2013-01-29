@@ -7,7 +7,7 @@ define ['jquery'], ($) ->
         zid: $.cookie 'zid'
         session: $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
         currentUrl: window.location.href
-        popupTypes: ["login", "register", "account", "reset"]
+        popupTypes: ["login", "register", "account", "reset", "confirm"]
 
       $(document).ready =>
         $('body').bind 'new_zid_obtained', =>
@@ -57,6 +57,8 @@ define ['jquery'], ($) ->
         @_submitLogin $(e.target)
       $('#zutron_reset_form form').submit (e) =>
         @_submitPasswordReset $(e.target)
+      $('#zutron_confirm_form form').submit (e) =>
+        @_submitPasswordConfirm $(e.target)
 
     _submitEmailRegistration: ($form) =>
       @_setHiddenValues $form
@@ -116,26 +118,27 @@ define ['jquery'], ($) ->
             @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
     _submitPasswordReset: ($form) ->
-      # on ajax success ->
+      $.ajax
+        type: 'POST'
+        data: $form.serialize()
+        url: "#{zutron_host}/password_reset"
+        beforeSend: (xhr) ->
+          xhr.overrideMimeType "text/json"
+          xhr.setRequestHeader "Accept", "application/json"
+
       $confirmation_box = $form.parent().empty()
       msg =  "An email has been sent to the email address you entered with password reset instructions."
       $confirmation_box.html "<p class='resetConfirmation'>#{msg}</p>"
-      # #TODO - wire up password reset form
-      # @_setHiddenValues($form)
-      # $.ajax
-      #   type: "POST"
-      #   data:
-      #   url:  "#{zutron_host}" #path for reset
-      #   beforeSend: (xhr) ->
-      #     xhr.overrideMimeType "text/json"
-      #     xhr.setRequestHeader "Accept", "application/json"
-      #   success: (data) =>
-      #     if data['redirectUrl'] # IE8 XDR Fallback
-      #       @_redirectOnSuccess data, $form
-      #     else
-      #       @_generateErrors(data, $form.parent().find(".errors"))
-      #   error: (errors) =>
-      #     @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors")
+
+    _submitPasswordConfirm: ($form) ->
+      $.ajax
+        type: 'PUT'
+        data: $form.serialize()
+        url: "#{zutron_host}/password_reset"
+        beforeSend: (xhr) ->
+          xhr.overrideMimeType "text/json"
+          xhr.setRequestHeader "Accept", "application/json"
+
 
     _clearInputs: (formID) ->
       $inputs = $(formID + ' input[type="email"]').add($(formID + ' input[type="password"]'))
