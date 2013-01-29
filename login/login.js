@@ -215,7 +215,8 @@
               };
               return _this._generateErrors(error, $form.parent().find(".errors"));
             } else {
-              return $form.empty().find('#reset_success').html(data.success).show();
+              $form.parent().empty();
+              return $('.reset_success').show();
             }
           },
           error: function(errors) {

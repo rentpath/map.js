@@ -144,7 +144,8 @@ define ['jquery'], ($) ->
             error = {'error': data.error}
             @_generateErrors error, $form.parent().find ".errors"
           else
-            $form.empty().find('#reset_success').html(data.success).show()
+            $form.parent().empty()
+            $('.reset_success').show()
         error: (errors) =>
           @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
