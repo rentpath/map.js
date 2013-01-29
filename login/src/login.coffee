@@ -151,7 +151,6 @@ define ['jquery'], ($) ->
     _clearInputs: (formID) ->
       $inputs = $(formID + ' input[type="email"]').add $(formID + ' input[type="password"]')
       $labels = $("#z_form_labels label")
-      console.log($inputs)
       $inputs.each (index, elem) ->
         $(elem).focus ->
           $($labels[index]).hide()

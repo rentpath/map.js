@@ -179,7 +179,6 @@
 
       Login.prototype._submitPasswordReset = function($form) {
         var _this = this;
-        console.log('submit');
         return $.ajax({
           type: 'POST',
           data: $form.serialize(),
@@ -229,7 +228,6 @@
         var $inputs, $labels;
         $inputs = $(formID + ' input[type="email"]').add($(formID + ' input[type="password"]'));
         $labels = $("#z_form_labels label");
-        console.log($inputs);
         return $inputs.each(function(index, elem) {
           $(elem).focus(function() {
             return $($labels[index]).hide();
