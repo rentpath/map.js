@@ -10,48 +10,50 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
     warehouseTag: null
 
     init: (opts={}) ->
-      @clickBindSelector = opts.clickBindSelector
-      @clickBindSelector = @clickBindSelector.
+      WH.clickBindSelector = opts.clickBindSelector
+      WH.clickBindSelector = WH.clickBindSelector.
         replace(/,\s+/g, ":not(#{opts.exclusions}), ") if opts.exclusions?
-      @domain            = document.location.host
-      @exclusionList     = opts.exclusionList || []
-      @fireCallback      = opts.fireCallback
-      @parentTagsAllowed = opts.parentTagsAllowed or /div|ul/
-      @path              = "#{document.location.pathname}#{document.location.search}"
-      @warehouseURL      = opts.warehouseURL
+      WH.domain            = document.location.host
+      WH.exclusionList     = opts.exclusionList || []
+      WH.fireCallback      = opts.fireCallback
+      WH.parentTagsAllowed = opts.parentTagsAllowed or /div|ul/
+      WH.path              = "#{document.location.pathname}#{document.location.search}"
+      WH.warehouseURL      = opts.warehouseURL
 
-      setCookies()
-      determineDocumentDimensions(document)
-      determineWindowDimensions(window)
-      determinePlatform(window)
+      WH.setCookies()
+      WH.determineDocumentDimensions(document)
+      WH.determineWindowDimensions(window)
+      WH.determinePlatform()
 
       $ ->
-        @metaData = getDataFromMetaTags(document)
-        firePageViewTag()
-        bindBodyClicked(document)
+        WH.metaData = WH.getDataFromMetaTags()
+        WH.firePageViewTag()
+        WH.bindBodyClicked()
 
-    bindBodyClicked: (doc) -> $(doc).on 'click', @clickBindSelector, elemClicked
+    bindBodyClicked: -> $(document).on 'click', WH.clickBindSelector, WH.elemClicked
 
     determineParent: (elem) ->
       for el in elem.parents()
-        return firstClass($(el)) if el.tagName.toLowerCase().match(@parentTagsAllowed)
+        return WH.firstClass($(el)) if el.tagName.toLowerCase().match(WH.parentTagsAllowed)
 
     determineWindowDimensions: (obj) ->
-      @windowDimensions = "#{obj.width()}x#{obj.height()}"
+      win = $(obj)
+      WH.windowDimensions = "#{win.width()}x#{win.height()}"
 
     determineDocumentDimensions: (obj) ->
-      @browserDimensions = "#{obj.width()}x#{obj.height()}"
+      doc = $(obj)
+      WH.browserDimensions = "#{doc.width()}x#{doc.height()}"
 
-    determinePlatform: (win) ->
-      @platform = browserdetect.platform(win)
+    determinePlatform: ->
+      WH.platform = browserdetect.platform()
 
     elemClicked: (e, opts={}) ->
       domTarget = e.target
       jQTarget = $(e.target)
       attrs = domTarget.attributes
 
-      item = firstClass(jQTarget) or ''
-      subGroup = determineParent(jQTarget) or ''
+      item = WH.firstClass(jQTarget) or ''
+      subGroup = WH.determineParent(jQTarget) or ''
       value = jQTarget.text() or ''
 
       trackingData = {
@@ -64,30 +66,30 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
         y:      e.clientY}
 
       for attr in attrs
-        if attr.name.indexOf('data-') == 0 and attr.name not in @exclusionList
+        if attr.name.indexOf('data-') == 0 and attr.name not in WH.exclusionList
           realName = attr.name.replace('data-', '')
           trackingData[realName] = attr.value
 
       href = jQTarget.attr('href')
       if href and opts.followHref? and opts.followHref
-        @lastLinkClicked = href
+        WH.lastLinkClicked = href
         e.preventDefault()
 
-      fire trackingData
+      WH.fire trackingData
       e.stopPropagation()
 
     fire: (obj) ->
-      obj.cb                      = @cacheBuster++
-      obj.sess                    = "#{@userID}.#{@sessionID}"
-      obj.fpc                     = @userID
-      obj.site                    = @domain
-      obj.path                    = @path
+      obj.cb                      = WH.cacheBuster++
+      obj.sess                    = "#{WH.userID}.#{WH.sessionID}"
+      obj.fpc                     = WH.userID
+      obj.site                    = WH.domain
+      obj.path                    = WH.path
       obj.title                   = $('title').text()
-      obj.bs                      = @windowDimensions
-      obj.sr                      = @browserDimensions
-      obj.os                      = @platform.OS
-      obj.browser                 = @platform.browser
-      obj.ver                     = @platform.version
+      obj.bs                      = WH.windowDimensions
+      obj.sr                      = WH.browserDimensions
+      obj.os                      = WH.platform.OS
+      obj.browser                 = WH.platform.browser
+      obj.ver                     = WH.platform.version
       obj.ref                     = document.referrer
       obj.registration            = $.cookie('sgn') ? 1 : 0
       obj.person_id               = $.cookie('zid')
@@ -96,50 +98,60 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       obj.googleplus_registration = ($.cookie('provider') == 'google_oauth2') ? 1 : 0
       obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 :  0
 
-      @fireCallback?(obj)
+      if WH.firstVisit
+        obj.firstVisit = WH.firstVisit
+        WH.firstVisit = null
 
-      if @firstVisit
-        obj.firstVisit = @firstVisit
-        @firstVisit = null
+      if WH.fireCallback
+        WH.fireCallback(obj)
 
-      @obj2query($.extend(obj, @metaData), (query) ->
-        requestURL = @warehouseURL + query
+      WH.obj2query($.extend(obj, WH.metaData), (query) ->
+        requestURL = WH.warehouseURL + query
 
         # handle IE url length limit
         if requestURL.length > 2048 and navigator.userAgent.indexOf('MSIE') >= 0
           requestURL = requestURL.substring(0,2043) + "&tu=1"
 
-        if @warehouseTag
-          @warehouseTag[0].src = requestURL
+        if WH.warehouseTag
+          WH.warehouseTag[0].src = requestURL
         else
-          @warehouseTag = $('<img/>',
-            {id:'PRMWarehouseTag', border:'0', width:'1', height:'1', src: requestURL })
+          WH.warehouseTag = $('<img/>', {id:'PRMWarehouseTag', border:'0', width:'1', height:'1', src: requestURL })
 
-        @warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type)
-        @warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
+        WH.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type)
+        WH.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
 
-        if @lastLinkClicked
+        if WH.lastLinkClicked
           lastLinkRedirect = (e) ->
             # ignore obtrusive JS in an href attribute
-            document.location = @lastLinkClicked if @lastLinkClicked.indexOf('javascript:') == -1
+            document.location = WH.lastLinkClicked if WH.lastLinkClicked.indexOf('javascript:') == -1
 
-          @warehouseTag.unbind('load').unbind('error').
+          WH.warehouseTag.unbind('load').unbind('error').
             bind('load',  lastLinkRedirect).
             bind('error', lastLinkRedirect))
 
       return
 
     firePageViewTag: ->
-      fire { type: 'pageview' }
+      WH.fire { type: 'pageview' }
 
     firstClass: (elem) ->
       return unless klasses = elem.attr('class')
       klasses.split(' ')[0]
 
-    getDataFromMetaTags: (obj) ->
-      retObj = { cg: '' }
-      metas = $(obj).find('meta')
+    getMetaAttr: (name) ->
+      if name
+        selector = 'meta[name="' + name + '"]'
+        meta = $(selector)
+        if meta[0]
+          content = meta.attr('content')
+          if content
+            return content
+          else
+            return undefined
 
+    getDataFromMetaTags: ->
+      retObj = { cg: '' }
+      metas = $('meta')
       for metaTag in metas
         metaTag = $(metaTag)
         if metaTag.attr('name') and metaTag.attr('name').indexOf('WH.') is 0
@@ -165,8 +177,10 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
 
       unless sessionID
         sessionID = timestamp
-        @firstVisit = timestamp
+        WH.firstVisit = timestamp
         $.cookie('WHSessionID', sessionID, { path: '/' })
 
-      @sessionID = sessionID
-      @userID = userID
+      WH.sessionID = sessionID
+      WH.userID = userID
+
+

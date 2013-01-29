@@ -28,29 +28,29 @@
         if (opts == null) {
           opts = {};
         }
-        this.clickBindSelector = opts.clickBindSelector;
+        WH.clickBindSelector = opts.clickBindSelector;
         if (opts.exclusions != null) {
-          this.clickBindSelector = this.clickBindSelector.replace(/,\s+/g, ":not(" + opts.exclusions + "), ");
+          WH.clickBindSelector = WH.clickBindSelector.replace(/,\s+/g, ":not(" + opts.exclusions + "), ");
         }
-        this.domain = document.location.host;
-        this.exclusionList = opts.exclusionList || [];
-        this.fireCallback = opts.fireCallback;
-        this.parentTagsAllowed = opts.parentTagsAllowed || /div|ul/;
-        this.path = "" + document.location.pathname + document.location.search;
-        this.warehouseURL = opts.warehouseURL;
-        setCookies();
-        determineDocumentDimensions(document);
-        determineWindowDimensions(window);
-        determinePlatform(window);
+        WH.domain = document.location.host;
+        WH.exclusionList = opts.exclusionList || [];
+        WH.fireCallback = opts.fireCallback;
+        WH.parentTagsAllowed = opts.parentTagsAllowed || /div|ul/;
+        WH.path = "" + document.location.pathname + document.location.search;
+        WH.warehouseURL = opts.warehouseURL;
+        WH.setCookies();
+        WH.determineDocumentDimensions(document);
+        WH.determineWindowDimensions(window);
+        WH.determinePlatform();
         return $(function() {
-          this.metaData = getDataFromMetaTags(document);
-          firePageViewTag();
-          return bindBodyClicked(document);
+          WH.metaData = WH.getDataFromMetaTags();
+          WH.firePageViewTag();
+          return WH.bindBodyClicked();
         });
       };
 
-      WH.prototype.bindBodyClicked = function(doc) {
-        return $(doc).on('click', this.clickBindSelector, elemClicked);
+      WH.prototype.bindBodyClicked = function() {
+        return $(document).on('click', WH.clickBindSelector, WH.elemClicked);
       };
 
       WH.prototype.determineParent = function(elem) {
@@ -58,22 +58,26 @@
         _ref = elem.parents();
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           el = _ref[_i];
-          if (el.tagName.toLowerCase().match(this.parentTagsAllowed)) {
-            return firstClass($(el));
+          if (el.tagName.toLowerCase().match(WH.parentTagsAllowed)) {
+            return WH.firstClass($(el));
           }
         }
       };
 
       WH.prototype.determineWindowDimensions = function(obj) {
-        return this.windowDimensions = "" + (obj.width()) + "x" + (obj.height());
+        var win;
+        win = $(obj);
+        return WH.windowDimensions = "" + (win.width()) + "x" + (win.height());
       };
 
       WH.prototype.determineDocumentDimensions = function(obj) {
-        return this.browserDimensions = "" + (obj.width()) + "x" + (obj.height());
+        var doc;
+        doc = $(obj);
+        return WH.browserDimensions = "" + (doc.width()) + "x" + (doc.height());
       };
 
-      WH.prototype.determinePlatform = function(win) {
-        return this.platform = browserdetect.platform(win);
+      WH.prototype.determinePlatform = function() {
+        return WH.platform = browserdetect.platform();
       };
 
       WH.prototype.elemClicked = function(e, opts) {
@@ -84,8 +88,8 @@
         domTarget = e.target;
         jQTarget = $(e.target);
         attrs = domTarget.attributes;
-        item = firstClass(jQTarget) || '';
-        subGroup = determineParent(jQTarget) || '';
+        item = WH.firstClass(jQTarget) || '';
+        subGroup = WH.determineParent(jQTarget) || '';
         value = jQTarget.text() || '';
         trackingData = {
           sg: subGroup,
@@ -97,33 +101,33 @@
         };
         for (_i = 0, _len = attrs.length; _i < _len; _i++) {
           attr = attrs[_i];
-          if (attr.name.indexOf('data-') === 0 && (_ref = attr.name, __indexOf.call(this.exclusionList, _ref) < 0)) {
+          if (attr.name.indexOf('data-') === 0 && (_ref = attr.name, __indexOf.call(WH.exclusionList, _ref) < 0)) {
             realName = attr.name.replace('data-', '');
             trackingData[realName] = attr.value;
           }
         }
         href = jQTarget.attr('href');
         if (href && (opts.followHref != null) && opts.followHref) {
-          this.lastLinkClicked = href;
+          WH.lastLinkClicked = href;
           e.preventDefault();
         }
-        fire(trackingData);
+        WH.fire(trackingData);
         return e.stopPropagation();
       };
 
       WH.prototype.fire = function(obj) {
         var _ref, _ref1, _ref2, _ref3, _ref4;
-        obj.cb = this.cacheBuster++;
-        obj.sess = "" + this.userID + "." + this.sessionID;
-        obj.fpc = this.userID;
-        obj.site = this.domain;
-        obj.path = this.path;
+        obj.cb = WH.cacheBuster++;
+        obj.sess = "" + WH.userID + "." + WH.sessionID;
+        obj.fpc = WH.userID;
+        obj.site = WH.domain;
+        obj.path = WH.path;
         obj.title = $('title').text();
-        obj.bs = this.windowDimensions;
-        obj.sr = this.browserDimensions;
-        obj.os = this.platform.OS;
-        obj.browser = this.platform.browser;
-        obj.ver = this.platform.version;
+        obj.bs = WH.windowDimensions;
+        obj.sr = WH.browserDimensions;
+        obj.os = WH.platform.OS;
+        obj.browser = WH.platform.browser;
+        obj.ver = WH.platform.version;
         obj.ref = document.referrer;
         obj.registration = (_ref = $.cookie('sgn')) != null ? _ref : {
           1: 0
@@ -141,23 +145,23 @@
         obj.twitter_registration = (_ref4 = $.cookie('provider') === 'twitter') != null ? _ref4 : {
           1: 0
         };
-        if (typeof this.fireCallback === "function") {
-          this.fireCallback(obj);
+        if (WH.firstVisit) {
+          obj.firstVisit = WH.firstVisit;
+          WH.firstVisit = null;
         }
-        if (this.firstVisit) {
-          obj.firstVisit = this.firstVisit;
-          this.firstVisit = null;
+        if (WH.fireCallback) {
+          WH.fireCallback(obj);
         }
-        this.obj2query($.extend(obj, this.metaData), function(query) {
+        WH.obj2query($.extend(obj, WH.metaData), function(query) {
           var lastLinkRedirect, requestURL;
-          requestURL = this.warehouseURL + query;
+          requestURL = WH.warehouseURL + query;
           if (requestURL.length > 2048 && navigator.userAgent.indexOf('MSIE') >= 0) {
             requestURL = requestURL.substring(0, 2043) + "&tu=1";
           }
-          if (this.warehouseTag) {
-            this.warehouseTag[0].src = requestURL;
+          if (WH.warehouseTag) {
+            WH.warehouseTag[0].src = requestURL;
           } else {
-            this.warehouseTag = $('<img/>', {
+            WH.warehouseTag = $('<img/>', {
               id: 'PRMWarehouseTag',
               border: '0',
               width: '1',
@@ -165,21 +169,21 @@
               src: requestURL
             });
           }
-          this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
-          this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
-          if (this.lastLinkClicked) {
+          WH.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
+          WH.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
+          if (WH.lastLinkClicked) {
             lastLinkRedirect = function(e) {
-              if (this.lastLinkClicked.indexOf('javascript:') === -1) {
-                return document.location = this.lastLinkClicked;
+              if (WH.lastLinkClicked.indexOf('javascript:') === -1) {
+                return document.location = WH.lastLinkClicked;
               }
             };
-            return this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
+            return WH.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
           }
         });
       };
 
       WH.prototype.firePageViewTag = function() {
-        return fire({
+        return WH.fire({
           type: 'pageview'
         });
       };
@@ -192,12 +196,28 @@
         return klasses.split(' ')[0];
       };
 
-      WH.prototype.getDataFromMetaTags = function(obj) {
+      WH.prototype.getMetaAttr = function(name) {
+        var content, meta, selector;
+        if (name) {
+          selector = 'meta[name="' + name + '"]';
+          meta = $(selector);
+          if (meta[0]) {
+            content = meta.attr('content');
+            if (content) {
+              return content;
+            } else {
+              return void 0;
+            }
+          }
+        }
+      };
+
+      WH.prototype.getDataFromMetaTags = function() {
         var metaTag, metas, name, retObj, _i, _len;
         retObj = {
           cg: ''
         };
-        metas = $(obj).find('meta');
+        metas = $('meta');
         for (_i = 0, _len = metas.length; _i < _len; _i++) {
           metaTag = metas[_i];
           metaTag = $(metaTag);
@@ -234,13 +254,13 @@
         }
         if (!sessionID) {
           sessionID = timestamp;
-          this.firstVisit = timestamp;
+          WH.firstVisit = timestamp;
           $.cookie('WHSessionID', sessionID, {
             path: '/'
           });
         }
-        this.sessionID = sessionID;
-        return this.userID = userID;
+        WH.sessionID = sessionID;
+        return WH.userID = userID;
       };
 
       return WH;
