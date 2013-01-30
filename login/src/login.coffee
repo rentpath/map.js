@@ -267,13 +267,12 @@ define ['jquery'], ($) ->
       $form.find("input#origin").val @my.currentUrl
 
     _determineClient: ($form) =>
-      if navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i)
-        clients = ["iOS", "android"]
-        $.each clients, (client) =>
-          if @my.currentUrl.indexOf client > 0
+        if @my.currentUrl.indexOf client > 0 and (navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i))
+          clients = ["iOS", "android"]
+          $.each clients, (client) =>
             my_client = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
-            my_client = my_client.split("=")[1]
-            @_createAppButton my_client.toLowerCase()
+            my_client = my_client.split("=")[1].toLowerCase()
+            @_createAppButton my_client
             false
 
     _createAppButton: (client) ->

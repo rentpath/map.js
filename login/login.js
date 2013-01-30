@@ -405,16 +405,14 @@
       Login.prototype._determineClient = function($form) {
         var clients,
           _this = this;
-        if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
+        if (this.my.currentUrl.indexOf(client > 0 && (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)))) {
           clients = ["iOS", "android"];
           return $.each(clients, function(client) {
             var my_client;
-            if (_this.my.currentUrl.indexOf(client > 0)) {
-              my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
-              my_client = my_client.split("=")[1];
-              _this._createAppButton(my_client.toLowerCase());
-              return false;
-            }
+            my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
+            my_client = my_client.split("=")[1].toLowerCase();
+            _this._createAppButton(my_client);
+            return false;
           });
         }
       };
