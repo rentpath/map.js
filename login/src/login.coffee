@@ -204,10 +204,10 @@ define ['jquery'], ($) ->
       if @my.session
         $changeLink.parent().removeClass 'hidden'
         $regLink.parent().addClass 'hidden'
-        $logLink.attr("class", "logout").text 'Logout'
+        $logLink.addClass("logout").text 'Logout'
       else
         $regLink.parent().removeClass 'hidden'
-        $logLink.attr("class", "login").text 'Login'
+        $logLink.addClass("login").text 'Login'
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"

@@ -321,10 +321,10 @@
         if (this.my.session) {
           $changeLink.parent().removeClass('hidden');
           $regLink.parent().addClass('hidden');
-          return $logLink.attr("class", "logout").text('Logout');
+          return $logLink.addClass("logout").text('Logout');
         } else {
           $regLink.parent().removeClass('hidden');
-          return $logLink.attr("class", "login").text('Login');
+          return $logLink.addClass("login").text('Login');
         }
       };
 
