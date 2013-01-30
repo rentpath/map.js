@@ -405,7 +405,7 @@
       Login.prototype._determineClient = function($form) {
         var clients,
           _this = this;
-        if (this.my.currentUrl.indexOf(client > 0 && (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)))) {
+        if (this.my.currentUrl.indexOf('client') > 0 && (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i))) {
           clients = ["iOS", "android"];
           return $.each(clients, function(client) {
             var my_client;

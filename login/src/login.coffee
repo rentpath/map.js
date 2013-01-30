@@ -267,7 +267,7 @@ define ['jquery'], ($) ->
       $form.find("input#origin").val @my.currentUrl
 
     _determineClient: ($form) =>
-        if @my.currentUrl.indexOf client > 0 and (navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i))
+        if @my.currentUrl.indexOf('client') > 0 and (navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i))
           clients = ["iOS", "android"]
           $.each clients, (client) =>
             my_client = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
