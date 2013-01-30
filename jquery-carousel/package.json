@@ -1,6 +1,6 @@
 {
   "name": "jquery-carousel",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "jQuery Carousel plugin, based on jCarousel 2.8 by Jan Sorgalla",
   "homepage": "http://sorgalla.com/projects/jcarousel/",
   "jam": {
