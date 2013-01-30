@@ -7,6 +7,8 @@
     Login = (function() {
 
       function Login() {
+        this._determineClient = __bind(this._determineClient, this);
+
         this._triggerModal = __bind(this._triggerModal, this);
 
         this._submitEmailRegistration = __bind(this._submitEmailRegistration, this);
@@ -200,9 +202,9 @@
       Login.prototype._submitPasswordConfirm = function($form) {
         var _this = this;
         return $.ajax({
-          type: 'PUT',
+          type: 'POST',
           data: $form.serialize(),
-          url: "" + zutron_host + "/password_reset",
+          url: "" + zutron_host + "/password_confirmation",
           beforeSend: function(xhr) {
             xhr.overrideMimeType("text/json");
             return xhr.setRequestHeader("Accept", "application/json");
@@ -211,12 +213,13 @@
             var error;
             if ((data != null) && data.error) {
               error = {
-                'error': data.error
+                'password': data.error
               };
               return _this._generateErrors(error, $form.parent().find(".errors"));
             } else {
               $form.parent().empty();
-              return $('.reset_success').show();
+              $('.reset_success').html(data.success).show();
+              return _this._determineClient($form);
             }
           },
           error: function(errors) {
@@ -389,6 +392,23 @@
         $form.find("input#state").val(this.my.zid);
         return $form.find("input#origin").val(this.my.currentUrl);
       };
+
+      Login.prototype._determineClient = function($form) {
+        var clients,
+          _this = this;
+        clients = ["iOS", "android"];
+        return $.each(clients, function(client) {
+          var my_client;
+          if (_this.my.currentUrl.indexOf(client > 0)) {
+            my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
+            my_client = my_client.split("=")[1];
+            _this._createAppButton(my_client);
+            return false;
+          }
+        });
+      };
+
+      Login.prototype._createAppButton = function(client) {};
 
       Login.prototype._overrideDependencies = function() {
         this.MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/) != null;

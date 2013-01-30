@@ -133,19 +133,20 @@ define ['jquery'], ($) ->
 
     _submitPasswordConfirm: ($form) ->
       $.ajax
-        type: 'PUT'
+        type: 'POST'
         data: $form.serialize()
-        url: "#{zutron_host}/password_reset"
+        url: "#{zutron_host}/password_confirmation"
         beforeSend: (xhr) ->
           xhr.overrideMimeType "text/json"
           xhr.setRequestHeader "Accept", "application/json"
         success: (data) =>
           if data? and data.error # IE8 XDR Fallback
-            error = {'error': data.error}
+            error = {'password': data.error}
             @_generateErrors error, $form.parent().find ".errors"
           else
             $form.parent().empty()
-            $('.reset_success').show()
+            $('.reset_success').html(data.success).show()
+            @_determineClient $form
         error: (errors) =>
           @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
@@ -259,6 +260,17 @@ define ['jquery'], ($) ->
     _setHiddenValues: ($form)->
       $form.find("input#state").val @my.zid
       $form.find("input#origin").val @my.currentUrl
+
+    _determineClient: ($form) =>
+      clients = ["iOS", "android"]
+      $.each clients, (client) =>
+        if @my.currentUrl.indexOf client > 0
+          my_client = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
+          my_client = my_client.split("=")[1]
+          @_createAppButton my_client
+          false
+
+    _createAppButton: (client) ->
 
     _overrideDependencies: ->
       @MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/)?
