@@ -412,7 +412,7 @@
             if (_this.my.currentUrl.indexOf(client > 0)) {
               my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
               my_client = my_client.split("=")[1];
-              _this._createAppButton(my_client);
+              _this._createAppButton(my_client.toLowerCase());
               return false;
             }
           });
@@ -421,10 +421,10 @@
 
       Login.prototype._createAppButton = function(client) {
         var btn, launch_url;
-        if (client.toLowerCase() === 'ios') {
+        if (client === 'ios') {
           launch_url = "a";
         }
-        if (client.toLowerCase() === 'android') {
+        if (client === 'android') {
           launch_url = "b";
         }
         btn = "<a href='" + launch_url + "' class='" + client + " app_button'>" + client + "</a>";

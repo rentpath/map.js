@@ -273,12 +273,12 @@ define ['jquery'], ($) ->
           if @my.currentUrl.indexOf client > 0
             my_client = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
             my_client = my_client.split("=")[1]
-            @_createAppButton my_client
+            @_createAppButton my_client.toLowerCase()
             false
 
     _createAppButton: (client) ->
-      launch_url = "a" if client.toLowerCase() is 'ios'
-      launch_url = "b" if client.toLowerCase() is 'android'
+      launch_url = "a" if client is 'ios'
+      launch_url = "b" if client is 'android'
       btn = "<a href='#{launch_url}' class='#{client} app_button'>#{client}</a>"
       $('#app_container').html btn
 
