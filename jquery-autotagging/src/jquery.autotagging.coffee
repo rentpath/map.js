@@ -4,54 +4,58 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     domain:       ''
     firstVisit:   null
     lastLinkClicked: null
+    metaData:     null
     path:         ''
     sessionID:    ''
     userID:       ''
     warehouseTag: null
 
-    init: (opts={}) ->
-      @clickBindSelector = opts.clickBindSelector
-      @clickBindSelector = @clickBindSelector.
-        replace(/,\s+/g, ":not(#{opts.exclusions}), ") if opts.exclusions?
+    init: (opts={}) =>
+      @clickBindSelector = opts.clickBindSelector || 'a, input[type=submit], input[type=button], img'
+      if opts.exclusions?
+        @clickBindSelector = @clickBindSelector.replace(/,\s+/g, ":not(#{opts.exclusions}), ")
+
       @domain            = document.location.host
       @exclusionList     = opts.exclusionList || []
       @fireCallback      = opts.fireCallback
-      @parentTagsAllowed = opts.parentTagsAllowed or /div|ul/
+      @parentTagsAllowed = opts.parentTagsAllowed || /div|ul/
       @path              = "#{document.location.pathname}#{document.location.search}"
       @warehouseURL      = opts.warehouseURL
 
-      setCookies()
-      determineDocumentDimensions(document)
-      determineWindowDimensions(window)
-      determinePlatform(window)
+      @setCookies()
+      @determineDocumentDimensions(document)
+      @determineWindowDimensions(window)
+      @determinePlatform(window)
 
-      $ ->
-        @metaData = getDataFromMetaTags(document)
-        firePageViewTag()
-        bindBodyClicked(document)
+      @metaData = @getDataFromMetaTags(document)
+      @firePageViewTag()
+      @bindBodyClicked(document)
 
-    bindBodyClicked: (doc) -> $(doc).on 'click', @clickBindSelector, elemClicked
+    bindBodyClicked: (doc) ->
+      $(doc).on 'click', @clickBindSelector, @elemClicked
 
     determineParent: (elem) ->
       for el in elem.parents()
-        return firstClass($(el)) if el.tagName.toLowerCase().match(@parentTagsAllowed)
+        return @firstClass($(el)) if el.tagName.toLowerCase().match(@parentTagsAllowed)
 
     determineWindowDimensions: (obj) ->
+      obj = $(obj)
       @windowDimensions = "#{obj.width()}x#{obj.height()}"
 
     determineDocumentDimensions: (obj) ->
+      obj = $(obj)
       @browserDimensions = "#{obj.width()}x#{obj.height()}"
 
     determinePlatform: (win) ->
       @platform = browserdetect.platform(win)
 
-    elemClicked: (e, opts={}) ->
+    elemClicked: (e, opts={}) =>
       domTarget = e.target
       jQTarget = $(e.target)
       attrs = domTarget.attributes
 
-      item = firstClass(jQTarget) or ''
-      subGroup = determineParent(jQTarget) or ''
+      item = @firstClass(jQTarget) or ''
+      subGroup = @determineParent(jQTarget) or ''
       value = jQTarget.text() or ''
 
       trackingData = {
@@ -73,10 +77,10 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         @lastLinkClicked = href
         e.preventDefault()
 
-      fire trackingData
+      @fire trackingData
       e.stopPropagation()
 
-    fire: (obj) ->
+    fire: (obj) =>
       obj.cb                      = @cacheBuster++
       obj.sess                    = "#{@userID}.#{@sessionID}"
       obj.fpc                     = @userID
@@ -127,10 +131,8 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
             bind('load',  lastLinkRedirect).
             bind('error', lastLinkRedirect))
 
-      return
-
     firePageViewTag: ->
-      fire { type: 'pageview' }
+      @fire { type: 'pageview' }
 
     firstClass: (elem) ->
       return unless klasses = elem.attr('class')
@@ -147,7 +149,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           retObj[name] = metaTag.attr('content')
       retObj
 
-    obj2query: (obj, cb) ->
+    obj2query: (obj, cb) =>
       rv = []
       for key of obj
         rv.push "&#{key}=#{encodeURIComponent(val)}" if obj.hasOwnProperty(key) and (val = obj[key])?
