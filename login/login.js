@@ -189,9 +189,18 @@
             xhr.overrideMimeType("text/json");
             return xhr.setRequestHeader("Accept", "application/json");
           },
-          success: function() {
-            $form.parent().empty();
-            return $('.reset_success').show();
+          success: function(data) {
+            var error;
+            if ((data != null) && data.error) {
+              error = {
+                'password': data.error
+              };
+              return _this._generateErrors(error, $form.parent().find(".errors"));
+            } else {
+              $form.parent().empty();
+              $('.reset_success').html(data.success).show();
+              return _this._determineClient($form);
+            }
           },
           error: function(errors) {
             return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
@@ -396,19 +405,31 @@
       Login.prototype._determineClient = function($form) {
         var clients,
           _this = this;
-        clients = ["iOS", "android"];
-        return $.each(clients, function(client) {
-          var my_client;
-          if (_this.my.currentUrl.indexOf(client > 0)) {
-            my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
-            my_client = my_client.split("=")[1];
-            _this._createAppButton(my_client);
-            return false;
-          }
-        });
+        if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i)) {
+          clients = ["iOS", "android"];
+          return $.each(clients, function(client) {
+            var my_client;
+            if (_this.my.currentUrl.indexOf(client > 0)) {
+              my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
+              my_client = my_client.split("=")[1];
+              _this._createAppButton(my_client);
+              return false;
+            }
+          });
+        }
       };
 
-      Login.prototype._createAppButton = function(client) {};
+      Login.prototype._createAppButton = function(client) {
+        var btn, launch_url;
+        if (client.toLowerCase() === 'ios') {
+          launch_url = "a";
+        }
+        if (client.toLowerCase() === 'android') {
+          launch_url = "b";
+        }
+        btn = "<a href='" + launch_url + "' class='" + client + " app_button'>" + client + "</a>";
+        return $('#app_container').html(btn);
+      };
 
       Login.prototype._overrideDependencies = function() {
         this.MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/) != null;
