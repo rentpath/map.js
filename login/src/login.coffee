@@ -29,11 +29,12 @@ define ['jquery'], ($) ->
           @_bindForms type
 
     expireCookie: (cookie) ->
-      options =
-        expires: new Date(1)
-        path: "/"
-        domain: ".#{window.location.host}"
-      $.cookie cookie, "", options
+      if cookie
+        options =
+          expires: new Date(1)
+          path: "/"
+          domain: ".#{window.location.host}"
+        $.cookie cookie, "", options
 
     wireupSocialLinks: ($div) ->
       baseUrl = "#{zutron_host}?zid_id=#{@my.zid}&referrer=#{@my.currentUrl}&technique="
@@ -71,6 +72,7 @@ define ['jquery'], ($) ->
           xhr.setRequestHeader "Accept", "application/json"
         success: (data) =>
           if data['redirectUrl'] # IE8 XDR Fallback
+            @_setSessionType()
             @_redirectOnSuccess data, $form
           else
             @_generateErrors(data, $form.parent().find(".errors"))
@@ -88,6 +90,7 @@ define ['jquery'], ($) ->
           xhr.setRequestHeader "Accept", "application/json"
         success: (data) =>
           if data['redirectUrl'] # IE8 XDR Fallback
+            @_setSessionType()
             @_redirectOnSuccess data, $form
           else
             @_generateErrors(data, $form.parent().find(".errors"))
@@ -200,11 +203,10 @@ define ['jquery'], ($) ->
       $regLink = $("a.register")
       $logLink = $("a.login")
       $changeLink = $('a.account')
-
       if @my.session
-        $changeLink.parent().removeClass 'hidden'
         $regLink.parent().addClass 'hidden'
-        $logLink.addClass("logout").text 'Logout'
+        $logLink.addClass("logout").removeClass("login").text 'Logout'
+        $changeLink.parent().removeClass 'hidden' if $.cookie 'z_type_email'
       else
         $regLink.parent().removeClass 'hidden'
         $logLink.addClass("login").text 'Login'
@@ -249,6 +251,8 @@ define ['jquery'], ($) ->
       e.preventDefault()
       @expireCookie "zid"
       @expireCookie "sgn"
+      @expireCookie "typ"
+
       window.location.replace @my.currentUrl
 
     _redirectTo: (url) ->
@@ -270,16 +274,19 @@ define ['jquery'], ($) ->
         if @my.currentUrl.indexOf('client') > 0 and (navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i))
           clients = ["iOS", "android"]
           $.each clients, (client) =>
-            my_client = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
-            my_client = my_client.split("=")[1].toLowerCase()
-            @_createAppButton my_client
+            myClient = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
+            myClient = my_client.split("=")[1].toLowerCase()
+            @_createAppButton myClient
             false
 
     _createAppButton: (client) ->
-      launch_url = "a" if client is 'ios'
-      launch_url = "b" if client is 'android'
-      btn = "<a href='#{launch_url}' class='#{client} app_button'>#{client}</a>"
+      launchUrl = "#" if client is 'ios'
+      launchUrl = "#" if client is 'android'
+      btn = "<a href='#{launchUrl}' class='#{client} app_button'>#{client}</a>"
       $('#app_container').html btn
+
+    _setSessionType: () ->
+      $.cookie 'z_type_email', 'profile' #user registered by email
 
     _overrideDependencies: ->
       @MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/)?

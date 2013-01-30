@@ -50,12 +50,14 @@
 
       Login.prototype.expireCookie = function(cookie) {
         var options;
-        options = {
-          expires: new Date(1),
-          path: "/",
-          domain: "." + window.location.host
-        };
-        return $.cookie(cookie, "", options);
+        if (cookie) {
+          options = {
+            expires: new Date(1),
+            path: "/",
+            domain: "." + window.location.host
+          };
+          return $.cookie(cookie, "", options);
+        }
       };
 
       Login.prototype.wireupSocialLinks = function($div) {
@@ -108,6 +110,7 @@
           },
           success: function(data) {
             if (data['redirectUrl']) {
+              _this._setSessionType();
               return _this._redirectOnSuccess(data, $form);
             } else {
               return _this._generateErrors(data, $form.parent().find(".errors"));
@@ -132,6 +135,7 @@
           },
           success: function(data) {
             if (data['redirectUrl']) {
+              _this._setSessionType();
               return _this._redirectOnSuccess(data, $form);
             } else {
               return _this._generateErrors(data, $form.parent().find(".errors"));
@@ -319,9 +323,11 @@
         $logLink = $("a.login");
         $changeLink = $('a.account');
         if (this.my.session) {
-          $changeLink.parent().removeClass('hidden');
           $regLink.parent().addClass('hidden');
-          return $logLink.addClass("logout").text('Logout');
+          $logLink.addClass("logout").removeClass("login").text('Logout');
+          if ($.cookie('z_type_email')) {
+            return $changeLink.parent().removeClass('hidden');
+          }
         } else {
           $regLink.parent().removeClass('hidden');
           return $logLink.addClass("login").text('Login');
@@ -378,6 +384,7 @@
         e.preventDefault();
         this.expireCookie("zid");
         this.expireCookie("sgn");
+        this.expireCookie("typ");
         return window.location.replace(this.my.currentUrl);
       };
 
@@ -408,25 +415,29 @@
         if (this.my.currentUrl.indexOf('client') > 0 && (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i))) {
           clients = ["iOS", "android"];
           return $.each(clients, function(client) {
-            var my_client;
-            my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
-            my_client = my_client.split("=")[1].toLowerCase();
-            _this._createAppButton(my_client);
+            var myClient;
+            myClient = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
+            myClient = my_client.split("=")[1].toLowerCase();
+            _this._createAppButton(myClient);
             return false;
           });
         }
       };
 
       Login.prototype._createAppButton = function(client) {
-        var btn, launch_url;
+        var btn, launchUrl;
         if (client === 'ios') {
-          launch_url = "a";
+          launchUrl = "#";
         }
         if (client === 'android') {
-          launch_url = "b";
+          launchUrl = "#";
         }
-        btn = "<a href='" + launch_url + "' class='" + client + " app_button'>" + client + "</a>";
+        btn = "<a href='" + launchUrl + "' class='" + client + " app_button'>" + client + "</a>";
         return $('#app_container').html(btn);
+      };
+
+      Login.prototype._setSessionType = function() {
+        return $.cookie('z_type_email', 'profile');
       };
 
       Login.prototype._overrideDependencies = function() {
