@@ -109,7 +109,7 @@ define ['jquery'], ($) ->
             xhr.overrideMimeType "text/json"
             xhr.setRequestHeader "Accept", "application/json"
           success: (data) =>
-            if data? and data.email # IE8 XDR Fallback
+            if data? and data.error # IE8 XDR Fallback
               error = {'email': data.email}
               @_generateErrors error, $form.parent().find ".errors"
             else
@@ -126,9 +126,9 @@ define ['jquery'], ($) ->
           xhr.overrideMimeType "text/json"
           xhr.setRequestHeader "Accept", "application/json"
         success: (data) =>
-          if data? and data.error # IE8 XDR Fallback
-            error = {'password': data.error}
-            @_generateErrors error, $form.parent().find ".errors"
+          if data.error # IE8 XDR Fallback
+            error = {'email': data.error}
+            @_generateErrors(error, $form.parent().find(".errors"))
           else
             $form.parent().empty()
             $('.reset_success').html(data.success).show()
@@ -262,7 +262,7 @@ define ['jquery'], ($) ->
           $("#zutron_login_form, #zutron_registration").prm_dialog_close()
           @_triggerModal $("#zutron_error")
 
-    _setHiddenValues: ($form)->
+    _setHiddenValues: ($form) ->
       $form.find("input#state").val @my.zid
       $form.find("input#origin").val @my.currentUrl
 

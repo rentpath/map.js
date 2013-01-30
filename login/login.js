@@ -164,7 +164,7 @@
           },
           success: function(data) {
             var error;
-            if ((data != null) && data.email) {
+            if ((data != null) && data.error) {
               error = {
                 'email': data.email
               };
@@ -191,9 +191,9 @@
           },
           success: function(data) {
             var error;
-            if ((data != null) && data.error) {
+            if (data.error) {
               error = {
-                'password': data.error
+                'email': data.error
               };
               return _this._generateErrors(error, $form.parent().find(".errors"));
             } else {
