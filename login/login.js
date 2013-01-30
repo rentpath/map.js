@@ -7,6 +7,8 @@
     Login = (function() {
 
       function Login() {
+        this._determineClient = __bind(this._determineClient, this);
+
         this._triggerModal = __bind(this._triggerModal, this);
 
         this._submitEmailRegistration = __bind(this._submitEmailRegistration, this);
@@ -19,7 +21,7 @@
           zid: $.cookie('zid'),
           session: $.cookie("sgn") === "temp" || $.cookie("sgn") === "perm",
           currentUrl: window.location.href,
-          popupTypes: ["login", "register", "account", "reset"]
+          popupTypes: ["login", "register", "account", "reset", "confirm"]
         };
         $(document).ready(function() {
           $('body').bind('new_zid_obtained', function() {
@@ -85,8 +87,11 @@
         $('#zutron_login_form form').submit(function(e) {
           return _this._submitLogin($(e.target));
         });
-        return $('#zutron_reset_form form').submit(function(e) {
+        $('#zutron_reset_form form').submit(function(e) {
           return _this._submitPasswordReset($(e.target));
+        });
+        return $('#zutron_confirm_form form').submit(function(e) {
+          return _this._submitPasswordConfirm($(e.target));
         });
       };
 
@@ -159,7 +164,7 @@
           },
           success: function(data) {
             var error;
-            if ((data != null) && data.email) {
+            if ((data != null) && data.error) {
               error = {
                 'email': data.email
               };
@@ -175,10 +180,61 @@
       };
 
       Login.prototype._submitPasswordReset = function($form) {
-        var $confirmation_box, msg;
-        $confirmation_box = $form.parent().empty();
-        msg = "An email has been sent to the email address you entered with password reset instructions.";
-        return $confirmation_box.html("<p class='resetConfirmation'>" + msg + "</p>");
+        var _this = this;
+        return $.ajax({
+          type: 'POST',
+          data: $form.serialize(),
+          url: "" + zutron_host + "/password_reset",
+          beforeSend: function(xhr) {
+            xhr.overrideMimeType("text/json");
+            return xhr.setRequestHeader("Accept", "application/json");
+          },
+          success: function(data) {
+            var error;
+            if (data.error) {
+              error = {
+                'email': data.error
+              };
+              return _this._generateErrors(error, $form.parent().find(".errors"));
+            } else {
+              $form.parent().empty();
+              $('.reset_success').html(data.success).show();
+              return _this._determineClient($form);
+            }
+          },
+          error: function(errors) {
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+          }
+        });
+      };
+
+      Login.prototype._submitPasswordConfirm = function($form) {
+        var _this = this;
+        return $.ajax({
+          type: 'POST',
+          data: $form.serialize(),
+          url: "" + zutron_host + "/password_confirmation",
+          beforeSend: function(xhr) {
+            xhr.overrideMimeType("text/json");
+            return xhr.setRequestHeader("Accept", "application/json");
+          },
+          success: function(data) {
+            var error;
+            if ((data != null) && data.error) {
+              error = {
+                'password': data.error
+              };
+              return _this._generateErrors(error, $form.parent().find(".errors"));
+            } else {
+              $form.parent().empty();
+              $('.reset_success').html(data.success).show();
+              return _this._determineClient($form);
+            }
+          },
+          error: function(errors) {
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+          }
+        });
       };
 
       Login.prototype._clearInputs = function(formID) {
@@ -265,10 +321,10 @@
         if (this.my.session) {
           $changeLink.parent().removeClass('hidden');
           $regLink.parent().addClass('hidden');
-          return $logLink.attr("class", "logout").text("Logout");
+          return $logLink.addClass("logout").text('Logout');
         } else {
           $regLink.parent().removeClass('hidden');
-          return $logLink.attr("class", "login").text("Login");
+          return $logLink.addClass("login").text('Login');
         }
       };
 
@@ -276,7 +332,7 @@
         var formID,
           _this = this;
         formID = "#zutron_" + type + "_form";
-        if (this.IS_MOBILE) {
+        if (this.MOBILE) {
           this.wireupSocialLinks($(formID));
         }
         this._clearInputs(formID);
@@ -346,13 +402,40 @@
         return $form.find("input#origin").val(this.my.currentUrl);
       };
 
+      Login.prototype._determineClient = function($form) {
+        var clients,
+          _this = this;
+        if (this.my.currentUrl.indexOf('client') > 0 && (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i))) {
+          clients = ["iOS", "android"];
+          return $.each(clients, function(client) {
+            var my_client;
+            my_client = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
+            my_client = my_client.split("=")[1].toLowerCase();
+            _this._createAppButton(my_client);
+            return false;
+          });
+        }
+      };
+
+      Login.prototype._createAppButton = function(client) {
+        var btn, launch_url;
+        if (client === 'ios') {
+          launch_url = "a";
+        }
+        if (client === 'android') {
+          launch_url = "b";
+        }
+        btn = "<a href='" + launch_url + "' class='" + client + " app_button'>" + client + "</a>";
+        return $('#app_container').html(btn);
+      };
+
       Login.prototype._overrideDependencies = function() {
-        this.IS_MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/) != null;
-        this.IS_BIGWEB = !this.IS_MOBILE;
-        if (this.IS_BIGWEB) {
+        this.MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/) != null;
+        this.BIGWEB = !this.MOBILE;
+        if (this.BIGWEB) {
           this._clearInputs = function() {};
         }
-        if (this.IS_MOBILE) {
+        if (this.MOBILE) {
           $.fn.prm_dialog_close = function() {};
           $.fn.prm_dialog_open = function() {};
           return this._triggerModal = function() {};

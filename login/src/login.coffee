@@ -7,7 +7,7 @@ define ['jquery'], ($) ->
         zid: $.cookie 'zid'
         session: $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
         currentUrl: window.location.href
-        popupTypes: ["login", "register", "account", "reset"]
+        popupTypes: ["login", "register", "account", "reset", "confirm"]
 
       $(document).ready =>
         $('body').bind 'new_zid_obtained', =>
@@ -57,6 +57,8 @@ define ['jquery'], ($) ->
         @_submitLogin $(e.target)
       $('#zutron_reset_form form').submit (e) =>
         @_submitPasswordReset $(e.target)
+      $('#zutron_confirm_form form').submit (e) =>
+        @_submitPasswordConfirm $(e.target)
 
     _submitEmailRegistration: ($form) =>
       @_setHiddenValues $form
@@ -107,7 +109,7 @@ define ['jquery'], ($) ->
             xhr.overrideMimeType "text/json"
             xhr.setRequestHeader "Accept", "application/json"
           success: (data) =>
-            if data? and data.email # IE8 XDR Fallback
+            if data? and data.error # IE8 XDR Fallback
               error = {'email': data.email}
               @_generateErrors error, $form.parent().find ".errors"
             else
@@ -116,29 +118,45 @@ define ['jquery'], ($) ->
             @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
     _submitPasswordReset: ($form) ->
-      # on ajax success ->
-      $confirmation_box = $form.parent().empty()
-      msg =  "An email has been sent to the email address you entered with password reset instructions."
-      $confirmation_box.html "<p class='resetConfirmation'>#{msg}</p>"
-      # #TODO - wire up password reset form
-      # @_setHiddenValues($form)
-      # $.ajax
-      #   type: "POST"
-      #   data:
-      #   url:  "#{zutron_host}" #path for reset
-      #   beforeSend: (xhr) ->
-      #     xhr.overrideMimeType "text/json"
-      #     xhr.setRequestHeader "Accept", "application/json"
-      #   success: (data) =>
-      #     if data['redirectUrl'] # IE8 XDR Fallback
-      #       @_redirectOnSuccess data, $form
-      #     else
-      #       @_generateErrors(data, $form.parent().find(".errors"))
-      #   error: (errors) =>
-      #     @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors")
+      $.ajax
+        type: 'POST'
+        data: $form.serialize()
+        url: "#{zutron_host}/password_reset"
+        beforeSend: (xhr) ->
+          xhr.overrideMimeType "text/json"
+          xhr.setRequestHeader "Accept", "application/json"
+        success: (data) =>
+          if data.error # IE8 XDR Fallback
+            error = {'email': data.error}
+            @_generateErrors(error, $form.parent().find(".errors"))
+          else
+            $form.parent().empty()
+            $('.reset_success').html(data.success).show()
+            @_determineClient $form
+        error: (errors) =>
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
+
+    _submitPasswordConfirm: ($form) ->
+      $.ajax
+        type: 'POST'
+        data: $form.serialize()
+        url: "#{zutron_host}/password_confirmation"
+        beforeSend: (xhr) ->
+          xhr.overrideMimeType "text/json"
+          xhr.setRequestHeader "Accept", "application/json"
+        success: (data) =>
+          if data? and data.error # IE8 XDR Fallback
+            error = {'password': data.error}
+            @_generateErrors error, $form.parent().find ".errors"
+          else
+            $form.parent().empty()
+            $('.reset_success').html(data.success).show()
+            @_determineClient $form
+        error: (errors) =>
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
     _clearInputs: (formID) ->
-      $inputs = $(formID + ' input[type="email"]').add($(formID + ' input[type="password"]'))
+      $inputs = $(formID + ' input[type="email"]').add $(formID + ' input[type="password"]')
       $labels = $("#z_form_labels label")
       $inputs.each (index, elem) ->
         $(elem).focus ->
@@ -186,16 +204,16 @@ define ['jquery'], ($) ->
       if @my.session
         $changeLink.parent().removeClass 'hidden'
         $regLink.parent().addClass 'hidden'
-        $logLink.attr("class", "logout").text "Logout"
+        $logLink.addClass("logout").text 'Logout'
       else
-        $regLink.parent().removeClass('hidden')
-        $logLink.attr("class", "login").text "Login"
+        $regLink.parent().removeClass 'hidden'
+        $logLink.addClass("login").text 'Login'
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"
 
       # TODO move dependencies to bottom of page
-      if @IS_MOBILE
+      if @MOBILE
         @wireupSocialLinks $(formID)
 
       @_clearInputs formID
@@ -244,16 +262,31 @@ define ['jquery'], ($) ->
           $("#zutron_login_form, #zutron_registration").prm_dialog_close()
           @_triggerModal $("#zutron_error")
 
-    _setHiddenValues: ($form)->
+    _setHiddenValues: ($form) ->
       $form.find("input#state").val @my.zid
       $form.find("input#origin").val @my.currentUrl
 
+    _determineClient: ($form) =>
+        if @my.currentUrl.indexOf('client') > 0 and (navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i))
+          clients = ["iOS", "android"]
+          $.each clients, (client) =>
+            my_client = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
+            my_client = my_client.split("=")[1].toLowerCase()
+            @_createAppButton my_client
+            false
+
+    _createAppButton: (client) ->
+      launch_url = "a" if client is 'ios'
+      launch_url = "b" if client is 'android'
+      btn = "<a href='#{launch_url}' class='#{client} app_button'>#{client}</a>"
+      $('#app_container').html btn
+
     _overrideDependencies: ->
-      @IS_MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/)?
-      @IS_BIGWEB = not @IS_MOBILE
-      if @IS_BIGWEB
+      @MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/)?
+      @BIGWEB = not @MOBILE
+      if @BIGWEB
         @_clearInputs = ->
-      if @IS_MOBILE
+      if @MOBILE
         $.fn.prm_dialog_close = ->
         $.fn.prm_dialog_open  = ->
         @_triggerModal = ->
