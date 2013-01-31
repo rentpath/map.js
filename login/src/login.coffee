@@ -100,20 +100,19 @@ define ['jquery'], ($) ->
     _submitChangeEmail: ($form)->
         @_setHiddenValues $form
         new_email =
-          profile:
-            email: $('input[name="new_email"]').val()
-            email_confirmation: $('input[name="new_email_confirm"]').val()
+          email: $('input[name="new_email"]').val()
+          email_confirmation: $('input[name="new_email_confirm"]').val()
         $.ajax
-          type: "GET"
+          type: "POST"
           data: new_email
           datatype: 'json'
-          url:  "#{zutron_host}/zids/#{@my.zid}/profile/edit.json"
+          url:  "#{zutron_host}/zids/#{@my.zid}/email_change.json"
           beforeSend: (xhr) ->
             xhr.overrideMimeType "text/json"
             xhr.setRequestHeader "Accept", "application/json"
           success: (data) =>
             if data? and data.error # IE8 XDR Fallback
-              error = {'email': data.email}
+              error = {'email': data.error}
               @_generateErrors error, $form.parent().find ".errors"
             else
               $('#zutron_account_form').prm_dialog_close()
