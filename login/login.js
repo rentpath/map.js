@@ -40,10 +40,11 @@
       }
 
       Login.prototype.toggleRegistrationDiv = function($div) {
+        var _this = this;
         if (!this.my.session) {
           this.wireupSocialLinks($div.show());
           return $.each(this.my.popupTypes, function(type) {
-            return this._bindForms(type);
+            return _this._bindForms(type);
           });
         }
       };
@@ -202,8 +203,7 @@
               return _this._generateErrors(error, $form.parent().find(".errors"));
             } else {
               $form.parent().empty();
-              $('.reset_success').html(data.success).show();
-              return _this._determineClient($form);
+              return $('.reset_success').html(data.success).show();
             }
           },
           error: function(errors) {
@@ -421,6 +421,8 @@
             _this._createAppButton(myClient);
             return false;
           });
+        } else {
+          return $('#reset_return_link').attr('href', "http://" + window.location.host).show();
         }
       };
 
@@ -464,8 +466,8 @@
       wireupSocialLinks: function() {
         return this.instance.wireupSocialLinks();
       },
-      toggleRegistrationDiv: function() {
-        return this.instance.toggleRegistrationDiv();
+      toggleRegistrationDiv: function(div) {
+        return this.instance.toggleRegistrationDiv(div);
       },
       expireCookie: function() {
         return this.instance.expireCookie();

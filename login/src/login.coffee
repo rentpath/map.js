@@ -25,7 +25,7 @@ define ['jquery'], ($) ->
     toggleRegistrationDiv: ($div) ->
       unless @my.session
         @wireupSocialLinks $div.show()
-        $.each @my.popupTypes, (type) ->
+        $.each @my.popupTypes, (type) =>
           @_bindForms type
 
     expireCookie: (cookie) ->
@@ -134,7 +134,6 @@ define ['jquery'], ($) ->
           else
             $form.parent().empty()
             $('.reset_success').html(data.success).show()
-            @_determineClient $form
         error: (errors) =>
           @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
 
@@ -151,6 +150,7 @@ define ['jquery'], ($) ->
             error = {'password': data.error}
             @_generateErrors error, $form.parent().find ".errors"
           else
+
             $form.parent().empty()
             $('.reset_success').html(data.success).show()
             @_determineClient $form
@@ -216,9 +216,7 @@ define ['jquery'], ($) ->
       # TODO move dependencies to bottom of page
       if @MOBILE
         @wireupSocialLinks $(formID)
-
       @_clearInputs formID
-
       $("a.#{type}").click =>
         $('.prm_dialog').prm_dialog_close()
         @_triggerModal $(formID)
@@ -277,6 +275,8 @@ define ['jquery'], ($) ->
             myClient = my_client.split("=")[1].toLowerCase()
             @_createAppButton myClient
             false
+        else
+          $('#reset_return_link').attr('href', "http://#{window.location.host}").show()
 
     _createAppButton: (client) ->
       launchUrl = "#" if client is 'ios'
@@ -300,6 +300,6 @@ define ['jquery'], ($) ->
   instance: {}
   init: -> @instance = new Login()
   wireupSocialLinks: -> @instance.wireupSocialLinks()
-  toggleRegistrationDiv: -> @instance.toggleRegistrationDiv()
+  toggleRegistrationDiv: (div) -> @instance.toggleRegistrationDiv(div)
   expireCookie: -> @instance.expireCookie()
   session: -> @instance.my.session
