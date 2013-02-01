@@ -153,16 +153,14 @@
           _this = this;
         this._setHiddenValues($form);
         new_email = {
-          profile: {
-            email: $('input[name="new_email"]').val(),
-            email_confirmation: $('input[name="new_email_confirm"]').val()
-          }
+          email: $('input[name="new_email"]').val(),
+          email_confirmation: $('input[name="new_email_confirm"]').val()
         };
         return $.ajax({
-          type: "GET",
+          type: "POST",
           data: new_email,
           datatype: 'json',
-          url: "" + zutron_host + "/zids/" + this.my.zid + "/profile/edit.json",
+          url: "" + zutron_host + "/zids/" + this.my.zid + "/email_change.json",
           beforeSend: function(xhr) {
             xhr.overrideMimeType("text/json");
             return xhr.setRequestHeader("Accept", "application/json");
@@ -171,7 +169,7 @@
             var error;
             if ((data != null) && data.error) {
               error = {
-                'email': data.email
+                'email': data.error
               };
               return _this._generateErrors(error, $form.parent().find(".errors"));
             } else {
