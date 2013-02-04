@@ -1,4 +1,4 @@
-define ['jquery'], ($) ->
+define ['jquery', 'primedia_events'], ($, events) ->
   class Login
     constructor: ->
       @_overrideDependencies()
