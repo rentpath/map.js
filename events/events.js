@@ -1,4 +1,4 @@
-define(function () {
+define(['jquery'], function($) {
     var eventsObject = $({});
     var trigger = function () {
         eventsObject.trigger.apply(eventsObject, arguments)
