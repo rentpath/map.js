@@ -297,10 +297,6 @@ define ['jquery'], ($) ->
       @BIGWEB = not @MOBILE
       if @BIGWEB
         @_clearInputs = ->
-      if @MOBILE
-        $.fn.prm_dialog_close = ->
-        $.fn.prm_dialog_open  = ->
-        @_triggerModal = ->
 
   instance: {}
   init: -> @instance = new Login()

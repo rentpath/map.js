@@ -450,12 +450,7 @@
         this.MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/) != null;
         this.BIGWEB = !this.MOBILE;
         if (this.BIGWEB) {
-          this._clearInputs = function() {};
-        }
-        if (this.MOBILE) {
-          $.fn.prm_dialog_close = function() {};
-          $.fn.prm_dialog_open = function() {};
-          return this._triggerModal = function() {};
+          return this._clearInputs = function() {};
         }
       };
 
