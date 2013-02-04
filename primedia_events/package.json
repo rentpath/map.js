@@ -1,5 +1,5 @@
 {
-  "name": "events",
+  "name": "primedia_events",
   "version": "0.0.1",
   "description": "Single events object",
   "homepage": "https://github.com/primedia/preserves",
@@ -7,8 +7,8 @@
     "dependencies": {
       "jquery": null
     },
-    "main": "events.js",
-    "include": ["events.js"]
+    "main": "primedia_events.js",
+    "include": ["primedia_events.js"]
   },
   "author": {
     "name": "Primedia"
