@@ -112,13 +112,14 @@
           success: function(data) {
             if (data['redirectUrl']) {
               _this._setSessionType();
+              events.trigger('event/emailRegistrationSuccess', data);
               return _this._redirectOnSuccess(data, $form);
             } else {
-              return _this._generateErrors(data, $form.parent().find(".errors"));
+              return _this._generateErrors(data, $form.parent().find(".errors"), 'emailRegistrationSuccessError');
             }
           },
           error: function(errors) {
-            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"), 'emailRegistrationError');
           }
         });
       };
@@ -137,13 +138,14 @@
           success: function(data) {
             if (data['redirectUrl']) {
               _this._setSessionType();
+              events.trigger('event/loginSuccess', data);
               return _this._redirectOnSuccess(data, $form);
             } else {
-              return _this._generateErrors(data, $form.parent().find(".errors"));
+              return _this._generateErrors(data, $form.parent().find(".errors"), 'loginSuccessError');
             }
           },
           error: function(errors) {
-            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"), 'loginError');
           }
         });
       };
@@ -171,13 +173,14 @@
               error = {
                 'email': data.error
               };
-              return _this._generateErrors(error, $form.parent().find(".errors"));
+              return _this._generateErrors(error, $form.parent().find(".errors", 'changeEmailSuccessError'));
             } else {
+              events.trigger('event/changeEmailSuccess', data);
               return $('#zutron_account_form').prm_dialog_close();
             }
           },
           error: function(errors) {
-            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors", 'changeEmailError'));
           }
         });
       };
@@ -198,14 +201,15 @@
               error = {
                 'email': data.error
               };
-              return _this._generateErrors(error, $form.parent().find(".errors"));
+              return _this._generateErrors(error, $form.parent().find(".errors"), 'passwordResetSuccessError');
             } else {
               $form.parent().empty();
+              events.trigger('event/passwordResetSuccess', data);
               return $('.reset_success').html(data.success).show();
             }
           },
           error: function(errors) {
-            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors", 'passwordResetError'));
           }
         });
       };
@@ -226,15 +230,16 @@
               error = {
                 'password': data.error
               };
-              return _this._generateErrors(error, $form.parent().find(".errors"));
+              return _this._generateErrors(error, $form.parent().find(".errors", 'passwordConfirmSuccessError'));
             } else {
               $form.parent().empty();
+              events.trigger('event/passwordConfirmSuccess', data);
               $('.reset_success').html(data.success).show();
               return _this._determineClient($form);
             }
           },
           error: function(errors) {
-            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors"));
+            return _this._generateErrors($.parseJSON(errors.responseText), $form.parent().find(".errors", 'passwordConfirmError'));
           }
         });
       };
@@ -265,9 +270,10 @@
         }
       };
 
-      Login.prototype._generateErrors = function(error, $box) {
+      Login.prototype._generateErrors = function(error, $box, eventName) {
         var $form, messages,
           _this = this;
+        events.trigger('event/' + eventName, error);
         this._clearErrors($box.parent());
         messages = '';
         if (error != null) {

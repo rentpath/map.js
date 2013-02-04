@@ -73,11 +73,12 @@ define ['jquery'], ($) ->
         success: (data) =>
           if data['redirectUrl'] # IE8 XDR Fallback
             @_setSessionType()
+            events.trigger('event/emailRegistrationSuccess', data)
             @_redirectOnSuccess data, $form
           else
-            @_generateErrors(data, $form.parent().find(".errors"))
+            @_generateErrors data, $form.parent().find(".errors"), 'emailRegistrationSuccessError'
         error: (errors) =>
-          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors")
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors"), 'emailRegistrationError'
 
     _submitLogin: ($form) ->
       @_setHiddenValues $form
@@ -91,11 +92,12 @@ define ['jquery'], ($) ->
         success: (data) =>
           if data['redirectUrl'] # IE8 XDR Fallback
             @_setSessionType()
+            events.trigger('event/loginSuccess', data)
             @_redirectOnSuccess data, $form
           else
-            @_generateErrors(data, $form.parent().find(".errors"))
+            @_generateErrors data, $form.parent().find(".errors"), 'loginSuccessError'
         error: (errors) =>
-          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors")
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors"), 'loginError'
 
     _submitChangeEmail: ($form)->
         @_setHiddenValues $form
@@ -113,11 +115,12 @@ define ['jquery'], ($) ->
           success: (data) =>
             if data? and data.error # IE8 XDR Fallback
               error = {'email': data.error}
-              @_generateErrors error, $form.parent().find ".errors"
+              @_generateErrors error, $form.parent().find ".errors", 'changeEmailSuccessError'
             else
+              events.trigger('event/changeEmailSuccess', data)
               $('#zutron_account_form').prm_dialog_close()
           error: (errors) =>
-            @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
+            @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors", 'changeEmailError'
 
     _submitPasswordReset: ($form) ->
       $.ajax
@@ -130,12 +133,13 @@ define ['jquery'], ($) ->
         success: (data) =>
           if data.error # IE8 XDR Fallback
             error = {'email': data.error}
-            @_generateErrors(error, $form.parent().find(".errors"))
+            @_generateErrors(error, $form.parent().find(".errors"), 'passwordResetSuccessError')
           else
             $form.parent().empty()
+            events.trigger('event/passwordResetSuccess', data)
             $('.reset_success').html(data.success).show()
         error: (errors) =>
-          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors", 'passwordResetError'
 
     _submitPasswordConfirm: ($form) ->
       $.ajax
@@ -148,14 +152,14 @@ define ['jquery'], ($) ->
         success: (data) =>
           if data? and data.error # IE8 XDR Fallback
             error = {'password': data.error}
-            @_generateErrors error, $form.parent().find ".errors"
+            @_generateErrors error, $form.parent().find ".errors", 'passwordConfirmSuccessError'
           else
-
             $form.parent().empty()
+            events.trigger('event/passwordConfirmSuccess', data)
             $('.reset_success').html(data.success).show()
             @_determineClient $form
         error: (errors) =>
-          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors"
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors", 'passwordConfirmError'
 
     _clearInputs: (formID) ->
       $inputs = $(formID + ' input[type="email"]').add $(formID + ' input[type="password"]')
@@ -173,7 +177,8 @@ define ['jquery'], ($) ->
       $form.prm_dialog_close()
       window.location.assign obj.redirectUrl if obj.redirectUrl
 
-    _generateErrors: (error, $box) ->
+    _generateErrors: (error, $box, eventName) ->
+      events.trigger('event/' + eventName, error)
       @_clearErrors $box.parent()
       messages = ''
       if error?
