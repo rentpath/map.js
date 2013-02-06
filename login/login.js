@@ -328,13 +328,13 @@
         $changeLink = $('a.account');
         if (this.my.session) {
           $regLink.parent().addClass('hidden');
-          $logLink.addClass("logout").removeClass("login").text('Logout');
+          $logLink.addClass("logout").removeClass("login").text('Log Out');
           if ($.cookie('z_type_email')) {
             return $changeLink.parent().removeClass('hidden');
           }
         } else {
           $regLink.parent().removeClass('hidden');
-          return $logLink.addClass("login").text('Login');
+          return $logLink.addClass("login").text('Log In');
         }
       };
 
@@ -388,7 +388,7 @@
         e.preventDefault();
         this.expireCookie("zid");
         this.expireCookie("sgn");
-        this.expireCookie("typ");
+        this.expireCookie("z_type_email");
         return window.location.replace(this.my.currentUrl);
       };
 
