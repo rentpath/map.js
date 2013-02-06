@@ -217,11 +217,10 @@ define ['jquery', 'primedia_events'], ($, events) ->
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"
-
       # TODO move dependencies to bottom of page
-      if @MOBILE
+      if @MOBILE and $(formID).is(':visible')
         @wireupSocialLinks $(formID)
-      @_clearInputs formID
+        @_clearInputs formID
       $("a.#{type}").click =>
         $('.prm_dialog').prm_dialog_close()
         @_triggerModal $(formID)

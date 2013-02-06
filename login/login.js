@@ -342,10 +342,10 @@
         var formID,
           _this = this;
         formID = "#zutron_" + type + "_form";
-        if (this.MOBILE) {
+        if (this.MOBILE && $(formID).is(':visible')) {
           this.wireupSocialLinks($(formID));
+          this._clearInputs(formID);
         }
-        this._clearInputs(formID);
         return $("a." + type).click(function() {
           $('.prm_dialog').prm_dialog_close();
           return _this._triggerModal($(formID));
