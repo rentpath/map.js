@@ -24,6 +24,8 @@
 
       WH.prototype.warehouseTag = null;
 
+      WH.prototype.performance = window.performance || {};
+
       WH.prototype.init = function(opts) {
         if (opts == null) {
           opts = {};
@@ -115,8 +117,13 @@
         return e.stopPropagation();
       };
 
+      WH.prototype.firedTime = function() {
+        return WH.performance.now() || WH.performance.mozNow() || WH.performance.msNow() || WH.performance.oNow() || WH.performance.webkitNow() || new Date().getTime();
+      };
+
       WH.prototype.fire = function(obj) {
         var _ref, _ref1, _ref2, _ref3, _ref4;
+        obj.ft = WH.firedTime();
         obj.cb = WH.cacheBuster++;
         obj.sess = "" + WH.userID + "." + WH.sessionID;
         obj.fpc = WH.userID;
