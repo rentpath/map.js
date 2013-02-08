@@ -8,6 +8,7 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
     sessionID:    ''
     userID:       ''
     warehouseTag: null
+    performance: window.performance || {}
 
     init: (opts={}) ->
       WH.clickBindSelector = opts.clickBindSelector
@@ -78,7 +79,16 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       WH.fire trackingData
       e.stopPropagation()
 
+    firedTime: () ->
+      return WH.performance.now()       ||
+             WH.performance.mozNow()    ||
+             WH.performance.msNow()     ||
+             WH.performance.oNow()      ||
+             WH.performance.webkitNow() ||
+             new Date().getTime()
+
     fire: (obj) ->
+      obj.ft                      = WH.firedTime()
       obj.cb                      = WH.cacheBuster++
       obj.sess                    = "#{WH.userID}.#{WH.sessionID}"
       obj.fpc                     = WH.userID
