@@ -45,9 +45,13 @@ describe("Autotagging Suite", function() {
 
       it('calls the given callback', function () {
         wh.fire(obj);
-
         expect(obj.blaze).toEqual(true);
         expect(wh.fireCallback).toHaveBeenCalled();
+      });
+
+      it('sets the firing time', function () {
+        wh.fire(obj);
+        expect(obj.ft).toNotEqual(undefined);
       });
     });
 

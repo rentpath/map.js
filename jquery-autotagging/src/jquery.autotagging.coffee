@@ -82,7 +82,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       e.stopPropagation()
 
     fire: (obj) =>
-      obj.ft                      = firedTime()
+      obj.ft                      = @firedTime()
       obj.cb                      = @cacheBuster++
       obj.sess                    = "#{@userID}.#{@sessionID}"
       obj.fpc                     = @userID
@@ -133,13 +133,14 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
             bind('load',  lastLinkRedirect).
             bind('error', lastLinkRedirect))
 
-    firedTime: ->
-      return performance.now()  ||
-        performance.mozNow()    ||
-        performance.msNow()     ||
-        performance.oNow()      ||
-        performance.webkitNow() ||
-        new Date().getTime()
+    firedTime: =>
+      now =
+        @performance.now        ||
+        @performance.webkitNow  ||
+        @performance.msNow      ||
+        @performance.oNow       ||
+        @performance.mozNow
+      now?() || new Date().getTime()
 
     firePageViewTag: ->
       @fire { type: 'pageview' }

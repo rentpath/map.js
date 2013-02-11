@@ -10,6 +10,8 @@
       function WH() {
         this.obj2query = __bind(this.obj2query, this);
 
+        this.firedTime = __bind(this.firedTime, this);
+
         this.fire = __bind(this.fire, this);
 
         this.elemClicked = __bind(this.elemClicked, this);
@@ -29,6 +31,8 @@
       WH.prototype.metaData = null;
 
       WH.prototype.path = '';
+
+      WH.prototype.performance = window.performance || {};
 
       WH.prototype.sessionID = '';
 
@@ -125,6 +129,7 @@
 
       WH.prototype.fire = function(obj) {
         var _ref, _ref1, _ref2, _ref3, _ref4;
+        obj.ft = this.firedTime();
         obj.cb = this.cacheBuster++;
         obj.sess = "" + this.userID + "." + this.sessionID;
         obj.fpc = this.userID;
@@ -188,6 +193,12 @@
             return this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
           }
         });
+      };
+
+      WH.prototype.firedTime = function() {
+        var now;
+        now = this.performance.now || this.performance.webkitNow || this.performance.msNow || this.performance.oNow || this.performance.mozNow;
+        return (typeof now === "function" ? now() : void 0) || new Date().getTime();
       };
 
       WH.prototype.firePageViewTag = function() {
