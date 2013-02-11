@@ -55,6 +55,11 @@ describe("Autotagging Suite", function() {
       });
     });
 
+    it ('firedTime returns the current time in epoch seconds', function() {
+      now = new Date().getTime();
+      expect(wh.firedTime()).toEqual(now);
+    });
+
     it('#firstClass yields the first class name of the element', function() {
       testElement = $("<div class='first second third'></div>");
       expect(wh.firstClass(testElement)).toEqual('first');

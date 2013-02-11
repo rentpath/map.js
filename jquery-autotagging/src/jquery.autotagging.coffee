@@ -135,10 +135,10 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
     firedTime: =>
       now =
-        @performance.now        ||
-        @performance.webkitNow  ||
-        @performance.msNow      ||
-        @performance.oNow       ||
+        @performance.now        or
+        @performance.webkitNow  or
+        @performance.msNow      or
+        @performance.oNow       or
         @performance.mozNow
       now?() || new Date().getTime()
 
