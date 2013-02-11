@@ -6,6 +6,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     lastLinkClicked: null
     metaData:     null
     path:         ''
+    performance:  window.performance || {}
     sessionID:    ''
     userID:       ''
     warehouseTag: null
@@ -81,6 +82,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       e.stopPropagation()
 
     fire: (obj) =>
+      obj.ft                      = firedTime()
       obj.cb                      = @cacheBuster++
       obj.sess                    = "#{@userID}.#{@sessionID}"
       obj.fpc                     = @userID
@@ -130,6 +132,14 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           @warehouseTag.unbind('load').unbind('error').
             bind('load',  lastLinkRedirect).
             bind('error', lastLinkRedirect))
+
+    firedTime: ->
+      return performance.now()  ||
+        performance.mozNow()    ||
+        performance.msNow()     ||
+        performance.oNow()      ||
+        performance.webkitNow() ||
+        new Date().getTime()
 
     firePageViewTag: ->
       @fire { type: 'pageview' }
