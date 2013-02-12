@@ -98,9 +98,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj.registration            = $.cookie('sgn') ? 1 : 0
       obj.person_id               = $.cookie('zid')
       obj.email_registration      = ($.cookie('provider') == 'identity') ? 1 : 0
-      obj.facebook_registration   = ($.cookie('provider') == 'facebook') ? 1 : 0
+      obj.facebook_registration   = ($.cookie('provider') == 'facebook' ? 1 : 0)
       obj.googleplus_registration = ($.cookie('provider') == 'google_oauth2') ? 1 : 0
-      obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 :  0
+      obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 : 0
 
       @fireCallback?(obj)
 

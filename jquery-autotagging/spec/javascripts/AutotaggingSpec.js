@@ -49,6 +49,43 @@ describe("Autotagging Suite", function() {
         expect(wh.fireCallback).toHaveBeenCalled();
       });
 
+      describe('records login information', function() {
+        var signon_cookie;
+
+        beforeEach(function() {
+          provider_cookie = $.cookie('provider');
+          signon_cookie   = $.cookie('sgn');
+          zid_cookie      = $.cookie('zid');
+        });
+
+        afterEach(function() {
+          $.cookie('provider', provider_cookie, {expires: 3650, path: '/'});
+          $.cookie('sgn', signon_cookie, {expires: 3650, path: '/'});
+          $.cookie('zid', zid_cookie, {expires: 3650, path: '/'});
+        });
+
+        it('returns "0" if not registered', function() {
+          $.cookie('sgn', 0, {expires: 3650, path: '/'});
+          wh.fire(obj);
+          expect(obj.registration).toEqual('0');
+        });
+
+        it('returns "1" if registered', function() {
+          $.cookie('sgn', 1, {expires: 3650, path: '/'});
+          wh.fire(obj);
+          expect(obj.registration).toEqual('1');
+        });
+
+        it('returns "1" for facebook if its the provider', function() {
+          $.cookie('provider', 'facebook', {expires: 3650, path: '/'});
+          wh.fire(obj);
+          expect(obj.facebook_registration).toEqual('1');
+          expect(obj.email_registration).toEqual('0');
+          expect(obj.googleplus_registration).toEqual('0');
+          expect(obj.twitter_registration).toEqual('0');
+        });
+      });
+
       it('sets the firing time', function () {
         wh.fire(obj);
         expect(obj.ft).toNotEqual(undefined);
