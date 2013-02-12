@@ -79,13 +79,14 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       WH.fire trackingData
       e.stopPropagation()
 
-    firedTime: () ->
-      return WH.performance.now()       ||
-             WH.performance.mozNow()    ||
-             WH.performance.msNow()     ||
-             WH.performance.oNow()      ||
-             WH.performance.webkitNow() ||
-             new Date().getTime()
+    firedTime: ->
+      now =
+        WH.performance.now        or
+        WH.performance.webkitNow  or
+        WH.performance.msNow      or
+        WH.performance.oNow       or
+        WH.performance.mozNow
+      now?() || new Date().getTime()
 
     fire: (obj) ->
       obj.ft                      = WH.firedTime()
@@ -112,8 +113,7 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
         obj.firstVisit = WH.firstVisit
         WH.firstVisit = null
 
-      if WH.fireCallback
-        WH.fireCallback(obj)
+      WH.fireCallback?(obj)
 
       WH.obj2query($.extend(obj, WH.metaData), (query) ->
         requestURL = WH.warehouseURL + query
@@ -192,5 +192,3 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
 
       WH.sessionID = sessionID
       WH.userID = userID
-
-
