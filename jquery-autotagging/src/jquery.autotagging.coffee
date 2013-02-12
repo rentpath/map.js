@@ -102,12 +102,12 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       obj.browser                 = WH.platform.browser
       obj.ver                     = WH.platform.version
       obj.ref                     = document.referrer
-      obj.registration            = $.cookie('sgn') ? 1 : 0
+      obj.registration            = if $.cookie('sgn') then 1 else 0
       obj.person_id               = $.cookie('zid')
-      obj.email_registration      = ($.cookie('provider') == 'identity') ? 1 : 0
-      obj.facebook_registration   = ($.cookie('provider') == 'facebook') ? 1 : 0
-      obj.googleplus_registration = ($.cookie('provider') == 'google_oauth2') ? 1 : 0
-      obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 :  0
+      obj.email_registration      = if ($.cookie('provider') == 'identity') then 1 else 0
+      obj.facebook_registration   = if ($.cookie('provider') == 'facebook') then 1 else 0
+      obj.googleplus_registration = if ($.cookie('provider') == 'google_oauth2') then 1 else 0
+      obj.twitter_registration    = if ($.cookie('provider') == 'twitter') then 1 else 0
 
       if WH.firstVisit
         obj.firstVisit = WH.firstVisit
