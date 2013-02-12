@@ -100,12 +100,11 @@ define ['jquery', 'primedia_events'], ($, events) ->
           @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors"), 'loginError'
 
     _submitChangeEmail: ($form)->
-        @_setHiddenValues $form
         new_email =
           email: $('input[name="new_email"]').val()
           email_confirmation: $('input[name="new_email_confirm"]').val()
         $.ajax
-          type: "POST"
+          type: "GET" # POST does not work in IE
           data: new_email
           datatype: 'json'
           url:  "#{zutron_host}/zids/#{@my.zid}/email_change.json"
