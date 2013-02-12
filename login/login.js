@@ -153,13 +153,12 @@
       Login.prototype._submitChangeEmail = function($form) {
         var new_email,
           _this = this;
-        this._setHiddenValues($form);
         new_email = {
           email: $('input[name="new_email"]').val(),
           email_confirmation: $('input[name="new_email_confirm"]').val()
         };
         return $.ajax({
-          type: "POST",
+          type: "GET",
           data: new_email,
           datatype: 'json',
           url: "" + zutron_host + "/zids/" + this.my.zid + "/email_change.json",
