@@ -51,6 +51,8 @@ describe("Autotagging Suite", function() {
 
       describe('records login information', function() {
         var signon_cookie;
+        var provider_cookie;
+        var zid_cookie;
 
         beforeEach(function() {
           provider_cookie = $.cookie('provider');
@@ -67,22 +69,55 @@ describe("Autotagging Suite", function() {
         it('returns "0" if not registered', function() {
           $.cookie('sgn', 0, {expires: 3650, path: '/'});
           wh.fire(obj);
-          expect(obj.registration).toEqual('0');
+          expect(obj.registration).toEqual(0);
         });
 
         it('returns "1" if registered', function() {
           $.cookie('sgn', 1, {expires: 3650, path: '/'});
           wh.fire(obj);
-          expect(obj.registration).toEqual('1');
+          expect(obj.registration).toEqual(1);
         });
 
-        it('returns "1" for facebook if its the provider', function() {
+        it('captures the zid as the person ID', function() {
+          $.cookie('zid', 'abcdefgh', {expires: 3650, path: '/'})
+          wh.fire(obj);
+          expect(obj.person_id).toEqual('abcdefgh');
+        });
+
+        it('returns "1" for facebook if FB is the login provider', function() {
           $.cookie('provider', 'facebook', {expires: 3650, path: '/'});
           wh.fire(obj);
-          expect(obj.facebook_registration).toEqual('1');
-          expect(obj.email_registration).toEqual('0');
-          expect(obj.googleplus_registration).toEqual('0');
-          expect(obj.twitter_registration).toEqual('0');
+          expect(obj.facebook_registration).toEqual(1);
+          expect(obj.email_registration).toEqual(0);
+          expect(obj.googleplus_registration).toEqual(0);
+          expect(obj.twitter_registration).toEqual(0);
+        });
+
+        it('returns "1" for twitter if Twitter is the login provider', function() {
+          $.cookie('provider', 'twitter', {expires: 3650, path: '/'});
+          wh.fire(obj);
+          expect(obj.facebook_registration).toEqual(0);
+          expect(obj.email_registration).toEqual(0);
+          expect(obj.googleplus_registration).toEqual(0);
+          expect(obj.twitter_registration).toEqual(1);
+        });
+
+        it('returns "1" for G+ if G+ is the login provider', function() {
+          $.cookie('provider', 'google_oauth2', {expires: 3650, path: '/'});
+          wh.fire(obj);
+          expect(obj.facebook_registration).toEqual(0);
+          expect(obj.email_registration).toEqual(0);
+          expect(obj.googleplus_registration).toEqual(1);
+          expect(obj.twitter_registration).toEqual(0);
+        });
+
+        it('returns "1" for Identity if email is the login provider', function() {
+          $.cookie('provider', 'identity', {expires: 3650, path: '/'});
+          wh.fire(obj);
+          expect(obj.facebook_registration).toEqual(0);
+          expect(obj.email_registration).toEqual(1);
+          expect(obj.googleplus_registration).toEqual(0);
+          expect(obj.twitter_registration).toEqual(0);
         });
       });
 
