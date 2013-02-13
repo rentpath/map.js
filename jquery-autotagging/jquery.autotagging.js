@@ -188,7 +188,7 @@
       WH.prototype.firedTime = function() {
         var now;
         now = this.performance.now || this.performance.webkitNow || this.performance.msNow || this.performance.oNow || this.performance.mozNow;
-        return (typeof now === "function" ? now() : void 0) || new Date().getTime();
+        return ((now != null) && now.call(this.performance)) || new Date().getTime();
       };
 
       WH.prototype.firePageViewTag = function() {

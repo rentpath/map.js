@@ -140,7 +140,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         @performance.msNow      or
         @performance.oNow       or
         @performance.mozNow
-      now?() || new Date().getTime()
+      (now? and now.call(@performance)) || new Date().getTime()
 
     firePageViewTag: ->
       @fire { type: 'pageview' }
