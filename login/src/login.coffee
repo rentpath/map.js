@@ -91,6 +91,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
           xhr.setRequestHeader "Accept", "application/json"
         success: (data) =>
           if data['redirectUrl'] # IE8 XDR Fallback
+            $("#zutron_login_form, #zutron_registration").prm_dialog_close()
             @_setSessionType()
             events.trigger('event/loginSuccess', data)
             @_redirectOnSuccess data, $form
