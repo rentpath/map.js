@@ -108,7 +108,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         obj.firstVisit = @firstVisit
         @firstVisit = null
 
-      @obj2query($.extend(obj, @metaData), (query) ->
+      @obj2query($.extend(obj, @metaData), (query) =>
         requestURL = @warehouseURL + query
 
         # handle IE url length limit

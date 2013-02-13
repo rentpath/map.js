@@ -128,6 +128,7 @@
       };
 
       WH.prototype.fire = function(obj) {
+        var _this = this;
         obj.ft = this.firedTime();
         obj.cb = this.cacheBuster++;
         obj.sess = "" + this.userID + "." + this.sessionID;
@@ -156,14 +157,14 @@
         }
         return this.obj2query($.extend(obj, this.metaData), function(query) {
           var lastLinkRedirect, requestURL;
-          requestURL = this.warehouseURL + query;
+          requestURL = _this.warehouseURL + query;
           if (requestURL.length > 2048 && navigator.userAgent.indexOf('MSIE') >= 0) {
             requestURL = requestURL.substring(0, 2043) + "&tu=1";
           }
-          if (this.warehouseTag) {
-            this.warehouseTag[0].src = requestURL;
+          if (_this.warehouseTag) {
+            _this.warehouseTag[0].src = requestURL;
           } else {
-            this.warehouseTag = $('<img/>', {
+            _this.warehouseTag = $('<img/>', {
               id: 'PRMWarehouseTag',
               border: '0',
               width: '1',
@@ -171,15 +172,15 @@
               src: requestURL
             });
           }
-          this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
-          this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
-          if (this.lastLinkClicked) {
+          _this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
+          _this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
+          if (_this.lastLinkClicked) {
             lastLinkRedirect = function(e) {
               if (this.lastLinkClicked.indexOf('javascript:') === -1) {
                 return document.location = this.lastLinkClicked;
               }
             };
-            return this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
+            return _this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
           }
         });
       };
