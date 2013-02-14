@@ -1,9 +1,9 @@
 define ->
   class BrowserDetect
-    @platform: (dataOS, dataBrowser) ->
-      os             = BrowserDetect.searchString(dataOS || BrowserDetect.dataOS()) or "an unknown OS"
+    @platform: ->
+      os             = BrowserDetect.searchString(BrowserDetect.dataOS()) or "an unknown OS"
 
-      result         = BrowserDetect.searchString(dataBrowser || BrowserDetect.dataBrowser())
+      result         = BrowserDetect.searchString(BrowserDetect.dataBrowser())
       browserName    = result.identity or "An unknown browser"
       versionLabel   = result.version
 
@@ -11,12 +11,12 @@ define ->
         BrowserDetect.searchVersion(versionLabel, navigator.appVersion) or
           "an unknown version"
 
-      return {browser: browserName, version: browserVersion, OS: os}
+      return {browser: browserName, version: browserVersion, OS: os.identity}
 
     @searchString: (data) ->
       for datum in data
-        dataString = datum.string
-        dataProp   = datum.prop
+        dataString = if (typeof datum.string == 'undefined') then null else datum.string
+        dataProp = if (typeof datum.prop == 'undefined') then null else datum.prop
 
         if dataString
           if dataString.indexOf(datum.subString) != -1

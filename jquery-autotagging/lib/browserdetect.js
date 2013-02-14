@@ -7,17 +7,17 @@
 
       function BrowserDetect() {}
 
-      BrowserDetect.platform = function(dataOS, dataBrowser) {
+      BrowserDetect.platform = function() {
         var browserName, browserVersion, os, result, versionLabel;
-        os = BrowserDetect.searchString(dataOS || BrowserDetect.dataOS()) || "an unknown OS";
-        result = BrowserDetect.searchString(dataBrowser || BrowserDetect.dataBrowser());
+        os = BrowserDetect.searchString(BrowserDetect.dataOS()) || "an unknown OS";
+        result = BrowserDetect.searchString(BrowserDetect.dataBrowser());
         browserName = result.identity || "An unknown browser";
         versionLabel = result.version;
         browserVersion = BrowserDetect.searchVersion(versionLabel, navigator.userAgent) || BrowserDetect.searchVersion(versionLabel, navigator.appVersion) || "an unknown version";
         return {
           browser: browserName,
           version: browserVersion,
-          OS: os
+          OS: os.identity
         };
       };
 
@@ -25,8 +25,8 @@
         var dataProp, dataString, datum, _i, _len;
         for (_i = 0, _len = data.length; _i < _len; _i++) {
           datum = data[_i];
-          dataString = datum.string;
-          dataProp = datum.prop;
+          dataString = typeof datum.string === 'undefined' ? null : datum.string;
+          dataProp = typeof datum.prop === 'undefined' ? null : datum.prop;
           if (dataString) {
             if (dataString.indexOf(datum.subString) !== -1) {
               return {
