@@ -48,8 +48,8 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj = $(obj)
       @browserDimensions = "#{obj.width()}x#{obj.height()}"
 
-    determinePlatform: ->
-      WH.platform = browserdetect.platform()
+    determinePlatform: (win) ->
+      @platform = browserdetect.platform(win)
 
     elemClicked: (e, opts={}) =>
       domTarget = e.target
@@ -70,13 +70,13 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         y:      e.clientY}
 
       for attr in attrs
-        if attr.name.indexOf('data-') == 0 and attr.name not in WH.exclusionList
+        if attr.name.indexOf('data-') == 0 and attr.name not in @exclusionList
           realName = attr.name.replace('data-', '')
           trackingData[realName] = attr.value
 
       href = jQTarget.attr('href')
       if href and opts.followHref? and opts.followHref
-        WH.lastLinkClicked = href
+        @lastLinkClicked = href
         e.preventDefault()
 
       @fire trackingData
@@ -90,27 +90,29 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj.site                    = @domain
       obj.path                    = @path
       obj.title                   = $('title').text()
-      obj.bs                      = WH.windowDimensions
-      obj.sr                      = WH.browserDimensions
-      obj.os                      = WH.platform.OS
-      obj.browser                 = WH.platform.browser
-      obj.ver                     = WH.platform.version
+      obj.bs                      = @windowDimensions
+      obj.sr                      = @browserDimensions
+      obj.os                      = @platform.OS
+      obj.browser                 = @platform.browser
+      obj.ver                     = @platform.version
       obj.ref                     = document.referrer
-      obj.login                   = if $.cookie('sgn') then 1 else 0
-      obj.person_id               = $.cookie('zid') if $.cookie('sgn')
+      obj.registration            = if $.cookie('sgn') == '1' then 1 else 0
+      obj.person_id               = $.cookie('zid')
+      obj.email_registration      = if $.cookie('provider') == 'identity' then 1 else 0
+      obj.facebook_registration   = if $.cookie('provider') == 'facebook' then 1 else 0
+      obj.googleplus_registration = if $.cookie('provider') == 'google_oauth2' then 1 else 0
+      obj.twitter_registration    = if $.cookie('provider') == 'twitter' then 1 else 0
+
+      @fireCallback?(obj)
 
       if @oneTimeData?
         for key of @oneTimeData
           obj[key] = @oneTimeData[key]
 
-      if WH.firstVisit
-        obj.firstVisit = WH.firstVisit
-        WH.firstVisit = null
+      if @firstVisit
+        obj.firstVisit = @firstVisit
+        @firstVisit = null
 
-      WH.fireCallback?(obj)
-
-      WH.obj2query($.extend(obj, WH.metaData), (query) ->
-        requestURL = WH.warehouseURL + query
       @obj2query($.extend(obj, @metaData), (query) =>
         requestURL = @warehouseURL + query
 
@@ -118,22 +120,23 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         if requestURL.length > 2048 and navigator.userAgent.indexOf('MSIE') >= 0
           requestURL = requestURL.substring(0,2043) + "&tu=1"
 
-        if WH.warehouseTag
-          WH.warehouseTag[0].src = requestURL
+        if @warehouseTag
+          @warehouseTag[0].src = requestURL
         else
-          WH.warehouseTag = $('<img/>', {id:'PRMWarehouseTag', border:'0', width:'1', height:'1', src: requestURL })
+          @warehouseTag = $('<img/>',
+            {id:'PRMWarehouseTag', border:'0', width:'1', height:'1', src: requestURL })
 
-        WH.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type)
-        WH.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
+        @warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type)
+        @warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
 
-        if WH.lastLinkClicked
+        if @lastLinkClicked
           lastLinkRedirect = (e) ->
             # ignore obtrusive JS in an href attribute
-            document.location = WH.lastLinkClicked if WH.lastLinkClicked.indexOf('javascript:') == -1
+            document.location = @lastLinkClicked if @lastLinkClicked.indexOf('javascript:') == -1
 
-          WH.warehouseTag.unbind('load').unbind('error').
+          @warehouseTag.unbind('load').unbind('error').
             bind('load',  lastLinkRedirect).
-            bind('error', lastLinkRedirect)
+            bind('error', lastLinkRedirect))
 
     firedTime: =>
       now =
@@ -151,29 +154,19 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       return unless klasses = elem.attr('class')
       klasses.split(' ')[0]
 
-    getMetaAttr: (name) ->
-      if name
-        selector = 'meta[name="' + name + '"]'
-        meta = $(selector)
-        if meta[0]
-          content = meta.attr('content')
-          if content
-            return content
-          else
-            return undefined
-
-    getOneTimeData: ->
-      @oneTimeData
-
-    getDataFromMetaTags: ->
+    getDataFromMetaTags: (obj) ->
       retObj = { cg: '' }
-      metas = $('meta')
+      metas = $(obj).find('meta')
+
       for metaTag in metas
         metaTag = $(metaTag)
         if metaTag.attr('name') and metaTag.attr('name').indexOf('WH.') is 0
           name = metaTag.attr('name').replace('WH.', '')
           retObj[name] = metaTag.attr('content')
       retObj
+
+    getOneTimeData: ->
+      @oneTimeData
 
     obj2query: (obj, cb) =>
       rv = []
@@ -193,11 +186,11 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
       unless sessionID
         sessionID = timestamp
-        WH.firstVisit = timestamp
+        @firstVisit = timestamp
         $.cookie('WHSessionID', sessionID, { path: '/' })
 
-      WH.sessionID = sessionID
-      WH.userID = userID
+      @sessionID = sessionID
+      @userID = userID
 
   setOneTimeData: (obj) =>
     @oneTimeData ||= {}
