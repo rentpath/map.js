@@ -2,7 +2,7 @@
 (function() {
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  define(['jquery', 'lib/browserdetect', 'jquery-cookie-rjs'], function($, browserdetect) {
+  define(['jquery', './lib/browserdetect', 'jquery-cookie-rjs'], function($, browserdetect) {
     var WH;
     return WH = (function() {
 
@@ -23,6 +23,8 @@
       WH.prototype.userID = '';
 
       WH.prototype.warehouseTag = null;
+
+      WH.prototype.performance = window.performance || {};
 
       WH.prototype.init = function(opts) {
         if (opts == null) {
@@ -115,8 +117,14 @@
         return e.stopPropagation();
       };
 
+      WH.prototype.firedTime = function() {
+        var now;
+        now = WH.performance.now || WH.performance.webkitNow || WH.performance.msNow || WH.performance.oNow || WH.performance.mozNow;
+        return (typeof now === "function" ? now() : void 0) || new Date().getTime();
+      };
+
       WH.prototype.fire = function(obj) {
-        var _ref, _ref1, _ref2, _ref3, _ref4;
+        obj.ft = WH.firedTime();
         obj.cb = WH.cacheBuster++;
         obj.sess = "" + WH.userID + "." + WH.sessionID;
         obj.fpc = WH.userID;
@@ -129,27 +137,17 @@
         obj.browser = WH.platform.browser;
         obj.ver = WH.platform.version;
         obj.ref = document.referrer;
-        obj.registration = (_ref = $.cookie('sgn')) != null ? _ref : {
-          1: 0
-        };
+        obj.registration = $.cookie('sgn') ? 1 : 0;
         obj.person_id = $.cookie('zid');
-        obj.email_registration = (_ref1 = $.cookie('provider') === 'identity') != null ? _ref1 : {
-          1: 0
-        };
-        obj.facebook_registration = (_ref2 = $.cookie('provider') === 'facebook') != null ? _ref2 : {
-          1: 0
-        };
-        obj.googleplus_registration = (_ref3 = $.cookie('provider') === 'google_oauth2') != null ? _ref3 : {
-          1: 0
-        };
-        obj.twitter_registration = (_ref4 = $.cookie('provider') === 'twitter') != null ? _ref4 : {
-          1: 0
-        };
+        obj.email_registration = $.cookie('provider') === 'identity' ? 1 : 0;
+        obj.facebook_registration = $.cookie('provider') === 'facebook' ? 1 : 0;
+        obj.googleplus_registration = $.cookie('provider') === 'google_oauth2' ? 1 : 0;
+        obj.twitter_registration = $.cookie('provider') === 'twitter' ? 1 : 0;
         if (WH.firstVisit) {
           obj.firstVisit = WH.firstVisit;
           WH.firstVisit = null;
         }
-        if (WH.fireCallback) {
+        if (typeof WH.fireCallback === "function") {
           WH.fireCallback(obj);
         }
         WH.obj2query($.extend(obj, WH.metaData), function(query) {

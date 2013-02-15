@@ -1,4 +1,4 @@
-define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect) ->
+define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect) ->
   class WH
     cacheBuster:  0
     domain:       ''
@@ -8,6 +8,7 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
     sessionID:    ''
     userID:       ''
     warehouseTag: null
+    performance: window.performance || {}
 
     init: (opts={}) ->
       WH.clickBindSelector = opts.clickBindSelector
@@ -78,7 +79,17 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       WH.fire trackingData
       e.stopPropagation()
 
+    firedTime: ->
+      now =
+        WH.performance.now        or
+        WH.performance.webkitNow  or
+        WH.performance.msNow      or
+        WH.performance.oNow       or
+        WH.performance.mozNow
+      now?() || new Date().getTime()
+
     fire: (obj) ->
+      obj.ft                      = WH.firedTime()
       obj.cb                      = WH.cacheBuster++
       obj.sess                    = "#{WH.userID}.#{WH.sessionID}"
       obj.fpc                     = WH.userID
@@ -91,19 +102,18 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
       obj.browser                 = WH.platform.browser
       obj.ver                     = WH.platform.version
       obj.ref                     = document.referrer
-      obj.registration            = $.cookie('sgn') ? 1 : 0
+      obj.registration            = if $.cookie('sgn') then 1 else 0
       obj.person_id               = $.cookie('zid')
-      obj.email_registration      = ($.cookie('provider') == 'identity') ? 1 : 0
-      obj.facebook_registration   = ($.cookie('provider') == 'facebook') ? 1 : 0
-      obj.googleplus_registration = ($.cookie('provider') == 'google_oauth2') ? 1 : 0
-      obj.twitter_registration    = ($.cookie('provider') == 'twitter') ? 1 :  0
+      obj.email_registration      = if ($.cookie('provider') == 'identity') then 1 else 0
+      obj.facebook_registration   = if ($.cookie('provider') == 'facebook') then 1 else 0
+      obj.googleplus_registration = if ($.cookie('provider') == 'google_oauth2') then 1 else 0
+      obj.twitter_registration    = if ($.cookie('provider') == 'twitter') then 1 else 0
 
       if WH.firstVisit
         obj.firstVisit = WH.firstVisit
         WH.firstVisit = null
 
-      if WH.fireCallback
-        WH.fireCallback(obj)
+      WH.fireCallback?(obj)
 
       WH.obj2query($.extend(obj, WH.metaData), (query) ->
         requestURL = WH.warehouseURL + query
@@ -182,5 +192,3 @@ define ['jquery', 'lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect)
 
       WH.sessionID = sessionID
       WH.userID = userID
-
-

@@ -111,6 +111,7 @@
           },
           success: function(data) {
             if (data['redirectUrl']) {
+              $("#zutron_login_form, #zutron_registration").prm_dialog_close();
               _this._setSessionType();
               events.trigger('event/emailRegistrationSuccess', data);
               return _this._redirectOnSuccess(data, $form);
@@ -137,6 +138,7 @@
           },
           success: function(data) {
             if (data['redirectUrl']) {
+              $("#zutron_login_form, #zutron_registration").prm_dialog_close();
               _this._setSessionType();
               events.trigger('event/loginSuccess', data);
               return _this._redirectOnSuccess(data, $form);
