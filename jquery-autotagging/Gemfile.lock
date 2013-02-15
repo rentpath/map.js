@@ -1,6 +1,5 @@
 GEM
   remote: https://rubygems.org/
-  remote: http://gemserver01.nor.primedia.com/
   specs:
     childprocess (0.3.6)
       ffi (~> 1.0, >= 1.0.6)

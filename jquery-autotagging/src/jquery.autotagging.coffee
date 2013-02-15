@@ -4,57 +4,60 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     domain:       ''
     firstVisit:   null
     lastLinkClicked: null
+    metaData:     null
+    oneTimeData:  null
     path:         ''
+    performance:  window.performance || {}
     sessionID:    ''
     userID:       ''
     warehouseTag: null
-    performance: window.performance || {}
 
-    init: (opts={}) ->
-      WH.clickBindSelector = opts.clickBindSelector
-      WH.clickBindSelector = WH.clickBindSelector.
-        replace(/,\s+/g, ":not(#{opts.exclusions}), ") if opts.exclusions?
-      WH.domain            = document.location.host
-      WH.exclusionList     = opts.exclusionList || []
-      WH.fireCallback      = opts.fireCallback
-      WH.parentTagsAllowed = opts.parentTagsAllowed or /div|ul/
-      WH.path              = "#{document.location.pathname}#{document.location.search}"
-      WH.warehouseURL      = opts.warehouseURL
+    init: (opts={}) =>
+      @clickBindSelector = opts.clickBindSelector || 'a, input[type=submit], input[type=button], img'
+      if opts.exclusions?
+        @clickBindSelector = @clickBindSelector.replace(/,\s+/g, ":not(#{opts.exclusions}), ")
 
-      WH.setCookies()
-      WH.determineDocumentDimensions(document)
-      WH.determineWindowDimensions(window)
-      WH.determinePlatform()
+      @domain            = document.location.host
+      @exclusionList     = opts.exclusionList || []
+      @fireCallback      = opts.fireCallback
+      @parentTagsAllowed = opts.parentTagsAllowed || /div|ul/
+      @path              = "#{document.location.pathname}#{document.location.search}"
+      @warehouseURL      = opts.warehouseURL
 
-      $ ->
-        WH.metaData = WH.getDataFromMetaTags()
-        WH.firePageViewTag()
-        WH.bindBodyClicked()
+      @setCookies()
+      @determineDocumentDimensions(document)
+      @determineWindowDimensions(window)
+      @determinePlatform(window)
 
-    bindBodyClicked: -> $(document).on 'click', WH.clickBindSelector, WH.elemClicked
+      @metaData = @getDataFromMetaTags(document)
+      @firePageViewTag()
+      @bindBodyClicked(document)
+
+    bindBodyClicked: (doc) ->
+      $(doc).on 'click', @clickBindSelector, @elemClicked
 
     determineParent: (elem) ->
       for el in elem.parents()
-        return WH.firstClass($(el)) if el.tagName.toLowerCase().match(WH.parentTagsAllowed)
+        return @firstClass($(el)) if el.tagName.toLowerCase().match(@parentTagsAllowed)
 
     determineWindowDimensions: (obj) ->
-      win = $(obj)
-      WH.windowDimensions = "#{win.width()}x#{win.height()}"
+      obj = $(obj)
+      @windowDimensions = "#{obj.width()}x#{obj.height()}"
 
     determineDocumentDimensions: (obj) ->
-      doc = $(obj)
-      WH.browserDimensions = "#{doc.width()}x#{doc.height()}"
+      obj = $(obj)
+      @browserDimensions = "#{obj.width()}x#{obj.height()}"
 
     determinePlatform: ->
       WH.platform = browserdetect.platform()
 
-    elemClicked: (e, opts={}) ->
+    elemClicked: (e, opts={}) =>
       domTarget = e.target
       jQTarget = $(e.target)
       attrs = domTarget.attributes
 
-      item = WH.firstClass(jQTarget) or ''
-      subGroup = WH.determineParent(jQTarget) or ''
+      item = @firstClass(jQTarget) or ''
+      subGroup = @determineParent(jQTarget) or ''
       value = jQTarget.text() or ''
 
       trackingData = {
@@ -76,25 +79,16 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         WH.lastLinkClicked = href
         e.preventDefault()
 
-      WH.fire trackingData
+      @fire trackingData
       e.stopPropagation()
 
-    firedTime: ->
-      now =
-        WH.performance.now        or
-        WH.performance.webkitNow  or
-        WH.performance.msNow      or
-        WH.performance.oNow       or
-        WH.performance.mozNow
-      now?() || new Date().getTime()
-
-    fire: (obj) ->
-      obj.ft                      = WH.firedTime()
-      obj.cb                      = WH.cacheBuster++
-      obj.sess                    = "#{WH.userID}.#{WH.sessionID}"
-      obj.fpc                     = WH.userID
-      obj.site                    = WH.domain
-      obj.path                    = WH.path
+    fire: (obj) =>
+      obj.ft                      = @firedTime()
+      obj.cb                      = @cacheBuster++
+      obj.sess                    = "#{@userID}.#{@sessionID}"
+      obj.fpc                     = @userID
+      obj.site                    = @domain
+      obj.path                    = @path
       obj.title                   = $('title').text()
       obj.bs                      = WH.windowDimensions
       obj.sr                      = WH.browserDimensions
@@ -102,12 +96,12 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj.browser                 = WH.platform.browser
       obj.ver                     = WH.platform.version
       obj.ref                     = document.referrer
-      obj.registration            = if $.cookie('sgn') then 1 else 0
-      obj.person_id               = $.cookie('zid')
-      obj.email_registration      = if ($.cookie('provider') == 'identity') then 1 else 0
-      obj.facebook_registration   = if ($.cookie('provider') == 'facebook') then 1 else 0
-      obj.googleplus_registration = if ($.cookie('provider') == 'google_oauth2') then 1 else 0
-      obj.twitter_registration    = if ($.cookie('provider') == 'twitter') then 1 else 0
+      obj.login                   = if $.cookie('sgn') then 1 else 0
+      obj.person_id               = $.cookie('zid') if $.cookie('sgn')
+
+      if @oneTimeData?
+        for key of @oneTimeData
+          obj[key] = @oneTimeData[key]
 
       if WH.firstVisit
         obj.firstVisit = WH.firstVisit
@@ -117,6 +111,8 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
       WH.obj2query($.extend(obj, WH.metaData), (query) ->
         requestURL = WH.warehouseURL + query
+      @obj2query($.extend(obj, @metaData), (query) =>
+        requestURL = @warehouseURL + query
 
         # handle IE url length limit
         if requestURL.length > 2048 and navigator.userAgent.indexOf('MSIE') >= 0
@@ -137,12 +133,19 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
           WH.warehouseTag.unbind('load').unbind('error').
             bind('load',  lastLinkRedirect).
-            bind('error', lastLinkRedirect))
+            bind('error', lastLinkRedirect)
 
-      return
+    firedTime: =>
+      now =
+        @performance.now        or
+        @performance.webkitNow  or
+        @performance.msNow      or
+        @performance.oNow       or
+        @performance.mozNow
+      (now? and now.call(@performance)) || new Date().getTime()
 
     firePageViewTag: ->
-      WH.fire { type: 'pageview' }
+      @fire { type: 'pageview' }
 
     firstClass: (elem) ->
       return unless klasses = elem.attr('class')
@@ -159,6 +162,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           else
             return undefined
 
+    getOneTimeData: ->
+      @oneTimeData
+
     getDataFromMetaTags: ->
       retObj = { cg: '' }
       metas = $('meta')
@@ -169,7 +175,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           retObj[name] = metaTag.attr('content')
       retObj
 
-    obj2query: (obj, cb) ->
+    obj2query: (obj, cb) =>
       rv = []
       for key of obj
         rv.push "&#{key}=#{encodeURIComponent(val)}" if obj.hasOwnProperty(key) and (val = obj[key])?
@@ -192,3 +198,8 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
       WH.sessionID = sessionID
       WH.userID = userID
+
+  setOneTimeData: (obj) =>
+    @oneTimeData ||= {}
+    for key of obj
+      @oneTimeData[key] = obj[key]

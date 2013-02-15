@@ -1,6 +1,10 @@
 {
   "name": "jquery-autotagging",
+<<<<<<< HEAD
   "version": "0.1.3",
+=======
+  "version": "0.1.4",
+>>>>>>> mss-jquery-autotagging
   "description": "Primedia autotagging plugin",
   "homepage": "https://github.com/primedia/preserves",
 

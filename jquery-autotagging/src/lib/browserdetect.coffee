@@ -1,8 +1,12 @@
 define ->
   class BrowserDetect
     @platform: ->
+<<<<<<< HEAD
       os             = BrowserDetect.searchString(BrowserDetect.dataOS()) or "an unknown OS"
 
+=======
+      os             = BrowserDetect.searchString(BrowserDetect.dataOS()) or "An unknown OS"
+>>>>>>> mss-jquery-autotagging
       result         = BrowserDetect.searchString(BrowserDetect.dataBrowser())
       browserName    = result.identity or "An unknown browser"
       versionLabel   = result.version
@@ -16,7 +20,11 @@ define ->
     @searchString: (data) ->
       for datum in data
         dataString = if (typeof datum.string == 'undefined') then null else datum.string
+<<<<<<< HEAD
         dataProp = if (typeof datum.prop == 'undefined') then null else datum.prop
+=======
+        dataProp   = if (typeof datum.prop == 'undefined') then null else datum.prop
+>>>>>>> mss-jquery-autotagging
 
         if dataString
           if dataString.indexOf(datum.subString) != -1
