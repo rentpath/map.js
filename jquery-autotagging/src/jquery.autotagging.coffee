@@ -36,6 +36,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     bindBodyClicked: (doc) ->
       $(doc).on 'click', @clickBindSelector, @elemClicked
 
+    clearOneTimeData: =>
+      @oneTimeData = undefined
+
     determineParent: (elem) ->
       for el in elem.parents()
         return @firstClass($(el)) if el.tagName.toLowerCase().match(@parentTagsAllowed)
@@ -108,6 +111,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       if @oneTimeData?
         for key of @oneTimeData
           obj[key] = @oneTimeData[key]
+        @clearOneTimeData();
 
       if @firstVisit
         obj.firstVisit = @firstVisit
@@ -192,7 +196,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @sessionID = sessionID
       @userID = userID
 
-  setOneTimeData: (obj) =>
-    @oneTimeData ||= {}
-    for key of obj
-      @oneTimeData[key] = obj[key]
+    setOneTimeData: (obj) ->
+      @oneTimeData ||= {}
+      for key of obj
+        @oneTimeData[key] = obj[key]

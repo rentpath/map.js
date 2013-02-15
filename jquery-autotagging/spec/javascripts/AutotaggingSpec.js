@@ -49,6 +49,16 @@ describe("Autotagging Suite", function() {
         expect(wh.fireCallback).toHaveBeenCalled();
       });
 
+      it('amends the object with the one time data ONCE', function() {
+        wh.setOneTimeData({auxiliary: 'secret'});
+        wh.fire(obj);
+        expect(obj.auxiliary).toEqual('secret');
+
+        next = {};
+        wh.fire(next);
+        expect(next.auxiliary).toEqual(undefined);
+      });
+
       describe('records login information', function() {
         var signon_cookie;
         var provider_cookie;
@@ -79,7 +89,7 @@ describe("Autotagging Suite", function() {
         });
 
         it('captures the zid as the person ID', function() {
-          $.cookie('zid', 'abcdefgh', {expires: 3650, path: '/'})
+          $.cookie('zid', 'abcdefgh', {expires: 3650, path: '/'});
           wh.fire(obj);
           expect(obj.person_id).toEqual('abcdefgh');
         });

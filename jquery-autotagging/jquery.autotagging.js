@@ -4,9 +4,8 @@
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   define(['jquery', './lib/browserdetect', 'jquery-cookie-rjs'], function($, browserdetect) {
-    var WH,
-      _this = this;
-    WH = (function() {
+    var WH;
+    return WH = (function() {
 
       function WH() {
         this.obj2query = __bind(this.obj2query, this);
@@ -16,6 +15,8 @@
         this.fire = __bind(this.fire, this);
 
         this.elemClicked = __bind(this.elemClicked, this);
+
+        this.clearOneTimeData = __bind(this.clearOneTimeData, this);
 
         this.init = __bind(this.init, this);
 
@@ -68,6 +69,10 @@
 
       WH.prototype.bindBodyClicked = function(doc) {
         return $(doc).on('click', this.clickBindSelector, this.elemClicked);
+      };
+
+      WH.prototype.clearOneTimeData = function() {
+        return this.oneTimeData = void 0;
       };
 
       WH.prototype.determineParent = function(elem) {
@@ -147,7 +152,9 @@
         obj.ver = this.platform.version;
         obj.ref = document.referrer;
         obj.registration = $.cookie('sgn') === '1' ? 1 : 0;
-        obj.person_id = $.cookie('zid');
+        if ($.cookie('sgn') != null) {
+          obj.person_id = $.cookie('zid');
+        }
         obj.email_registration = $.cookie('provider') === 'identity' ? 1 : 0;
         obj.facebook_registration = $.cookie('provider') === 'facebook' ? 1 : 0;
         obj.googleplus_registration = $.cookie('provider') === 'google_oauth2' ? 1 : 0;
@@ -159,6 +166,7 @@
           for (key in this.oneTimeData) {
             obj[key] = this.oneTimeData[key];
           }
+          this.clearOneTimeData();
         }
         if (this.firstVisit) {
           obj.firstVisit = this.firstVisit;
@@ -269,20 +277,19 @@
         return this.userID = userID;
       };
 
+      WH.prototype.setOneTimeData = function(obj) {
+        var key, _results;
+        this.oneTimeData || (this.oneTimeData = {});
+        _results = [];
+        for (key in obj) {
+          _results.push(this.oneTimeData[key] = obj[key]);
+        }
+        return _results;
+      };
+
       return WH;
 
     })();
-    return {
-      setOneTimeData: function(obj) {
-        var key, _results;
-        _this.oneTimeData || (_this.oneTimeData = {});
-        _results = [];
-        for (key in obj) {
-          _results.push(_this.oneTimeData[key] = obj[key]);
-        }
-        return _results;
-      }
-    };
   });
 
 }).call(this);
