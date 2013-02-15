@@ -385,8 +385,9 @@
 
       Login.prototype._logOut = function(e) {
         e.preventDefault();
-        this.expireCookie("zid");
+        this.expireCookie("provider");
         this.expireCookie("sgn");
+        this.expireCookie("zid");
         this.expireCookie("z_type_email");
         return window.location.replace(this.my.currentUrl);
       };

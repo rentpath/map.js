@@ -249,8 +249,9 @@ define ['jquery', 'primedia_events'], ($, events) ->
 
     _logOut: (e) ->
       e.preventDefault()
-      @expireCookie "zid"
+      @expireCookie "provider"
       @expireCookie "sgn"
+      @expireCookie "zid"
       @expireCookie "z_type_email"
 
       window.location.replace @my.currentUrl
