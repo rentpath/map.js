@@ -86,25 +86,21 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       e.stopPropagation()
 
     fire: (obj) =>
-      obj.ft                      = @firedTime()
-      obj.cb                      = @cacheBuster++
-      obj.sess                    = "#{@userID}.#{@sessionID}"
-      obj.fpc                     = @userID
-      obj.site                    = @domain
-      obj.path                    = @path
-      obj.title                   = $('title').text()
-      obj.bs                      = @windowDimensions
-      obj.sr                      = @browserDimensions
-      obj.os                      = @platform.OS
-      obj.browser                 = @platform.browser
-      obj.ver                     = @platform.version
-      obj.ref                     = document.referrer
-      obj.registration            = if $.cookie('sgn') == '1' then 1 else 0
-      obj.person_id               = $.cookie('zid') if $.cookie('sgn')?
-      obj.email_registration      = if $.cookie('provider') == 'identity' then 1 else 0
-      obj.facebook_registration   = if $.cookie('provider') == 'facebook' then 1 else 0
-      obj.googleplus_registration = if $.cookie('provider') == 'google_oauth2' then 1 else 0
-      obj.twitter_registration    = if $.cookie('provider') == 'twitter' then 1 else 0
+      obj.ft        = @firedTime()
+      obj.cb        = @cacheBuster++
+      obj.sess      = "#{@userID}.#{@sessionID}"
+      obj.fpc       = @userID
+      obj.site      = @domain
+      obj.path      = @path
+      obj.title     = $('title').text()
+      obj.bs        = @windowDimensions
+      obj.sr        = @browserDimensions
+      obj.os        = @platform.OS
+      obj.browser   = @platform.browser
+      obj.ver       = @platform.version
+      obj.ref       = document.referrer
+      obj.logged_in = if $.cookie('sgn')? then 1 else 0
+      obj.person_id = $.cookie('zid') if $.cookie('sgn')?
 
       @fireCallback?(obj)
 
