@@ -97,7 +97,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj.ver                     = @platform.version
       obj.ref                     = document.referrer
       obj.registration            = if $.cookie('sgn') == '1' then 1 else 0
-      obj.person_id               = $.cookie('zid')
+      obj.person_id               = $.cookie('zid') if $.cookie('sgn')?
       obj.email_registration      = if $.cookie('provider') == 'identity' then 1 else 0
       obj.facebook_registration   = if $.cookie('provider') == 'facebook' then 1 else 0
       obj.googleplus_registration = if $.cookie('provider') == 'google_oauth2' then 1 else 0

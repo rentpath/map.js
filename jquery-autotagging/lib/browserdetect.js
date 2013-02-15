@@ -9,11 +9,7 @@
 
       BrowserDetect.platform = function() {
         var browserName, browserVersion, os, result, versionLabel;
-<<<<<<< HEAD
-        os = BrowserDetect.searchString(BrowserDetect.dataOS()) || "an unknown OS";
-=======
         os = BrowserDetect.searchString(BrowserDetect.dataOS()) || "An unknown OS";
->>>>>>> mss-jquery-autotagging
         result = BrowserDetect.searchString(BrowserDetect.dataBrowser());
         browserName = result.identity || "An unknown browser";
         versionLabel = result.version;

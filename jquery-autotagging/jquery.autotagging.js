@@ -4,8 +4,9 @@
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   define(['jquery', './lib/browserdetect', 'jquery-cookie-rjs'], function($, browserdetect) {
-    var WH;
-    return WH = (function() {
+    var WH,
+      _this = this;
+    WH = (function() {
 
       function WH() {
         this.obj2query = __bind(this.obj2query, this);
@@ -30,6 +31,8 @@
 
       WH.prototype.metaData = null;
 
+      WH.prototype.oneTimeData = null;
+
       WH.prototype.path = '';
 
       WH.prototype.performance = window.performance || {};
@@ -40,41 +43,14 @@
 
       WH.prototype.warehouseTag = null;
 
-      WH.prototype.performance = window.performance || {};
-
       WH.prototype.init = function(opts) {
         if (opts == null) {
           opts = {};
         }
-<<<<<<< HEAD
-        WH.clickBindSelector = opts.clickBindSelector;
-=======
         this.clickBindSelector = opts.clickBindSelector || 'a, input[type=submit], input[type=button], img';
->>>>>>> mss-jquery-autotagging
         if (opts.exclusions != null) {
-          WH.clickBindSelector = WH.clickBindSelector.replace(/,\s+/g, ":not(" + opts.exclusions + "), ");
+          this.clickBindSelector = this.clickBindSelector.replace(/,\s+/g, ":not(" + opts.exclusions + "), ");
         }
-<<<<<<< HEAD
-        WH.domain = document.location.host;
-        WH.exclusionList = opts.exclusionList || [];
-        WH.fireCallback = opts.fireCallback;
-        WH.parentTagsAllowed = opts.parentTagsAllowed || /div|ul/;
-        WH.path = "" + document.location.pathname + document.location.search;
-        WH.warehouseURL = opts.warehouseURL;
-        WH.setCookies();
-        WH.determineDocumentDimensions(document);
-        WH.determineWindowDimensions(window);
-        WH.determinePlatform();
-        return $(function() {
-          WH.metaData = WH.getDataFromMetaTags();
-          WH.firePageViewTag();
-          return WH.bindBodyClicked();
-        });
-      };
-
-      WH.prototype.bindBodyClicked = function() {
-        return $(document).on('click', WH.clickBindSelector, WH.elemClicked);
-=======
         this.domain = document.location.host;
         this.exclusionList = opts.exclusionList || [];
         this.fireCallback = opts.fireCallback;
@@ -92,7 +68,6 @@
 
       WH.prototype.bindBodyClicked = function(doc) {
         return $(doc).on('click', this.clickBindSelector, this.elemClicked);
->>>>>>> mss-jquery-autotagging
       };
 
       WH.prototype.determineParent = function(elem) {
@@ -100,29 +75,13 @@
         _ref = elem.parents();
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           el = _ref[_i];
-<<<<<<< HEAD
-          if (el.tagName.toLowerCase().match(WH.parentTagsAllowed)) {
-            return WH.firstClass($(el));
-=======
           if (el.tagName.toLowerCase().match(this.parentTagsAllowed)) {
             return this.firstClass($(el));
->>>>>>> mss-jquery-autotagging
           }
         }
       };
 
       WH.prototype.determineWindowDimensions = function(obj) {
-<<<<<<< HEAD
-        var win;
-        win = $(obj);
-        return WH.windowDimensions = "" + (win.width()) + "x" + (win.height());
-      };
-
-      WH.prototype.determineDocumentDimensions = function(obj) {
-        var doc;
-        doc = $(obj);
-        return WH.browserDimensions = "" + (doc.width()) + "x" + (doc.height());
-=======
         obj = $(obj);
         return this.windowDimensions = "" + (obj.width()) + "x" + (obj.height());
       };
@@ -130,11 +89,10 @@
       WH.prototype.determineDocumentDimensions = function(obj) {
         obj = $(obj);
         return this.browserDimensions = "" + (obj.width()) + "x" + (obj.height());
->>>>>>> mss-jquery-autotagging
       };
 
-      WH.prototype.determinePlatform = function() {
-        return WH.platform = browserdetect.platform();
+      WH.prototype.determinePlatform = function(win) {
+        return this.platform = browserdetect.platform(win);
       };
 
       WH.prototype.elemClicked = function(e, opts) {
@@ -145,13 +103,8 @@
         domTarget = e.target;
         jQTarget = $(e.target);
         attrs = domTarget.attributes;
-<<<<<<< HEAD
-        item = WH.firstClass(jQTarget) || '';
-        subGroup = WH.determineParent(jQTarget) || '';
-=======
         item = this.firstClass(jQTarget) || '';
         subGroup = this.determineParent(jQTarget) || '';
->>>>>>> mss-jquery-autotagging
         value = jQTarget.text() || '';
         trackingData = {
           sg: subGroup,
@@ -163,88 +116,54 @@
         };
         for (_i = 0, _len = attrs.length; _i < _len; _i++) {
           attr = attrs[_i];
-          if (attr.name.indexOf('data-') === 0 && (_ref = attr.name, __indexOf.call(WH.exclusionList, _ref) < 0)) {
+          if (attr.name.indexOf('data-') === 0 && (_ref = attr.name, __indexOf.call(this.exclusionList, _ref) < 0)) {
             realName = attr.name.replace('data-', '');
             trackingData[realName] = attr.value;
           }
         }
         href = jQTarget.attr('href');
         if (href && (opts.followHref != null) && opts.followHref) {
-          WH.lastLinkClicked = href;
+          this.lastLinkClicked = href;
           e.preventDefault();
         }
-<<<<<<< HEAD
-        WH.fire(trackingData);
-=======
         this.fire(trackingData);
->>>>>>> mss-jquery-autotagging
         return e.stopPropagation();
       };
 
-      WH.prototype.firedTime = function() {
-        var now;
-        now = WH.performance.now || WH.performance.webkitNow || WH.performance.msNow || WH.performance.oNow || WH.performance.mozNow;
-        return (typeof now === "function" ? now() : void 0) || new Date().getTime();
-      };
-
       WH.prototype.fire = function(obj) {
-<<<<<<< HEAD
-        obj.ft = WH.firedTime();
-        obj.cb = WH.cacheBuster++;
-        obj.sess = "" + WH.userID + "." + WH.sessionID;
-        obj.fpc = WH.userID;
-        obj.site = WH.domain;
-        obj.path = WH.path;
-=======
-        var _this = this;
+        var key,
+          _this = this;
         obj.ft = this.firedTime();
         obj.cb = this.cacheBuster++;
         obj.sess = "" + this.userID + "." + this.sessionID;
         obj.fpc = this.userID;
         obj.site = this.domain;
         obj.path = this.path;
->>>>>>> mss-jquery-autotagging
         obj.title = $('title').text();
-        obj.bs = WH.windowDimensions;
-        obj.sr = WH.browserDimensions;
-        obj.os = WH.platform.OS;
-        obj.browser = WH.platform.browser;
-        obj.ver = WH.platform.version;
+        obj.bs = this.windowDimensions;
+        obj.sr = this.browserDimensions;
+        obj.os = this.platform.OS;
+        obj.browser = this.platform.browser;
+        obj.ver = this.platform.version;
         obj.ref = document.referrer;
-<<<<<<< HEAD
-        obj.registration = $.cookie('sgn') ? 1 : 0;
-=======
         obj.registration = $.cookie('sgn') === '1' ? 1 : 0;
->>>>>>> mss-jquery-autotagging
         obj.person_id = $.cookie('zid');
         obj.email_registration = $.cookie('provider') === 'identity' ? 1 : 0;
         obj.facebook_registration = $.cookie('provider') === 'facebook' ? 1 : 0;
         obj.googleplus_registration = $.cookie('provider') === 'google_oauth2' ? 1 : 0;
         obj.twitter_registration = $.cookie('provider') === 'twitter' ? 1 : 0;
-<<<<<<< HEAD
-        if (WH.firstVisit) {
-          obj.firstVisit = WH.firstVisit;
-          WH.firstVisit = null;
-=======
         if (typeof this.fireCallback === "function") {
           this.fireCallback(obj);
->>>>>>> mss-jquery-autotagging
         }
-        if (typeof WH.fireCallback === "function") {
-          WH.fireCallback(obj);
-        }
-<<<<<<< HEAD
-        WH.obj2query($.extend(obj, WH.metaData), function(query) {
-          var lastLinkRedirect, requestURL;
-          requestURL = WH.warehouseURL + query;
-          if (requestURL.length > 2048 && navigator.userAgent.indexOf('MSIE') >= 0) {
-            requestURL = requestURL.substring(0, 2043) + "&tu=1";
+        if (this.oneTimeData != null) {
+          for (key in this.oneTimeData) {
+            obj[key] = this.oneTimeData[key];
           }
-          if (WH.warehouseTag) {
-            WH.warehouseTag[0].src = requestURL;
-          } else {
-            WH.warehouseTag = $('<img/>', {
-=======
+        }
+        if (this.firstVisit) {
+          obj.firstVisit = this.firstVisit;
+          this.firstVisit = null;
+        }
         return this.obj2query($.extend(obj, this.metaData), function(query) {
           var lastLinkRedirect, requestURL;
           requestURL = _this.warehouseURL + query;
@@ -255,7 +174,6 @@
             _this.warehouseTag[0].src = requestURL;
           } else {
             _this.warehouseTag = $('<img/>', {
->>>>>>> mss-jquery-autotagging
               id: 'PRMWarehouseTag',
               border: '0',
               width: '1',
@@ -263,25 +181,15 @@
               src: requestURL
             });
           }
-<<<<<<< HEAD
-          WH.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
-          WH.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
-          if (WH.lastLinkClicked) {
-=======
           _this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
           _this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
           if (_this.lastLinkClicked) {
->>>>>>> mss-jquery-autotagging
             lastLinkRedirect = function(e) {
-              if (WH.lastLinkClicked.indexOf('javascript:') === -1) {
-                return document.location = WH.lastLinkClicked;
+              if (this.lastLinkClicked.indexOf('javascript:') === -1) {
+                return document.location = this.lastLinkClicked;
               }
             };
-<<<<<<< HEAD
-            return WH.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
-=======
             return _this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
->>>>>>> mss-jquery-autotagging
           }
         });
       };
@@ -293,11 +201,7 @@
       };
 
       WH.prototype.firePageViewTag = function() {
-<<<<<<< HEAD
-        return WH.fire({
-=======
         return this.fire({
->>>>>>> mss-jquery-autotagging
           type: 'pageview'
         });
       };
@@ -310,28 +214,12 @@
         return klasses.split(' ')[0];
       };
 
-      WH.prototype.getMetaAttr = function(name) {
-        var content, meta, selector;
-        if (name) {
-          selector = 'meta[name="' + name + '"]';
-          meta = $(selector);
-          if (meta[0]) {
-            content = meta.attr('content');
-            if (content) {
-              return content;
-            } else {
-              return void 0;
-            }
-          }
-        }
-      };
-
-      WH.prototype.getDataFromMetaTags = function() {
+      WH.prototype.getDataFromMetaTags = function(obj) {
         var metaTag, metas, name, retObj, _i, _len;
         retObj = {
           cg: ''
         };
-        metas = $('meta');
+        metas = $(obj).find('meta');
         for (_i = 0, _len = metas.length; _i < _len; _i++) {
           metaTag = metas[_i];
           metaTag = $(metaTag);
@@ -341,6 +229,10 @@
           }
         }
         return retObj;
+      };
+
+      WH.prototype.getOneTimeData = function() {
+        return this.oneTimeData;
       };
 
       WH.prototype.obj2query = function(obj, cb) {
@@ -368,18 +260,29 @@
         }
         if (!sessionID) {
           sessionID = timestamp;
-          WH.firstVisit = timestamp;
+          this.firstVisit = timestamp;
           $.cookie('WHSessionID', sessionID, {
             path: '/'
           });
         }
-        WH.sessionID = sessionID;
-        return WH.userID = userID;
+        this.sessionID = sessionID;
+        return this.userID = userID;
       };
 
       return WH;
 
     })();
+    return {
+      setOneTimeData: function(obj) {
+        var key, _results;
+        _this.oneTimeData || (_this.oneTimeData = {});
+        _results = [];
+        for (key in obj) {
+          _results.push(_this.oneTimeData[key] = obj[key]);
+        }
+        return _results;
+      }
+    };
   });
 
 }).call(this);
