@@ -23,6 +23,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @parentTagsAllowed = opts.parentTagsAllowed || /div|ul/
       @path              = "#{document.location.pathname}#{document.location.search}"
       @warehouseURL      = opts.warehouseURL
+      @opts              = opts
 
       @setCookies()
       @determineDocumentDimensions(document)
@@ -54,7 +55,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     determinePlatform: (win) ->
       @platform = browserdetect.platform(win)
 
-    elemClicked: (e, opts={}) =>
+    elemClicked: (e) =>
       domTarget = e.target
       jQTarget = $(e.target)
       attrs = domTarget.attributes
@@ -77,8 +78,11 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           realName = attr.name.replace('data-', '')
           trackingData[realName] = attr.value
 
-      href = jQTarget.attr('href')
-      if href and opts.followHref? and opts.followHref
+      # in case where image or other elements are wraped in anchor tag
+      # go to parent(anchor) and get href attribute
+      href = jQTarget.attr('href') || jQTarget.parent('a').attr('href')
+
+      if href and @opts.followHref? and @opts.followHref
         @lastLinkClicked = href
         e.preventDefault()
 
@@ -130,7 +134,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         @warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
 
         if @lastLinkClicked
-          lastLinkRedirect = (e) ->
+          lastLinkRedirect = =>
             # ignore obtrusive JS in an href attribute
             document.location = @lastLinkClicked if @lastLinkClicked.indexOf('javascript:') == -1
 
