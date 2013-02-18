@@ -58,6 +58,7 @@
         this.parentTagsAllowed = opts.parentTagsAllowed || /div|ul/;
         this.path = "" + document.location.pathname + document.location.search;
         this.warehouseURL = opts.warehouseURL;
+        this.opts = opts;
         this.setCookies();
         this.determineDocumentDimensions(document);
         this.determineWindowDimensions(window);
@@ -100,11 +101,8 @@
         return this.platform = browserdetect.platform(win);
       };
 
-      WH.prototype.elemClicked = function(e, opts) {
+      WH.prototype.elemClicked = function(e) {
         var attr, attrs, domTarget, href, item, jQTarget, realName, subGroup, trackingData, value, _i, _len, _ref;
-        if (opts == null) {
-          opts = {};
-        }
         domTarget = e.target;
         jQTarget = $(e.target);
         attrs = domTarget.attributes;
@@ -126,8 +124,8 @@
             trackingData[realName] = attr.value;
           }
         }
-        href = jQTarget.attr('href');
-        if (href && (opts.followHref != null) && opts.followHref) {
+        href = jQTarget.attr('href') || jQTarget.parent('a').attr('href');
+        if (href && (this.opts.followHref != null) && this.opts.followHref) {
           this.lastLinkClicked = href;
           e.preventDefault();
         }
@@ -188,9 +186,9 @@
           _this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
           _this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
           if (_this.lastLinkClicked) {
-            lastLinkRedirect = function(e) {
-              if (this.lastLinkClicked.indexOf('javascript:') === -1) {
-                return document.location = this.lastLinkClicked;
+            lastLinkRedirect = function() {
+              if (_this.lastLinkClicked.indexOf('javascript:') === -1) {
+                return document.location = _this.lastLinkClicked;
               }
             };
             return _this.warehouseTag.unbind('load').unbind('error').bind('load', lastLinkRedirect).bind('error', lastLinkRedirect);
