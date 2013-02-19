@@ -68,7 +68,7 @@ define(['jquery'], function ($) { /***** PRIMEDIA DIALOG v2.2 *****/
             b.unbind(".prm_dialog_" + a).hide();
             $(document).unbind(".prm_dialog_" + a);
             $(window).unbind(".prm_dialog_" + a)
-			$('body').trigger('dialogClosed')
+			$('body').trigger('dialogClosed', b)
         })
     };
 
