@@ -54,7 +54,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     determinePlatform: (win) ->
       @platform = browserdetect.platform(win)
 
-    elemClicked: (e, opts={}) =>
+    elemClicked: (e, options={}) =>
       domTarget = e.target
       jQTarget = $(e.target)
       attrs = domTarget.attributes
@@ -78,7 +78,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           trackingData[realName] = attr.value
 
       href = jQTarget.attr('href')
-      if href and opts.followHref? and opts.followHref
+      if href and options.followHref? and options.followHref
         @lastLinkClicked = href
         e.preventDefault()
 
