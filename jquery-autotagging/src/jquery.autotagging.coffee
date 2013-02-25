@@ -55,7 +55,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     determinePlatform: (win) ->
       @platform = browserdetect.platform(win)
 
-    elemClicked: (e) =>
+    elemClicked: (e, options={}) =>
       domTarget = e.target
       jQTarget = $(e.target)
       attrs = domTarget.attributes
@@ -78,11 +78,8 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           realName = attr.name.replace('data-', '')
           trackingData[realName] = attr.value
 
-      # in case where image or other elements are wraped in anchor tag
-      # go to parent(anchor) and get href attribute
       href = jQTarget.attr('href') || jQTarget.parent('a').attr('href')
-
-      if href and @opts.followHref? and @opts.followHref
+      if href and options.followHref? and options.followHref
         @lastLinkClicked = href
         e.preventDefault()
 

@@ -101,8 +101,11 @@
         return this.platform = browserdetect.platform(win);
       };
 
-      WH.prototype.elemClicked = function(e) {
+      WH.prototype.elemClicked = function(e, options) {
         var attr, attrs, domTarget, href, item, jQTarget, realName, subGroup, trackingData, value, _i, _len, _ref;
+        if (options == null) {
+          options = {};
+        }
         domTarget = e.target;
         jQTarget = $(e.target);
         attrs = domTarget.attributes;
@@ -125,7 +128,7 @@
           }
         }
         href = jQTarget.attr('href') || jQTarget.parent('a').attr('href');
-        if (href && (this.opts.followHref != null) && this.opts.followHref) {
+        if (href && (options.followHref != null) && options.followHref) {
           this.lastLinkClicked = href;
           e.preventDefault();
         }
