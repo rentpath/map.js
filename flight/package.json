@@ -1,0 +1,32 @@
+{
+  "name": "flight",
+  "version": "1.0.2",
+  "description": "Clientside component infrastructure",
+  "homepage": "https://github.com/primedia/preserves",
+  "jam": {
+    "dependencies": {
+      "jquery": "1.8.3",
+      "es5-shim": "2.0.0"
+    },
+    "main": "lib/index.js",
+    "include": [
+      "lib/advice.js",
+      "lib/component.js",
+      "lib/compose.js",
+      "lib/index.js",
+      "lib/logger.js",
+      "lib/registry.js",
+      "lib/utils.js"
+    ]
+  },
+  "author": {
+    "name": "Primedia"
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/primedia/preserves.git"
+    }
+  ],
+  "github": "https://github.com/primedia/preserves.git"
+}
