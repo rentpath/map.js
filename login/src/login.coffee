@@ -37,7 +37,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
         $.cookie cookie, "", options
 
     wireupSocialLinks: ($div) ->
-      baseUrl = "#{zutron_host}?zid_id=#{@my.zid}&referrer=#{@my.currentUrl}&technique="
+      baseUrl = "#{zutron_host}?zid_id=#{@my.zid}&referrer=#{encodeURIComponent(@my.currentUrl)}&technique="
       fbLink = $div.find("a.icon_facebook48")
       twitterLink = $div.find("a.icon_twitter48")
       googleLink = $div.find("a.icon_google_plus48")
@@ -271,7 +271,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
 
     _setHiddenValues: ($form) ->
       $form.find("input#state").val @my.zid
-      $form.find("input#origin").val @my.currentUrl
+      $form.find("input#origin").val encodeURIComponent(@my.currentUrl)
 
     _determineClient: ($form) =>
         if @my.currentUrl.indexOf('client') > 0 and (navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i))
