@@ -7,8 +7,6 @@
     Login = (function() {
 
       function Login() {
-        this._determineClient = __bind(this._determineClient, this);
-
         this._triggerModal = __bind(this._triggerModal, this);
 
         this._submitEmailRegistration = __bind(this._submitEmailRegistration, this);
@@ -236,7 +234,7 @@
               $form.parent().empty();
               events.trigger('event/passwordConfirmSuccess', data);
               $('.reset_success').html(data.success).show();
-              return _this._determineClient($form);
+              return _this._determineClient();
             }
           },
           error: function(errors) {
@@ -386,11 +384,13 @@
       };
 
       Login.prototype._logOut = function(e) {
+        var all_cookies,
+          _this = this;
         e.preventDefault();
-        this.expireCookie("provider");
-        this.expireCookie("sgn");
-        this.expireCookie("zid");
-        this.expireCookie("z_type_email");
+        all_cookies = ["provider", "sgn", "zid", "z_type_email"];
+        $.each(all_cookies, function(user_cookie) {
+          return _this.expireCookie(user_cookie);
+        });
         return window.location.replace(this.my.currentUrl);
       };
 
@@ -415,17 +415,16 @@
         return $form.find("input#origin").val(this.my.currentUrl);
       };
 
-      Login.prototype._determineClient = function($form) {
+      Login.prototype._determineClient = function() {
         var clients,
           _this = this;
-        if (this.my.currentUrl.indexOf('client') > 0 && (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone/i))) {
+        if (this.my.currentUrl.indexOf('client') > 0) {
           clients = ["iOS", "android"];
           return $.each(clients, function(client) {
             var myClient;
             myClient = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
-            myClient = my_client.split("=")[1].toLowerCase();
-            _this._createAppButton(myClient);
-            return false;
+            myClient = myClient.split("=")[1].toLowerCase();
+            return _this._createAppButton(myClient);
           });
         } else {
           return $('#reset_return_link').attr('href', "http://" + window.location.host).show();
@@ -434,13 +433,14 @@
 
       Login.prototype._createAppButton = function(client) {
         var btn, launchUrl;
-        if (client === 'ios') {
-          launchUrl = "#";
+        switch (client) {
+          case 'android':
+            launchUrl = "com.primedia.Apartments://settings/";
+            break;
+          case 'ios':
+            launchUrl = "com.primedia.apartmentguide.settings://settings/";
         }
-        if (client === 'android') {
-          launchUrl = "#";
-        }
-        btn = "<a href='" + launchUrl + "' class='" + client + " app_button'>" + client + "</a>";
+        btn = "<a href='" + launchUrl + "' class='" + client + "_app_button'>Launch ApartmentGuide App</a>";
         return $('#app_container').html(btn);
       };
 
