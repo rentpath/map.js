@@ -158,7 +158,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
             $form.parent().empty()
             events.trigger('event/passwordConfirmSuccess', data)
             $('.reset_success').html(data.success).show()
-            @_determineClient $form
+            @_determineClient()
         error: (errors) =>
           @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors", 'passwordConfirmError'
 
@@ -251,11 +251,8 @@ define ['jquery', 'primedia_events'], ($, events) ->
 
     _logOut: (e) ->
       e.preventDefault()
-      @expireCookie "provider"
-      @expireCookie "sgn"
-      @expireCookie "zid"
-      @expireCookie "z_type_email"
-
+      all_cookies =  ["provider", "sgn", "zid", "z_type_email"]
+      $.each all_cookies, (user_cookie) => @expireCookie user_cookie
       window.location.replace @my.currentUrl
 
     _redirectTo: (url) ->
@@ -273,21 +270,21 @@ define ['jquery', 'primedia_events'], ($, events) ->
       $form.find("input#state").val @my.zid
       $form.find("input#origin").val encodeURIComponent(@my.currentUrl)
 
-    _determineClient: ($form) =>
-        if @my.currentUrl.indexOf('client') > 0 and (navigator.userAgent.match(/Android/i) or navigator.userAgent.match(/iPhone/i))
+    _determineClient: ->
+        if @my.currentUrl.indexOf('client') > 0
           clients = ["iOS", "android"]
           $.each clients, (client) =>
             myClient = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
-            myClient = my_client.split("=")[1].toLowerCase()
+            myClient = myClient.split("=")[1].toLowerCase()
             @_createAppButton myClient
-            false
         else
           $('#reset_return_link').attr('href', "http://#{window.location.host}").show()
 
     _createAppButton: (client) ->
-      launchUrl = "#" if client is 'ios'
-      launchUrl = "#" if client is 'android'
-      btn = "<a href='#{launchUrl}' class='#{client} app_button'>#{client}</a>"
+      switch client
+        when 'android'  then launchUrl = "com.primedia.Apartments://settings/"
+        when 'ios'      then launchUrl = "com.primedia.apartmentguide.settings://settings/"
+      btn = "<a href='#{launchUrl}' class='#{client}_app_button'>Launch ApartmentGuide App</a>"
       $('#app_container').html btn
 
     _setSessionType: () ->
