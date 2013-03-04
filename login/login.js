@@ -433,12 +433,8 @@
 
       Login.prototype._createAppButton = function(client) {
         var btn, launchUrl;
-        switch (client) {
-          case 'android':
-            launchUrl = "com.primedia.Apartments://settings/";
-            break;
-          case 'ios':
-            launchUrl = "com.primedia.apartmentguide.settings://settings/";
+        if (client) {
+          launchUrl = "com.primedia.Apartments://settings";
         }
         btn = "<a href='" + launchUrl + "' class='" + client + "_app_button'>Launch ApartmentGuide App</a>";
         return $('#app_container').html(btn);
