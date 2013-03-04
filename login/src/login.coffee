@@ -281,9 +281,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
           $('#reset_return_link').attr('href', "http://#{window.location.host}").show()
 
     _createAppButton: (client) ->
-      switch client
-        when 'android'  then launchUrl = "com.primedia.Apartments://settings/"
-        when 'ios'      then launchUrl = "com.primedia.apartmentguide.settings://settings/"
+      launchUrl = "com.primedia.Apartments://settings" if client
       btn = "<a href='#{launchUrl}' class='#{client}_app_button'>Launch ApartmentGuide App</a>"
       $('#app_container').html btn
 
