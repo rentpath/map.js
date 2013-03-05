@@ -169,9 +169,29 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     getOneTimeData: ->
       @oneTimeData
 
-    obj2query: (obj, cb) =>
-      rv = []
+    # we are putting the tags ina predefined order before firing.  This will have
+    # a performance hit - mocked in jsfiddle shows 1 to 2 ms
+    sort_order_array:  ["site" , "site_version","firstvisit","tu","cg","listingid","dpg","type"
+                        ,"sg","item","value","spg","lpp","path","logged_in","ft"]
+    setTagOrder: (obj) ->
+      prop_key_array = []
+      result_array = []
       for key of obj
+        prop_key_array.push key
+
+      for elem of @sort_order_array
+        index = prop_key_array.indexOf(@sort_order_array[elem])
+        if index > 0
+          result_array.push prop_key_array[index]
+          prop_key_array.splice(index,1)
+      result_array = result_array.concat(prop_key_array) 
+      return result_array
+
+    obj2query: (obj, cb) =>
+      tag_order = @setTagOrder(obj)
+      rv = []
+      for elem of tag_order
+        key = tag_order[elem]
         rv.push "&#{key}=#{encodeURIComponent(val)}" if obj.hasOwnProperty(key) and (val = obj[key])?
       cb(rv.join('').replace(/^&/,'?'))
       return

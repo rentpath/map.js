@@ -240,10 +240,32 @@
         return this.oneTimeData;
       };
 
-      WH.prototype.obj2query = function(obj, cb) {
-        var key, rv, val;
-        rv = [];
+      WH.prototype.sort_order_array = ["site", "site_version", "firstvisit", "tu", "cg", "listingid", "dpg", "type", "sg", "item", "value", "spg", "lpp", "path", "logged_in", "ft"];
+
+      WH.prototype.setTagOrder = function(obj) {
+        var elem, index, key, prop_key_array, result_array;
+        prop_key_array = [];
+        result_array = [];
         for (key in obj) {
+          prop_key_array.push(key);
+        }
+        for (elem in this.sort_order_array) {
+          index = prop_key_array.indexOf(this.sort_order_array[elem]);
+          if (index > 0) {
+            result_array.push(prop_key_array[index]);
+            prop_key_array.splice(index, 1);
+          }
+        }
+        result_array = result_array.concat(prop_key_array);
+        return result_array;
+      };
+
+      WH.prototype.obj2query = function(obj, cb) {
+        var elem, key, rv, tag_order, val;
+        tag_order = this.setTagOrder(obj);
+        rv = [];
+        for (elem in tag_order) {
+          key = tag_order[elem];
           if (obj.hasOwnProperty(key) && ((val = obj[key]) != null)) {
             rv.push("&" + key + "=" + (encodeURIComponent(val)));
           }
