@@ -177,8 +177,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     sort_order_array:  ["site" , "site_version","firstvisit","tu","cg","listingid","dpg","type"
                         ,"sg","item","value","spg","lpp","path","logged_in","ft"]
     setTagOrder: (obj) ->
-      #sort_order_array = ["site" , "cg","site_version"]
-      #sort_order_array = @srt_order_array
       prop_key_array = []
       result_array = []
 
@@ -196,9 +194,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
     obj2query: (obj, cb) =>
       tag_order = @setTagOrder(obj)
-
       rv = []
-      #for key of obj
       for elem of tag_order
         key = tag_order[elem]
         rv.push "&#{key}=#{encodeURIComponent(val)}" if obj.hasOwnProperty(key) and (val = obj[key])?
