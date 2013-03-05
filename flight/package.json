@@ -16,7 +16,8 @@
       "lib/index.js",
       "lib/logger.js",
       "lib/registry.js",
-      "lib/utils.js"
+      "lib/utils.js",
+      "tools/debug/debug.js"
     ]
   },
   "author": {

@@ -94,13 +94,13 @@ define(
           data = $.extend(true, {}, this.attr.eventData, data);
         }
 
-        var returnVal = $element.trigger((event || type), data);
+        $element.trigger((event || type), data);
 
         if (defaultFn && !event.isDefaultPrevented()) {
           (this[defaultFn] || defaultFn).call(this);
         }
 
-        return returnVal;
+        return $element;
       };
 
       this.on = function() {
@@ -201,7 +201,8 @@ define(
 
       Component.toString = function() {
         var prettyPrintMixins = mixins.map(function(mixin) {
-          if ($.browser.msie) {
+          if (mixin.name == null) {
+            //function name property not supported by this browser, use regex
             var m = mixin.toString().match(functionNameRegEx);
             return (m && m[1]) ? m[1] : "";
           } else {
@@ -211,6 +212,7 @@ define(
 
         return prettyPrintMixins;
       };
+
 
       Component.describe = Component.toString();
 
