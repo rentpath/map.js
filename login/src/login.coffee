@@ -252,7 +252,8 @@ define ['jquery', 'primedia_events'], ($, events) ->
     _logOut: (e) ->
       e.preventDefault()
       all_cookies =  ["provider", "sgn", "zid", "z_type_email"]
-      $.each all_cookies, (user_cookie) => @expireCookie user_cookie
+      $.each all_cookies, (index, cookie) =>
+        @expireCookie cookie
       window.location.replace @my.currentUrl
 
     _redirectTo: (url) ->
