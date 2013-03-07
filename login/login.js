@@ -61,7 +61,7 @@
 
       Login.prototype.wireupSocialLinks = function($div) {
         var baseUrl, fbLink, googleLink, twitterLink;
-        baseUrl = "" + zutron_host + "?zid_id=" + this.my.zid + "&referrer=" + this.my.currentUrl + "&technique=";
+        baseUrl = "" + zutron_host + "?zid_id=" + this.my.zid + "&referrer=" + (encodeURIComponent(this.my.currentUrl)) + "&technique=";
         fbLink = $div.find("a.icon_facebook48");
         twitterLink = $div.find("a.icon_twitter48");
         googleLink = $div.find("a.icon_google_plus48");
@@ -388,8 +388,8 @@
           _this = this;
         e.preventDefault();
         all_cookies = ["provider", "sgn", "zid", "z_type_email"];
-        $.each(all_cookies, function(user_cookie) {
-          return _this.expireCookie(user_cookie);
+        $.each(all_cookies, function(index, cookie) {
+          return _this.expireCookie(cookie);
         });
         return window.location.replace(this.my.currentUrl);
       };
@@ -412,7 +412,7 @@
 
       Login.prototype._setHiddenValues = function($form) {
         $form.find("input#state").val(this.my.zid);
-        return $form.find("input#origin").val(this.my.currentUrl);
+        return $form.find("input#origin").val(encodeURIComponent(this.my.currentUrl));
       };
 
       Login.prototype._determineClient = function() {
