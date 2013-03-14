@@ -52,7 +52,7 @@ define(['jquery'], function ($) {
                                     rightHotSpot.animate({
                                         right: '+=140px'
                                     }, 400, function () {
-                                        var image_num = Math.abs(rightHotSpot.position().left) / Slide.image_width + 1,
+                                        var image_num = parseInt((Math.abs(rightHotSpot.position().left) / Slide.image_width + 1), 10),
                                             image_total = rightHotSpot.width() / Slide.image_width,
                                             image_counter = $(this).parentsUntil('.column1').find('.scroll_image_counter');
                                         image_counter.html(image_num + '/' + image_total);
@@ -70,7 +70,7 @@ define(['jquery'], function ($) {
                                     leftHotSpot.animate({
                                         right:'-=140px'
                                     }, 400, function () {
-                                        var image_num = Math.abs(leftHotSpot.position().left) / Slide.image_width + 1,
+                                        var image_num = parseInt((Math.abs(leftHotSpot.position().left) / Slide.image_width + 1), 10),
                                             image_total = leftHotSpot.width() / Slide.image_width,
                                             image_counter = $(this).parentsUntil('.column1').find('.scroll_image_counter');
                                         image_counter.html(image_num + '/' + image_total);
