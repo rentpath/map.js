@@ -98,13 +98,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj.os                      = @platform.OS
       obj.browser                 = @platform.browser
       obj.ver                     = @platform.version
-      obj.ref                     = document.referrer
+      obj.ref                     = if ($.cookie('real_referrer') != null && $.cookie('real_referrer').length == 0) then document.referrer else $.cookie('real_referrer')
       obj.registration            = if $.cookie('sgn') == '1' then 1 else 0
       obj.person_id               = $.cookie('zid') if $.cookie('sgn')?
-      obj.email_registration      = if $.cookie('provider') == 'identity' then 1 else 0
-      obj.facebook_registration   = if $.cookie('provider') == 'facebook' then 1 else 0
-      obj.googleplus_registration = if $.cookie('provider') == 'google_oauth2' then 1 else 0
-      obj.twitter_registration    = if $.cookie('provider') == 'twitter' then 1 else 0
 
       @fireCallback?(obj)
 
@@ -189,7 +185,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           result_array.push prop_key_array[index]
           prop_key_array.splice(index,1)
 
-      result_array = result_array.concat(prop_key_array) 
+      result_array = result_array.concat(prop_key_array)
       return result_array
 
     obj2query: (obj, cb) =>

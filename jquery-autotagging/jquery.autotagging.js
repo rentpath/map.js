@@ -150,15 +150,11 @@
         obj.os = this.platform.OS;
         obj.browser = this.platform.browser;
         obj.ver = this.platform.version;
-        obj.ref = document.referrer;
+        obj.ref = $.cookie('real_referrer') !== null && $.cookie('real_referrer').length === 0 ? document.referrer : $.cookie('real_referrer');
         obj.registration = $.cookie('sgn') === '1' ? 1 : 0;
         if ($.cookie('sgn') != null) {
           obj.person_id = $.cookie('zid');
         }
-        obj.email_registration = $.cookie('provider') === 'identity' ? 1 : 0;
-        obj.facebook_registration = $.cookie('provider') === 'facebook' ? 1 : 0;
-        obj.googleplus_registration = $.cookie('provider') === 'google_oauth2' ? 1 : 0;
-        obj.twitter_registration = $.cookie('provider') === 'twitter' ? 1 : 0;
         if (typeof this.fireCallback === "function") {
           this.fireCallback(obj);
         }
