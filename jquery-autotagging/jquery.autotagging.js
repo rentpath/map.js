@@ -151,8 +151,8 @@
         obj.os = this.platform.OS;
         obj.browser = this.platform.browser;
         obj.ver = this.platform.version;
-        obj.ref = document.referrer;
-        obj.logged_in = $.cookie('sgn') != null ? 1 : 0;
+        obj.ref = $.cookie('real_referrer') !== null && $.cookie('real_referrer').length === 0 ? document.referrer : $.cookie('real_referrer');
+        obj.registration = $.cookie('sgn') === '1' ? 1 : 0;
         if ($.cookie('sgn') != null) {
           obj.person_id = $.cookie('zid');
         }

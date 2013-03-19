@@ -87,21 +87,21 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       e.stopPropagation()
 
     fire: (obj) =>
-      obj.ft        = @firedTime()
-      obj.cb        = @cacheBuster++
-      obj.sess      = "#{@userID}.#{@sessionID}"
-      obj.fpc       = @userID
-      obj.site      = @domain
-      obj.path      = @path
-      obj.title     = $('title').text()
-      obj.bs        = @windowDimensions
-      obj.sr        = @browserDimensions
-      obj.os        = @platform.OS
-      obj.browser   = @platform.browser
-      obj.ver       = @platform.version
-      obj.ref       = document.referrer
-      obj.logged_in = if $.cookie('sgn')? then 1 else 0
-      obj.person_id = $.cookie('zid') if $.cookie('sgn')?
+      obj.ft                      = @firedTime()
+      obj.cb                      = @cacheBuster++
+      obj.sess                    = "#{@userID}.#{@sessionID}"
+      obj.fpc                     = @userID
+      obj.site                    = @domain
+      obj.path                    = @path
+      obj.title                   = $('title').text()
+      obj.bs                      = @windowDimensions
+      obj.sr                      = @browserDimensions
+      obj.os                      = @platform.OS
+      obj.browser                 = @platform.browser
+      obj.ver                     = @platform.version
+      obj.ref                     = if ($.cookie('real_referrer') != null && $.cookie('real_referrer').length == 0) then document.referrer else $.cookie('real_referrer')
+      obj.registration            = if $.cookie('sgn') == '1' then 1 else 0
+      obj.person_id               = $.cookie('zid') if $.cookie('sgn')?
 
       @fireCallback?(obj)
 
@@ -170,12 +170,13 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @oneTimeData
 
     # we are putting the tags ina predefined order before firing.  This will have
-    # a performance hit - mocked in jsfiddle shows 1 to 2 ms
+    # a performance hit - mocked in jsfiddle
     sort_order_array:  ["site" , "site_version","firstvisit","tu","cg","listingid","dpg","type"
                         ,"sg","item","value","spg","lpp","path","logged_in","ft"]
     setTagOrder: (obj) ->
       prop_key_array = []
       result_array = []
+
       for key of obj
         prop_key_array.push key
 
@@ -184,7 +185,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         if index > 0
           result_array.push prop_key_array[index]
           prop_key_array.splice(index,1)
-      result_array = result_array.concat(prop_key_array) 
+
+      result_array = result_array.concat(prop_key_array)
+
       return result_array
 
     obj2query: (obj, cb) =>
