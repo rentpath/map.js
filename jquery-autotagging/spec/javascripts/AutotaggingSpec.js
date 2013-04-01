@@ -153,6 +153,26 @@ describe("Autotagging Suite", function() {
       expect(wh.getDataFromMetaTags(testDoc)).toEqual(result);
     });
 
+    describe("#elemClicked", function() {
+      var newContent;
+      var targets;
+
+      beforeEach(function() {
+        newContent = $("<div><a class='link' href='#to_the_past'>Z</a></div>");
+        targets = 'a.link';
+        wh.init({followHref: true});
+        wh.clickBindSelector = targets;
+        wh.bindBodyClicked(newContent);
+        spyOn(wh, 'elemClicked');
+      });
+
+      it('saves the last link clicked', function() {
+        newContent.find('a.link').click();
+        expect(wh.lastLinkClicked).toEqual("#to_the_past");
+        expect(wh.elemClicked).toHaveBeenCalled();
+      });
+    });
+
     describe("#init", function() {
       var newContent;
       var targets;

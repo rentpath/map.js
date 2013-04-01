@@ -25,6 +25,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @warehouseURL      = opts.warehouseURL
       @opts              = opts
 
+      @setFollowHref(opts)
       @setCookies()
       @determineDocumentDimensions(document)
       @determineWindowDimensions(window)
@@ -78,8 +79,12 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           realName = attr.name.replace('data-', '')
           trackingData[realName] = attr.value
 
+      # Set again here to handle elemClicked re-bindings which
+      # might pass a different followHref setting
+      @setFollowHref(opts)
+
       href = jQTarget.attr('href') || jQTarget.parent('a').attr('href')
-      if href and options.followHref? and options.followHref
+      if href and @followHref
         @lastLinkClicked = href
         e.preventDefault()
 
@@ -220,3 +225,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @oneTimeData ||= {}
       for key of obj
         @oneTimeData[key] = obj[key]
+
+    setFollowHref: (opts) ->
+      @followHref = if opts.followHref? then opts.followHref else true
