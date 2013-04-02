@@ -3,6 +3,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     cacheBuster:  0
     domain:       ''
     firstVisit:   null
+    followHref:   true
     lastLinkClicked: null
     metaData:     null
     oneTimeData:  null

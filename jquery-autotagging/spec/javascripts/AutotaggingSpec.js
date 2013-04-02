@@ -166,6 +166,10 @@ describe("Autotagging Suite", function() {
         spyOn(wh, 'elemClicked');
       });
 
+      it('should read a followHref of true by default', function() {
+        expect(wh.followHref).toEqual(true);
+      });
+
       it('saves the last link clicked', function() {
         newContent.find('a.link').click();
         expect(wh.lastLinkClicked).toEqual("#to_the_past");
