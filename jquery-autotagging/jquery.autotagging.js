@@ -28,8 +28,6 @@
 
       WH.prototype.firstVisit = null;
 
-      WH.prototype.lastLinkClicked = null;
-
       WH.prototype.metaData = null;
 
       WH.prototype.oneTimeData = null;
@@ -59,6 +57,7 @@
         this.path = "" + document.location.pathname + document.location.search;
         this.warehouseURL = opts.warehouseURL;
         this.opts = opts;
+        this.setFollowHref(opts);
         this.setCookies();
         this.determineDocumentDimensions(document);
         this.determineWindowDimensions(window);
@@ -127,8 +126,9 @@
             trackingData[realName] = attr.value;
           }
         }
+        this.setFollowHref(options);
         href = jQTarget.attr('href') || jQTarget.parent('a').attr('href');
-        if (href && (options.followHref != null) && options.followHref) {
+        if (href && this.followHref) {
           this.lastLinkClicked = href;
           e.preventDefault();
         }
@@ -188,8 +188,8 @@
           }
           _this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
           _this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
-          if (_this.lastLinkClicked) {
-            lastLinkRedirect = function() {
+          if (_this.lastLinkClicked != null) {
+            lastLinkRedirect = function(e) {
               if (_this.lastLinkClicked.indexOf('javascript:') === -1) {
                 return document.location = _this.lastLinkClicked;
               }
@@ -304,6 +304,11 @@
           _results.push(this.oneTimeData[key] = obj[key]);
         }
         return _results;
+      };
+
+      WH.prototype.setFollowHref = function(opts) {
+        this.lastLinkClicked = null;
+        return this.followHref = opts.followHref != null ? opts.followHref : true;
       };
 
       return WH;
