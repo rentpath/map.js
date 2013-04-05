@@ -121,7 +121,6 @@ describe("Autotagging Suite", function() {
         wh.init({followHref: true});
         wh.clickBindSelector = targets;
         wh.bindBodyClicked(newContent);
-        spyOn(wh, 'elemClicked');
       });
 
       it('should read a followHref of true by default', function() {
@@ -131,7 +130,6 @@ describe("Autotagging Suite", function() {
       it('saves the last link clicked', function() {
         newContent.find('a.link').click();
         expect(wh.lastLinkClicked).toEqual("#to_the_past");
-        expect(wh.elemClicked).toHaveBeenCalled();
       });
     });
 
