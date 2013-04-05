@@ -118,13 +118,9 @@ describe("Autotagging Suite", function() {
       beforeEach(function() {
         newContent = $("<div><a class='link' href='#to_the_past'>Z</a></div>");
         targets = 'a.link';
-        wh.init({followHref: true});
+        wh.init();
         wh.clickBindSelector = targets;
         wh.bindBodyClicked(newContent);
-      });
-
-      it('should read a followHref of true by default', function() {
-        expect(wh.followHref).toEqual(true);
       });
 
       it('saves the last link clicked', function() {
@@ -162,6 +158,18 @@ describe("Autotagging Suite", function() {
       data = wh.getOneTimeData();
       expect(data.a).toEqual('Apple');
       expect(data.b).toEqual('Banana');
+    });
+
+    describe("#setFollowHref", function() {
+      it('defaults to true', function() {
+        wh.setFollowHref();
+        expect(wh.followHref).toEqual(true);
+      });
+
+      it('overrides default with argument', function() {
+        wh.setFollowHref({followHref:false});
+        expect(wh.followHref).toEqual(false);
+      });
     });
   });
 });

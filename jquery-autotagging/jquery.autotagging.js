@@ -307,6 +307,9 @@
       };
 
       WH.prototype.setFollowHref = function(opts) {
+        if (opts == null) {
+          opts = {};
+        }
         this.lastLinkClicked = null;
         return this.followHref = opts.followHref != null ? opts.followHref : true;
       };

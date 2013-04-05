@@ -225,6 +225,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       for key of obj
         @oneTimeData[key] = obj[key]
 
-    setFollowHref: (opts) ->
+    setFollowHref: (opts={}) ->
       @lastLinkClicked = null
       @followHref = if opts.followHref? then opts.followHref else true
