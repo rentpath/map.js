@@ -3,7 +3,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     cacheBuster:  0
     domain:       ''
     firstVisit:   null
-    lastLinkClicked: null
     metaData:     null
     oneTimeData:  null
     path:         ''
@@ -25,6 +24,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @warehouseURL      = opts.warehouseURL
       @opts              = opts
 
+      @setFollowHref(opts)
       @setCookies()
       @determineDocumentDimensions(document)
       @determineWindowDimensions(window)
@@ -78,8 +78,12 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           realName = attr.name.replace('data-', '')
           trackingData[realName] = attr.value
 
+      # Set again here to handle elemClicked re-bindings which
+      # might pass a different followHref setting
+      @setFollowHref(options)
+
       href = jQTarget.attr('href') || jQTarget.parent('a').attr('href')
-      if href and options.followHref? and options.followHref
+      if href and @followHref
         @lastLinkClicked = href
         e.preventDefault()
 
@@ -130,8 +134,8 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         @warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type)
         @warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type)
 
-        if @lastLinkClicked
-          lastLinkRedirect = =>
+        if @lastLinkClicked?
+          lastLinkRedirect = (e) =>
             # ignore obtrusive JS in an href attribute
             document.location = @lastLinkClicked if @lastLinkClicked.indexOf('javascript:') == -1
 
@@ -220,3 +224,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @oneTimeData ||= {}
       for key of obj
         @oneTimeData[key] = obj[key]
+
+    setFollowHref: (opts={}) ->
+      @lastLinkClicked = null
+      @followHref = if opts.followHref? then opts.followHref else true

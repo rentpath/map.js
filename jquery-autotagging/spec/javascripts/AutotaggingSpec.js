@@ -87,48 +87,6 @@ describe("Autotagging Suite", function() {
           wh.fire(obj);
           expect(obj.registration).toEqual(1);
         });
-
-        it('captures the zid as the person ID', function() {
-          $.cookie('zid', 'abcdefgh', {expires: 3650, path: '/'});
-          wh.fire(obj);
-          expect(obj.person_id).toEqual('abcdefgh');
-        });
-
-        it('returns "1" for facebook if FB is the login provider', function() {
-          $.cookie('provider', 'facebook', {expires: 3650, path: '/'});
-          wh.fire(obj);
-          expect(obj.facebook_registration).toEqual(1);
-          expect(obj.email_registration).toEqual(0);
-          expect(obj.googleplus_registration).toEqual(0);
-          expect(obj.twitter_registration).toEqual(0);
-        });
-
-        it('returns "1" for twitter if Twitter is the login provider', function() {
-          $.cookie('provider', 'twitter', {expires: 3650, path: '/'});
-          wh.fire(obj);
-          expect(obj.facebook_registration).toEqual(0);
-          expect(obj.email_registration).toEqual(0);
-          expect(obj.googleplus_registration).toEqual(0);
-          expect(obj.twitter_registration).toEqual(1);
-        });
-
-        it('returns "1" for G+ if G+ is the login provider', function() {
-          $.cookie('provider', 'google_oauth2', {expires: 3650, path: '/'});
-          wh.fire(obj);
-          expect(obj.facebook_registration).toEqual(0);
-          expect(obj.email_registration).toEqual(0);
-          expect(obj.googleplus_registration).toEqual(1);
-          expect(obj.twitter_registration).toEqual(0);
-        });
-
-        it('returns "1" for Identity if email is the login provider', function() {
-          $.cookie('provider', 'identity', {expires: 3650, path: '/'});
-          wh.fire(obj);
-          expect(obj.facebook_registration).toEqual(0);
-          expect(obj.email_registration).toEqual(1);
-          expect(obj.googleplus_registration).toEqual(0);
-          expect(obj.twitter_registration).toEqual(0);
-        });
       });
 
       it('sets the firing time', function () {
@@ -151,6 +109,24 @@ describe("Autotagging Suite", function() {
       testDoc = $("<div><meta name='WH.test' content='dummy'/><meta name='WH.quiz' content='placeholder'</div>");
       result = { cg : '', test : 'dummy', quiz : 'placeholder' };
       expect(wh.getDataFromMetaTags(testDoc)).toEqual(result);
+    });
+
+    describe("#elemClicked", function() {
+      var newContent;
+      var targets;
+
+      beforeEach(function() {
+        newContent = $("<div><a class='link' href='#to_the_past'>Z</a></div>");
+        targets = 'a.link';
+        wh.init();
+        wh.clickBindSelector = targets;
+        wh.bindBodyClicked(newContent);
+      });
+
+      it('saves the last link clicked', function() {
+        newContent.find('a.link').click();
+        expect(wh.lastLinkClicked).toEqual("#to_the_past");
+      });
     });
 
     describe("#init", function() {
@@ -182,6 +158,18 @@ describe("Autotagging Suite", function() {
       data = wh.getOneTimeData();
       expect(data.a).toEqual('Apple');
       expect(data.b).toEqual('Banana');
+    });
+
+    describe("#setFollowHref", function() {
+      it('defaults to true', function() {
+        wh.setFollowHref();
+        expect(wh.followHref).toEqual(true);
+      });
+
+      it('overrides default with argument', function() {
+        wh.setFollowHref({followHref:false});
+        expect(wh.followHref).toEqual(false);
+      });
     });
   });
 });
