@@ -32,7 +32,7 @@
       },
       save: function(item, value) {
         var data, key, record;
-        key = window.location.pathname;
+        key = this.key();
         data = utils.getPageInfo(key);
         record = _read(key);
         if (record != null) {
@@ -45,41 +45,32 @@
         }
         return record;
       },
-      peek: function(item) {
+      peek: function(item, not_found) {
         var v;
-        v = _read(window.location.pathname);
+        if (not_found == null) {
+          not_found = 0;
+        }
+        v = _read(this.key()) || {};
         if (v[item] != null) {
           return parseInt(v[item]);
         } else {
-          return 0;
+          return not_found;
         }
       },
       number_of_visits: function() {
-        var v;
-        v = _read(window.location.pathname).count;
-        if (v != null) {
-          return parseInt(v);
-        } else {
-          return 0;
-        }
+        return this.peek('count');
       },
       refinements: function() {
-        return _read(window.location.pathname).nodes;
+        return this.peek('nodes', []);
       },
       number_of_refinements: function() {
-        var r;
-        r = _read(window.location.pathname).nodes.length;
-        if (r != null) {
-          return parseInt(r);
-        } else {
-          return 0;
-        }
+        return this.refinements.length;
       },
       type: function() {
-        return _read(window.location.pathname).type;
+        return this.peek('type', '');
       },
       searchType: function() {
-        return _read(window.location.pathname).searchType;
+        return this.peek('searchType', '');
       }
     };
   });

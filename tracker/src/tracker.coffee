@@ -27,7 +27,7 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
       record
 
     save: (item, value) ->
-      key = window.location.pathname
+      key = @key()
       data = utils.getPageInfo(key)
 
       record = _read key
@@ -42,27 +42,18 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
 
       record
 
-    peek: (item) ->
-      v = _read(window.location.pathname)
-      return if v[item]? then parseInt(v[item]) else 0
+    peek: (item, not_found=0) ->
+      v = _read(@key()) || {}
+      return if v[item]? then parseInt(v[item]) else not_found
 
-    number_of_visits: ->
-      v = _read(window.location.pathname).count
-      return if v? then parseInt(v) else 0
+    number_of_visits: -> @peek('count')
 
-    refinements: ->
-      _read(window.location.pathname).nodes
+    refinements: -> @peek('nodes', [])
 
-    number_of_refinements: ->
-      r = _read(window.location.pathname).nodes.length
-      return if r? then parseInt(r) else 0
+    number_of_refinements: -> @refinements.length
 
-    type: ->
-      _read(window.location.pathname).type
+    type: -> @peek('type', '')
 
-    searchType: ->
-      _read(window.location.pathname).searchType
-
-
+    searchType: -> @peek('searchType', '')
 
   }
