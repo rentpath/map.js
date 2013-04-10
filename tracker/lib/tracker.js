@@ -16,19 +16,9 @@
         return window.location.pathname;
       },
       track: function() {
-        var data, key, record;
-        key = this.key();
-        data = utils.getPageInfo();
-        record = _read(key);
-        if (record != null) {
-          record['count']++;
-          _write(key, record);
-        } else {
-          record = data;
-          record['count'] = 1;
-          _write(key, record);
-        }
-        return record;
+        var count;
+        count = this.peek('count', 0) + 1;
+        return this.save('count', count);
       },
       save: function(item, value) {
         var data, key, record;

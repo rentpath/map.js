@@ -11,20 +11,8 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
       window.location.pathname
 
     track: ->
-      key = @key()
-      data = utils.getPageInfo()
-
-      record = _read key
-
-      if record?
-        record['count']++
-        _write key, record
-      else
-        record = data
-        record['count'] = 1
-        _write key, record
-
-      record
+      count = @peek('count', 0) + 1
+      @save('count', count)
 
     save: (item, value) ->
       key = @key()
