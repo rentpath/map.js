@@ -10,8 +10,6 @@ describe("Tracker Suite", function() {
     var ready = false;
     var key = "/apartments/Alaska/Yakutat/";
 
-    localStorage.clear();
-
     require(['../../tracker'], function(localTracker) {
       tracker = localTracker;
 
@@ -25,11 +23,17 @@ describe("Tracker Suite", function() {
     });
   });
 
-  describe("Public Static Methods", function() {
+  describe("Public Module Functions", function() {
     describe("#track", function() {
-      it('should increment the count', function () {
+      localStorage.clear();
+
+      it('should start the count', function () {
         tracker.track();
-        expect(checkStorage('count')).toEqual('1');
+        expect(checkStorage('count')).toEqual(1);
+      });
+      it('should increase the count', function () {
+        tracker.track();
+        expect(checkStorage('count')).toEqual(2);
       });
     });
   });

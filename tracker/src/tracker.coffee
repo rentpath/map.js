@@ -7,8 +7,11 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
     localStorage.setItem(key, JSON.stringify(value))
 
   return {
+    key: ->
+      window.location.pathname
+
     track: ->
-      key = window.location.pathname
+      key = @key()
       data = utils.getPageInfo()
 
       record = _read key

@@ -17,7 +17,7 @@
       },
       track: function() {
         var data, key, record;
-        key = window.location.pathname;
+        key = this.key();
         data = utils.getPageInfo();
         record = _read(key);
         if (record != null) {
