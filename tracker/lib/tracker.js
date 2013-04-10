@@ -4,12 +4,17 @@
   define(['jquery', 'primedia_events', 'utils'], function($, events, utils) {
     var _read, _write;
     _read = function(key) {
-      var data, value;
+      var data;
       data = localStorage.getItem(key);
-      return value = data != null ? JSON.parse(data) : null;
+      if (data != null) {
+        return JSON.parse(data);
+      } else {
+        return null;
+      }
     };
     _write = function(key, value) {
-      return localStorage.setItem(key, JSON.stringify(value));
+      localStorage.setItem(key, JSON.stringify(value));
+      return value;
     };
     return {
       key: function() {
@@ -24,15 +29,9 @@
         var data, key, record;
         key = this.key();
         data = utils.getPageInfo(key);
-        record = _read(key);
-        if (record != null) {
-          record[item] = value;
-          _write(key, record);
-        } else {
-          record = data;
-          record[item] = value;
-          _write(key, record);
-        }
+        record = _read(key) || data;
+        record[item] = value;
+        _write(key, record);
         return record;
       },
       peek: function(item, not_found) {
