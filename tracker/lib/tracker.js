@@ -52,7 +52,7 @@
         }
         v = _read(this.key()) || {};
         if (v[item] != null) {
-          return parseInt(v[item]);
+          return v[item];
         } else {
           return not_found;
         }
@@ -64,7 +64,7 @@
         return this.peek('nodes', []);
       },
       number_of_refinements: function() {
-        return this.refinements.length;
+        return this.peek('nodes', []).length;
       },
       type: function() {
         return this.peek('type', '');

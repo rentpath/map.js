@@ -44,13 +44,13 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
 
     peek: (item, not_found=0) ->
       v = _read(@key()) || {}
-      return if v[item]? then parseInt(v[item]) else not_found
+      return if v[item]? then v[item] else not_found
 
     number_of_visits: -> @peek('count')
 
     refinements: -> @peek('nodes', [])
 
-    number_of_refinements: -> @refinements.length
+    number_of_refinements: -> @peek('nodes', []).length
 
     type: -> @peek('type', '')
 

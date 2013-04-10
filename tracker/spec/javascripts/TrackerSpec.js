@@ -7,11 +7,17 @@ describe("Tracker Suite", function() {
     return item;
   };
 
+
   beforeEach(function() {
     var ready = false;
     var key = "/apartments/Alaska/Yakutat/";
 
-    require(['../../tracker'], function(localTracker) {
+    require(['jquery', '../../tracker'], function($, localTracker) {
+
+      $('head').append('<meta class="pageInfo" content="search" name="type">');
+      $('head').append('<meta class="pageInfo" content="city" name="searchType">');
+      $('head').append('<meta class="pageInfo" content="1z141xt,1z141xu,4lt" name="nodes">');
+
       tracker = localTracker;
 
       tracker.key = function() { key };
@@ -44,7 +50,10 @@ describe("Tracker Suite", function() {
       it('should save page info', function () {
         tracker.track('something', 12);
         var page = checkStorage();
-        expect(page['nodes']).toEqual(['some', 'nodes', 'here']);
+
+        expect(page['type']).toEqual('search');
+        expect(page['searchType']).toEqual('city');
+        expect(page['nodes']).toEqual(['1z141xt','1z141xu','4lt']);
       });
 
       it('should save an arbitrary item', function () {
@@ -94,7 +103,7 @@ describe("Tracker Suite", function() {
 
       it('should return the list of nodes', function () {
         tracker.track();
-        expect(tracker.refinements()).toEqual(1);
+        expect(tracker.refinements()).toEqual(['1z141xt','1z141xu','4lt']);
       });
     });
 
@@ -117,9 +126,9 @@ describe("Tracker Suite", function() {
         expect(tracker.type()).toEqual('');
       });
 
-      it('should return the type', function () {
+      it('should return the page type', function () {
         tracker.track();
-        expect(tracker.type()).toEqual('');
+        expect(tracker.type()).toEqual('search');
       });
     });
 
@@ -131,7 +140,7 @@ describe("Tracker Suite", function() {
 
       it('should return the search type', function () {
         tracker.track();
-        expect(tracker.searchType()).toEqual('');
+        expect(tracker.searchType()).toEqual('city');
       });
     });
 
