@@ -4,8 +4,9 @@ describe("Tracker Suite", function() {
   key = path = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/";
   path_and_query = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/?&sort=ratings-desc&page=1";
 
-  var checkStorage = function(field) {
-    var item = JSON.parse(localStorage.getItem(key));
+  var checkStorage = function(field, id) {
+    if (id == null) id = path;
+    var item = JSON.parse(localStorage.getItem(id));
     if(field) return item[field] || null;
     return item;
   };
@@ -41,7 +42,7 @@ describe("Tracker Suite", function() {
       it("should return the base search path", function() {
         expect(tracker.key("base")).toEqual('/apartments/Alaska/Yakutat/')
       });
-      it("should return the base search path regardless of whether there are refinements to strip", function() {
+      it("should return the base search path regardless of whether there are refinements gto strip", function() {
         tracker.path = function() { return base };
         expect(tracker.key("base")).toEqual('/apartments/Alaska/Yakutat/')
       });
@@ -76,6 +77,11 @@ describe("Tracker Suite", function() {
         tracker.save('something', 12);
         expect(checkStorage('something')).toEqual(12);
       });
+
+      it('should save an arbitrary item under a different key', function () {
+        tracker.save('something else', 12, 'base');
+        expect(checkStorage('something else', base)).toEqual(12);
+      });
     });
 
     describe("#peek", function() {
@@ -96,6 +102,13 @@ describe("Tracker Suite", function() {
         localStorage.setItem(key, str)
 
         expect(tracker.peek('something')).toEqual(1);
+      });
+
+      it('should return an existent item from a different key', function () {
+        var str = JSON.stringify({'another thing':100});
+        localStorage.setItem(base, str)
+
+        expect(tracker.peek('another thing', 0, 'base')).toEqual(100);
       });
     });
 

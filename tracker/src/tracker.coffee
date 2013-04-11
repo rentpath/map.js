@@ -23,8 +23,8 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
       count = @peek('count', 0) + 1
       @save('count', count)
 
-    save: (item, value) ->
-      key = @key()
+    save: (item, value, type) ->
+      key = @key(type)
       prefill_data = utils.getPageInfo(key)
 
       record = _read(key, prefill_data)
@@ -33,8 +33,8 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
 
       record
 
-    peek: (item, not_found=0) ->
-      v = _read(@key())
+    peek: (item, not_found=0, type) ->
+      v = _read(@key(type))
       if v[item]? then v[item] else not_found
 
     number_of_visits: -> @peek('count')

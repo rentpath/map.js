@@ -44,21 +44,21 @@
         count = this.peek('count', 0) + 1;
         return this.save('count', count);
       },
-      save: function(item, value) {
+      save: function(item, value, type) {
         var key, prefill_data, record;
-        key = this.key();
+        key = this.key(type);
         prefill_data = utils.getPageInfo(key);
         record = _read(key, prefill_data);
         record[item] = value;
         _write(key, record);
         return record;
       },
-      peek: function(item, not_found) {
+      peek: function(item, not_found, type) {
         var v;
         if (not_found == null) {
           not_found = 0;
         }
-        v = _read(this.key());
+        v = _read(this.key(type));
         if (v[item] != null) {
           return v[item];
         } else {
