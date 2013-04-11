@@ -1,5 +1,7 @@
 describe("Tracker Suite", function() {
-  var tracker, key;
+  var tracker, key, path, path_and_query;
+  key = path = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/";
+  path_and_query = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/?&sort=ratings-desc&page=1";
 
   var checkStorage = function(field) {
     var item = JSON.parse(localStorage.getItem(key));
@@ -10,17 +12,17 @@ describe("Tracker Suite", function() {
 
   beforeEach(function() {
     var ready = false;
-    var key = "/apartments/Alaska/Yakutat/";
 
     require(['jquery', '../../tracker'], function($, localTracker) {
 
       $('head').append('<meta class="pageInfo" content="search" name="type">');
       $('head').append('<meta class="pageInfo" content="city" name="searchType">');
       $('head').append('<meta class="pageInfo" content="1z141xt,1z141xu,4lt" name="nodes">');
+      $('head').append('<meta class="pageInfo" content="1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt" name="refinements">');
 
       tracker = localTracker;
 
-      tracker.key = function() { key };
+      tracker.path = function() { return path };
 
       ready = true;
     });
@@ -31,6 +33,15 @@ describe("Tracker Suite", function() {
   });
 
   describe("Public Module Functions", function() {
+    describe("#key", function() {
+      it("should return the refined search path by default", function() {
+        expect(tracker.key()).toEqual('/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/')
+      });
+      it("should return the base search path", function() {
+        expect(tracker.key("base")).toEqual('/apartments/Alaska/Yakutat/')
+      });
+    });
+
     describe("#track", function() {
       localStorage.clear();
 
@@ -118,7 +129,6 @@ describe("Tracker Suite", function() {
         expect(tracker.number_of_refinements()).toEqual(3);
       });
     });
-
 
     describe("#type", function() {
       it('should return an empty string for a missing field', function () {

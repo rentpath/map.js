@@ -17,8 +17,24 @@
       return value;
     };
     return {
-      key: function() {
+      path: function() {
         return window.location.pathname;
+      },
+      path_and_query: function() {
+        return window.location.pathname + window.location.search;
+      },
+      key: function(type) {
+        var refinements;
+        if (type == null) {
+          type = "refined";
+        }
+        switch (type) {
+          case "refined":
+            return this.path();
+          case "base":
+            refinements = $("head meta[name='refinements']").attr('content') || "";
+            return this.path().split(refinements).shift();
+        }
       },
       track: function() {
         var count;

@@ -8,8 +8,16 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
     value
 
   return {
-    key: ->
-      window.location.pathname
+    path: -> window.location.pathname
+
+    path_and_query: -> window.location.pathname + window.location.search
+
+    key: (type="refined") ->
+      switch type
+        when "refined" then @path()
+        when "base"
+          refinements = $("head meta[name='refinements']").attr('content') || ""
+          @path().split(refinements).shift()
 
     track: ->
       count = @peek('count', 0) + 1
@@ -38,5 +46,4 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
     type: -> @peek('type', '')
 
     searchType: -> @peek('searchType', '')
-
   }
