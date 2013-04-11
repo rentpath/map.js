@@ -3,13 +3,16 @@
 
   define(['jquery', 'primedia_events', 'utils'], function($, events, utils) {
     var _read, _write;
-    _read = function(key) {
+    _read = function(key, not_found) {
       var data;
+      if (not_found == null) {
+        not_found = {};
+      }
       data = localStorage.getItem(key);
       if (data != null) {
         return JSON.parse(data);
       } else {
-        return null;
+        return not_found;
       }
     };
     _write = function(key, value) {
@@ -42,10 +45,10 @@
         return this.save('count', count);
       },
       save: function(item, value) {
-        var data, key, record;
+        var key, prefill_data, record;
         key = this.key();
-        data = utils.getPageInfo(key);
-        record = _read(key) || data;
+        prefill_data = utils.getPageInfo(key);
+        record = _read(key, prefill_data);
         record[item] = value;
         _write(key, record);
         return record;
@@ -55,7 +58,7 @@
         if (not_found == null) {
           not_found = 0;
         }
-        v = _read(this.key()) || {};
+        v = _read(this.key());
         if (v[item] != null) {
           return v[item];
         } else {

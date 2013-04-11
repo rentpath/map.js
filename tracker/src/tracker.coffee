@@ -1,7 +1,7 @@
 define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
-  _read = (key) ->
+  _read = (key, not_found={}) ->
     data = localStorage.getItem(key)
-    if data? then JSON.parse(data) else null
+    if data? then JSON.parse(data) else not_found
 
   _write = (key, value) ->
     localStorage.setItem(key, JSON.stringify(value))
@@ -25,16 +25,16 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
 
     save: (item, value) ->
       key = @key()
-      data = utils.getPageInfo(key)
+      prefill_data = utils.getPageInfo(key)
 
-      record = _read(key) || data
+      record = _read(key, prefill_data)
       record[item] = value
       _write key, record
 
       record
 
     peek: (item, not_found=0) ->
-      v = _read(@key()) || {}
+      v = _read(@key())
       if v[item]? then v[item] else not_found
 
     number_of_visits: -> @peek('count')
