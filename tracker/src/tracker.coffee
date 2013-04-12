@@ -34,8 +34,8 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
       record
 
     peek: (item, not_found=0, type) ->
-      v = _read(@key(type))
-      if v[item]? then v[item] else not_found
+      record = _read(@key(type))
+      if record[item]? then record[item] else not_found
 
     number_of_visits: -> @peek('count')
 

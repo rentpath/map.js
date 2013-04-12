@@ -55,13 +55,13 @@
         return record;
       },
       peek: function(item, not_found, type) {
-        var v;
+        var record;
         if (not_found == null) {
           not_found = 0;
         }
-        v = _read(this.key(type));
-        if (v[item] != null) {
-          return v[item];
+        record = _read(this.key(type));
+        if (record[item] != null) {
+          return record[item];
         } else {
           return not_found;
         }

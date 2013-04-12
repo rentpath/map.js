@@ -1,5 +1,6 @@
 describe("Tracker Suite", function() {
   var tracker, backupTracker, key, base, path, path_and_query;
+
   base = "/apartments/Alaska/Yakutat/";
   key = path = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/";
   path_and_query = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/?&sort=ratings-desc&page=1";
@@ -28,10 +29,10 @@ describe("Tracker Suite", function() {
 
       tracker = localTracker;
 
+      tracker.path = function() { return path };
+
       backupTracker = { path: tracker.path,
                         path_refinements: tracker.path_refinements};
-
-      tracker.path = function() { return path };
 
       ready = true;
     });
