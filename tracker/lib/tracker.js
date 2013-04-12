@@ -26,8 +26,10 @@
       path_and_query: function() {
         return window.location.pathname + window.location.search;
       },
+      path_refinements: function() {
+        return $("head meta[name='refinements']").attr('content') || null;
+      },
       key: function(type) {
-        var refinements;
         if (type == null) {
           type = "refined";
         }
@@ -35,8 +37,7 @@
           case "refined":
             return this.path();
           case "base":
-            refinements = $("head meta[name='refinements']").attr('content') || "";
-            return this.path().split(refinements).shift();
+            return this.path().split(this.path_refinements()).shift();
         }
       },
       track: function() {
@@ -54,13 +55,13 @@
         return record;
       },
       peek: function(item, not_found, type) {
-        var v;
+        var record;
         if (not_found == null) {
           not_found = 0;
         }
-        v = _read(this.key(type));
-        if (v[item] != null) {
-          return v[item];
+        record = _read(this.key(type));
+        if (record[item] != null) {
+          return record[item];
         } else {
           return not_found;
         }

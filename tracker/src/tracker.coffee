@@ -12,12 +12,12 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
 
     path_and_query: -> window.location.pathname + window.location.search
 
+    path_refinements: -> $("head meta[name='refinements']").attr('content') || null
+
     key: (type="refined") ->
       switch type
         when "refined" then @path()
-        when "base"
-          refinements = $("head meta[name='refinements']").attr('content') || ""
-          @path().split(refinements).shift()
+        when "base" then @path().split(@path_refinements()).shift()
 
     track: ->
       count = @peek('count', 0) + 1
@@ -34,8 +34,8 @@ define ['jquery', 'primedia_events', 'utils'], ($, events, utils) ->
       record
 
     peek: (item, not_found=0, type) ->
-      v = _read(@key(type))
-      if v[item]? then v[item] else not_found
+      record = _read(@key(type))
+      if record[item]? then record[item] else not_found
 
     number_of_visits: -> @peek('count')
 
