@@ -42,9 +42,17 @@ describe("Tracker Suite", function() {
       it("should return the base search path", function() {
         expect(tracker.key("base")).toEqual('/apartments/Alaska/Yakutat/')
       });
-      it("should return the base search path regardless of whether there are refinements gto strip", function() {
+      it("should return the base search path regardless of whether there are refinements to strip", function() {
+        var _path_refinements = tracker.path_refinements;
+        var _path = tracker.path;
+
         tracker.path = function() { return base };
+        tracker.path_refinements = function() { return null };
+
         expect(tracker.key("base")).toEqual('/apartments/Alaska/Yakutat/')
+
+        tracker.path_refinements = _path_refinements;
+        tracker.path = _path;
       });
     });
 

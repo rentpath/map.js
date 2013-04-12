@@ -26,8 +26,10 @@
       path_and_query: function() {
         return window.location.pathname + window.location.search;
       },
+      path_refinements: function() {
+        return $("head meta[name='refinements']").attr('content') || null;
+      },
       key: function(type) {
-        var refinements;
         if (type == null) {
           type = "refined";
         }
@@ -35,8 +37,7 @@
           case "refined":
             return this.path();
           case "base":
-            refinements = $("head meta[name='refinements']").attr('content') || "";
-            return this.path().split(refinements).shift();
+            return this.path().split(this.path_refinements()).shift();
         }
       },
       track: function() {
