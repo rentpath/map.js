@@ -1,5 +1,5 @@
 describe("Tracker Suite", function() {
-  var tracker, key, base, path, path_and_query;
+  var tracker, backupTracker, key, base, path, path_and_query;
   base = "/apartments/Alaska/Yakutat/";
   key = path = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/";
   path_and_query = "/apartments/Alaska/Yakutat/1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt/?&sort=ratings-desc&page=1";
@@ -11,6 +11,10 @@ describe("Tracker Suite", function() {
     return item;
   };
 
+  var resetTracker = function() {
+    tracker.path = backupTracker.path;
+    tracker.path_refinements = backupTracker.path_refinements;
+  };
 
   beforeEach(function() {
     var ready = false;
@@ -23,6 +27,9 @@ describe("Tracker Suite", function() {
       $('head').append('<meta class="pageInfo" content="1-beds-1-baths-1-star-rating-1z141xt+1z141xu+4lt" name="refinements">');
 
       tracker = localTracker;
+
+      backupTracker = { path: tracker.path,
+                        path_refinements: tracker.path_refinements};
 
       tracker.path = function() { return path };
 
@@ -43,16 +50,12 @@ describe("Tracker Suite", function() {
         expect(tracker.key("base")).toEqual('/apartments/Alaska/Yakutat/')
       });
       it("should return the base search path regardless of whether there are refinements to strip", function() {
-        var _path_refinements = tracker.path_refinements;
-        var _path = tracker.path;
-
         tracker.path = function() { return base };
         tracker.path_refinements = function() { return null };
 
         expect(tracker.key("base")).toEqual('/apartments/Alaska/Yakutat/')
 
-        tracker.path_refinements = _path_refinements;
-        tracker.path = _path;
+        resetTracker();
       });
     });
 
