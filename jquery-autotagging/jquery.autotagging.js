@@ -190,6 +190,9 @@
           _this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
           if (_this.lastLinkClicked != null) {
             lastLinkRedirect = function(e) {
+              if (!((_this.lastLinkClicked != null) && (_this.lastLinkClicked.indexOf != null))) {
+                return;
+              }
               if (_this.lastLinkClicked.indexOf('javascript:') === -1) {
                 return document.location = _this.lastLinkClicked;
               }

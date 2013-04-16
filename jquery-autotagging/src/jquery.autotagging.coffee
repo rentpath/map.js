@@ -136,6 +136,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
         if @lastLinkClicked?
           lastLinkRedirect = (e) =>
+            return unless @lastLinkClicked? && @lastLinkClicked.indexOf?
             # ignore obtrusive JS in an href attribute
             document.location = @lastLinkClicked if @lastLinkClicked.indexOf('javascript:') == -1
 
