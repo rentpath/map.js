@@ -72,6 +72,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
           xhr.setRequestHeader "Accept", "application/json"
         success: (data) =>
           if data['redirectUrl'] # IE8 XDR Fallback
+            @_stayOrLeave $form
             $("#zutron_login_form, #zutron_registration").prm_dialog_close()
             @_setSessionType()
             events.trigger('event/emailRegistrationSuccess', data)
@@ -92,6 +93,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
           xhr.setRequestHeader "Accept", "application/json"
         success: (data) =>
           if data['redirectUrl'] # IE8 XDR Fallback
+            @_stayOrLeave $form
             $("#zutron_login_form, #zutron_registration").prm_dialog_close()
             @_setSessionType()
             events.trigger('event/loginSuccess', data)
@@ -240,15 +242,18 @@ define ['jquery', 'primedia_events'], ($, events) ->
 
     _bindSocialLink: ($link, url, $div) ->
       $link.on "click", =>
-        staySignedIn = $div.find('input[type="checkbox"]').attr('checked')
-        if staySignedIn
-          options =
-            path: "/"
-            domain: window.location.host
-          $.cookie "stay", "true", options
-        else
-          @expireCookie "sgn"
+        @_stayOrLeave $div
         @_redirectTo url
+
+    _stayOrLeave: ($form) ->
+      staySignedIn = $form.find('input[type="checkbox"]').attr('checked')
+      if staySignedIn
+        options =
+          path: "/",
+          domain: window.location.host
+        $.cookie "stay", "true", options
+      else
+        @expireCookie "sgn"
 
     _logOut: (e) ->
       e.preventDefault()

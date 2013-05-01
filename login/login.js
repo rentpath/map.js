@@ -37,6 +37,7 @@
 
       Login.prototype.toggleRegistrationDiv = function($div) {
         var _this = this;
+
         if (!this.my.session) {
           this.wireupSocialLinks($div.show());
           return $.each(this.my.popupTypes, function(type) {
@@ -47,6 +48,7 @@
 
       Login.prototype.expireCookie = function(cookie) {
         var options;
+
         if (cookie) {
           options = {
             expires: new Date(1),
@@ -77,6 +79,7 @@
 
       Login.prototype._enableLoginRegistration = function() {
         var _this = this;
+
         $('#zutron_register_form form').submit(function(e) {
           return _this._submitEmailRegistration($(e.target));
         });
@@ -96,6 +99,7 @@
 
       Login.prototype._submitEmailRegistration = function($form) {
         var _this = this;
+
         this._setHiddenValues($form);
         return $.ajax({
           type: 'POST',
@@ -107,6 +111,7 @@
           },
           success: function(data) {
             if (data['redirectUrl']) {
+              _this._stayOrLeave($form);
               $("#zutron_login_form, #zutron_registration").prm_dialog_close();
               _this._setSessionType();
               events.trigger('event/emailRegistrationSuccess', data);
@@ -123,6 +128,7 @@
 
       Login.prototype._submitLogin = function($form) {
         var _this = this;
+
         this._setHiddenValues($form);
         return $.ajax({
           type: "POST",
@@ -134,6 +140,7 @@
           },
           success: function(data) {
             if (data['redirectUrl']) {
+              _this._stayOrLeave($form);
               $("#zutron_login_form, #zutron_registration").prm_dialog_close();
               _this._setSessionType();
               events.trigger('event/loginSuccess', data);
@@ -151,6 +158,7 @@
       Login.prototype._submitChangeEmail = function($form) {
         var new_email,
           _this = this;
+
         new_email = {
           email: $('input[name="new_email"]').val(),
           email_confirmation: $('input[name="new_email_confirm"]').val()
@@ -166,6 +174,7 @@
           },
           success: function(data) {
             var error;
+
             if ((data != null) && data.error) {
               error = {
                 'email': data.error
@@ -184,6 +193,7 @@
 
       Login.prototype._submitPasswordReset = function($form) {
         var _this = this;
+
         return $.ajax({
           type: 'POST',
           data: $form.serialize(),
@@ -194,6 +204,7 @@
           },
           success: function(data) {
             var error;
+
             if (data.error) {
               error = {
                 'email': data.error
@@ -213,6 +224,7 @@
 
       Login.prototype._submitPasswordConfirm = function($form) {
         var _this = this;
+
         return $.ajax({
           type: 'POST',
           data: $form.serialize(),
@@ -223,6 +235,7 @@
           },
           success: function(data) {
             var error;
+
             if ((data != null) && data.error) {
               error = {
                 'password': data.error
@@ -243,6 +256,7 @@
 
       Login.prototype._clearInputs = function(formID) {
         var $inputs, $labels;
+
         $inputs = $(formID + ' input[type="email"]').add($(formID + ' input[type="password"]'));
         $labels = $("#z_form_labels label");
         return $inputs.each(function(index, elem) {
@@ -270,6 +284,7 @@
       Login.prototype._generateErrors = function(error, $box, eventName) {
         var $form, messages,
           _this = this;
+
         events.trigger('event/' + eventName, error);
         this._clearErrors($box.parent());
         messages = '';
@@ -277,6 +292,7 @@
           $form = $box.parent().find('form');
           $.each(error, function(key, value) {
             var formattedError;
+
             $form.find("#" + key).parent('p').addClass('error');
             formattedError = _this._formatError(key, value);
             messages += "<li>" + formattedError + "</li>";
@@ -320,6 +336,7 @@
 
       Login.prototype._toggleLogIn = function() {
         var $changeLink, $logLink, $regLink;
+
         $regLink = $("a.register");
         $logLink = $("a.login");
         $changeLink = $('a.account');
@@ -338,6 +355,7 @@
       Login.prototype._bindForms = function(type) {
         var formID,
           _this = this;
+
         formID = "#zutron_" + type + "_form";
         if (this.MOBILE && $(formID).is(':visible')) {
           this.wireupSocialLinks($(formID));
@@ -366,25 +384,32 @@
 
       Login.prototype._bindSocialLink = function($link, url, $div) {
         var _this = this;
+
         return $link.on("click", function() {
-          var options, staySignedIn;
-          staySignedIn = $div.find('input[type="checkbox"]').attr('checked');
-          if (staySignedIn) {
-            options = {
-              path: "/",
-              domain: window.location.host
-            };
-            $.cookie("stay", "true", options);
-          } else {
-            _this.expireCookie("sgn");
-          }
+          _this._stayOrLeave($div);
           return _this._redirectTo(url);
         });
+      };
+
+      Login.prototype._stayOrLeave = function($form) {
+        var options, staySignedIn;
+
+        staySignedIn = $form.find('input[type="checkbox"]').attr('checked');
+        if (staySignedIn) {
+          options = {
+            path: "/",
+            domain: window.location.host
+          };
+          return $.cookie("stay", "true", options);
+        } else {
+          return this.expireCookie("sgn");
+        }
       };
 
       Login.prototype._logOut = function(e) {
         var all_cookies,
           _this = this;
+
         e.preventDefault();
         all_cookies = ["provider", "sgn", "zid", "z_type_email"];
         $.each(all_cookies, function(index, cookie) {
@@ -395,6 +420,7 @@
 
       Login.prototype._redirectTo = function(url) {
         var _this = this;
+
         return $.ajax({
           type: "get",
           url: zutron_host + "/ops/heartbeat/riak",
@@ -417,10 +443,12 @@
       Login.prototype._determineClient = function() {
         var clients,
           _this = this;
+
         if (this.my.currentUrl.indexOf('client') > 0) {
           clients = ["iOS", "android"];
           return $.each(clients, function(client) {
             var myClient;
+
             myClient = _this.my.currentUrl.substring(_this.my.currentUrl.indexOf('client'), location.href.length);
             myClient = myClient.split("=")[1].toLowerCase();
             return _this._createAppButton(myClient);
@@ -432,6 +460,7 @@
 
       Login.prototype._createAppButton = function(client) {
         var btn, launchUrl;
+
         if (client) {
           launchUrl = "com.primedia.Apartments://settings";
         }
