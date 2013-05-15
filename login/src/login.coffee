@@ -212,11 +212,12 @@ define ['jquery', 'primedia_events'], ($, events) ->
       $changeLink = $('a.account')
       if @my.session
         $regLink.parent().addClass 'hidden'
-        $logLink.addClass("logout").removeClass("login").text 'Log Out'
+        $logLink.addClass("logout").removeClass("login")
+        $('.link_text',$logLink).text('Log Out')
         $changeLink.parent().removeClass 'hidden' if $.cookie 'z_type_email'
       else
         $regLink.parent().removeClass 'hidden'
-        $logLink.addClass("login").text 'Log In'
+        $('a.logout .link_text').text('Log In')
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"
