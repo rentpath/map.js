@@ -343,13 +343,14 @@
         $changeLink = $('a.account');
         if (this.my.session) {
           $regLink.parent().addClass('hidden');
-          $logLink.addClass("logout").removeClass("login").text('Log Out');
+          $logLink.addClass("logout").removeClass("login");
+          $('.link_text', $logLink).text('Log Out');
           if ($.cookie('z_type_email')) {
             return $changeLink.parent().removeClass('hidden');
           }
         } else {
           $regLink.parent().removeClass('hidden');
-          return $logLink.addClass("login").text('Log In');
+          return $('a.logout .link_text').text('Log In');
         }
       };
 
