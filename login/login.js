@@ -17,7 +17,7 @@
           zid: $.cookie('zid'),
           session: $.cookie("sgn") === "temp" || $.cookie("sgn") === "perm",
           currentUrl: window.location.href,
-          popupTypes: ["login", "register", "account", "reset", "confirm"]
+          popupTypes: ["login", "register", "account", "reset", "confirm", "success"]
         };
         $(document).ready(function() {
           $('body').bind('new_zid_obtained', function() {
@@ -61,6 +61,7 @@
 
       Login.prototype.wireupSocialLinks = function($div) {
         var baseUrl, fbLink, googleLink, twitterLink;
+
         baseUrl = "" + zutron_host + "?zid_id=" + this.my.zid + "&referrer=" + (encodeURIComponent(this.my.currentUrl)) + "&technique=";
         fbLink = $div.find("a.icon_facebook48");
         twitterLink = $div.find("a.icon_twitter48");
@@ -182,7 +183,8 @@
               return _this._generateErrors(error, $form.parent().find(".errors", 'changeEmailSuccessError'));
             } else {
               events.trigger('event/changeEmailSuccess', data);
-              return $('#zutron_account_form').prm_dialog_close();
+              $('#zutron_account_form').prm_dialog_close();
+              return _this._triggerModal($("#zutron_success_form"));
             }
           },
           error: function(errors) {

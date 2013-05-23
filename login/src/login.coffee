@@ -7,7 +7,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
         zid: $.cookie 'zid'
         session: $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
         currentUrl: window.location.href
-        popupTypes: ["login", "register", "account", "reset", "confirm"]
+        popupTypes: ["login", "register", "account", "reset", "confirm", "success"]
 
       $(document).ready =>
         $('body').bind 'new_zid_obtained', =>
@@ -122,6 +122,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
             else
               events.trigger('event/changeEmailSuccess', data)
               $('#zutron_account_form').prm_dialog_close()
+              @_triggerModal $("#zutron_success_form")
           error: (errors) =>
             @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors", 'changeEmailError'
 
