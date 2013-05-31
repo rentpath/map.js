@@ -177,7 +177,8 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     # we are putting the tags ina predefined order before firing.  This will have
     # a performance hit - mocked in jsfiddle
     sort_order_array:  ["site" , "site_version","firstvisit","tu","cg","listingid","dpg","type"
-                        ,"sg","item","value","spg","lpp","path","logged_in","ft"]
+                        ,"sg","item","value","ssSiteName","ssTestName","ssVariationGroupName"
+                        ,"spg","lpp","path","logged_in","ft"]
     setTagOrder: (obj) ->
       prop_key_array = []
       result_array = []
