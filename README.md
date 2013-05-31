@@ -19,5 +19,10 @@ git checkout foo
 git checkout -B some_feature_branch_name
 ````
 
-Any changes made to a package must be noted by bumping the version in the `package.json` in accordance with [semantic versioning](http://semver.org) on the package's branch (not in the master branch!).
+Any changes made to a package must be noted by bumping the version in the `package.json` in accordance with [semantic versioning](http://semver.org) on the package's branch (not in the master branch!). If checking out the package's branch doesn't work using 'git checkout [package name], then do the following:
+
+````
+git checkout --track -b [package name] origin/[package name]
+````
+
 Then the branch can be merged into master, tagged, and the package published to the Jam server as documented in [JAM.md](https://github.com/primedia/idg/blob/master/JAM.md).
