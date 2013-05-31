@@ -74,82 +74,88 @@ define(['jquery'], function ($) {
 
         };
 
-        function setup_bindings() {
-            $("select#moving_lead_MovingFrom_state").bind("change",
-                function () {
-                    load_cities($("select#moving_lead_MovingFrom_state").val(), $("select#moving_lead_MovingFrom_city"));
-                }).trigger('change');
-
-            $("select#moving_lead_MovingTo_state").bind("change",
-                function () {
-                    load_cities($("select#moving_lead_MovingTo_state").val(), $("select#moving_lead_MovingTo_city"));
-                }).trigger('change');
-
-            $("select#moving_lead_MovingTo_city").bind("change",
-                function () {
-                    load_zips($("select#moving_lead_MovingTo_city").val(), $("select#moving_lead_MovingTo_state").val(), $("select#moving_lead_MovingTo_zip"));
-                }).trigger('change');
-
-            $("select#moving_lead_MovingFrom_city").bind("change",
-                function () {
-                    load_zips($("select#moving_lead_MovingFrom_city").val(), $("select#moving_lead_MovingFrom_state").val(), $("select#moving_lead_MovingFrom_zip"));
-                }).trigger('change');
-        }
-
-        function load_cities(state, target, callback) {
-            if (state) {
-                // get the selected value
-                var current_city = target.val();
-                $.getJSON("/v1/moving_lead/get_cities/" + escape(state), function (json) {
-                    parse_and_inject_results(json, target, current_city);
-                    if (callback) {
-                        callback();
-                    }
-                });
-            }
-        }
-
-        function load_zips(city, state, target) {
-            if (city) {
-                var current_zip = target.val();
-                $.getJSON("/v1/moving_lead/get_zipcodes/" + escape(state) + "/" + escape(city), function (json) {
-                    parse_and_inject_results(json, target, current_zip);
-                });
-            }
-        }
-
-        function load_cities_and_zips(city, state, target) {
-            var city_select = target.find("label:contains('City')").next();
-            var state_code = state_code_from_name(state);
-            if (city) {
-                load_cities(state_code, city_select, function () {
-                    city_select.val(city);
-                    load_zips(city, state_code, target.find("label:contains('Zip')").next());
-                });
-            } else {
-                load_cities(state_code, city_select);
-            }
-        }
-
-        function parse_and_inject_results(json, target, current) {
-            var data = json;
-            var html = ['<option value="">Please select</option>'];
-            var selected;
-
-            for (var i = 0, len = data.length; i < len; i++) {
-                selected = (data[i].toLowerCase().replace(' ', '') == current.toLowerCase().replace(' ', '') ? ' selected="selected" ' : '');
-                html.push('<option value="' + data[i] + '" ' + selected + '>' + data[i] + '</option>');
-            }
-            target.html(html.join(''));
-        }
-
-        function state_code_from_name(name) {
-            return $("select#moving_lead_MovingTo_state").find('option').filter(
-                function () {
-                    return (new RegExp('^' + name + '$')).test($(this).text());
-                }).attr('value');
-        }
     })(jQuery);
 
+    function setup_bindings() {
+        $("select#moving_lead_MovingFrom_state").bind("change",
+            function () {
+                load_cities($("select#moving_lead_MovingFrom_state").val(), $("select#moving_lead_MovingFrom_city"));
+            }).trigger('change');
+
+        $("select#moving_lead_MovingTo_state").bind("change",
+            function () {
+                load_cities($("select#moving_lead_MovingTo_state").val(), $("select#moving_lead_MovingTo_city"));
+            }).trigger('change');
+
+        $("select#moving_lead_MovingTo_city").bind("change",
+            function () {
+                load_zips($("select#moving_lead_MovingTo_city").val(), $("select#moving_lead_MovingTo_state").val(), $("select#moving_lead_MovingTo_zip"));
+            }).trigger('change');
+
+        $("select#moving_lead_MovingFrom_city").bind("change",
+            function () {
+                load_zips($("select#moving_lead_MovingFrom_city").val(), $("select#moving_lead_MovingFrom_state").val(), $("select#moving_lead_MovingFrom_zip"));
+            }).trigger('change');
+    }
+
+    function load_cities(state, target, callback) {
+        if (state) {
+            // get the selected value
+            var current_city = target.val();
+            $.getJSON("/v1/moving_lead/get_cities/" + escape(state), function (json) {
+                parse_and_inject_results(json, target, current_city);
+                if (callback) {
+                    callback();
+                }
+            });
+        }
+    }
+
+    function load_zips(city, state, target) {
+        if (city) {
+            var current_zip = target.val();
+            $.getJSON("/v1/moving_lead/get_zipcodes/" + escape(state) + "/" + escape(city), function (json) {
+                parse_and_inject_results(json, target, current_zip);
+            });
+        }
+    }
+
+    function load_cities_and_zips(city, state, target) {
+        var city_select = target.find("label:contains('City')").next();
+        var state_code = state_code_from_name(state);
+        if (city) {
+            load_cities(state_code, city_select, function () {
+                city_select.val(city);
+                load_zips(city, state_code, target.find("label:contains('Zip')").next());
+            });
+        } else {
+            load_cities(state_code, city_select);
+        }
+    }
+
+    function parse_and_inject_results(json, target, current) {
+        var data = json;
+        var html = ['<option value="">Please select</option>'];
+        var selected;
+
+        for (var i = 0, len = data.length; i < len; i++) {
+            selected = (data[i].toLowerCase().replace(' ', '') == current.toLowerCase().replace(' ', '') ? ' selected="selected" ' : '');
+            html.push('<option value="' + data[i] + '" ' + selected + '>' + data[i] + '</option>');
+        }
+        target.html(html.join(''));
+    }
+
+    function state_code_from_name(name) {
+        return $("select#moving_lead_MovingTo_state").find('option').filter(
+            function () {
+                return (new RegExp('^' + name + '$')).test($(this).text());
+            }).attr('value');
+    }
+
+    return {
+        load_cities_and_zips: load_cities_and_zips,
+        load_cities:          load_cities,
+        load_zips:            load_zips
+    };
 });
 /* 2012-04-26 11:13:21 -0400 */
