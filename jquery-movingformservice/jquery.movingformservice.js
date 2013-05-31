@@ -138,8 +138,9 @@ define(['jquery'], function ($) {
         var html = ['<option value="">Please select</option>'];
         var selected;
 
+        current = current && current.toLowerCase().replace(' ', '');
         for (var i = 0, len = data.length; i < len; i++) {
-            selected = (data[i].toLowerCase().replace(' ', '') == current.toLowerCase().replace(' ', '') ? ' selected="selected" ' : '');
+            selected = (data[i].toLowerCase().replace(' ', '') == current ? ' selected="selected" ' : '');
             html.push('<option value="' + data[i] + '" ' + selected + '>' + data[i] + '</option>');
         }
         target.html(html.join(''));
