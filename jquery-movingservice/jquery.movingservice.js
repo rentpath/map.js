@@ -1,5 +1,4 @@
 define(['jquery', 'jquery-movingformservice'],function ($, movingFormService) {
-
     $.fn.getLeadForm = function (input_button) { //TODO: I SHOULD NOT BE A PLUGIN -BNS
         try {
             var lead_form = $(this);
@@ -29,7 +28,7 @@ define(['jquery', 'jquery-movingformservice'],function ($, movingFormService) {
                         }
 
                         if (!city_to_selector.val()) {
-                            load_cities_and_zips(city, state, $('#moving_to_row'));
+                            movingFormService.load_cities_and_zips(city, state, $('#moving_to_row'));
                         }
                     } else {
                         state_from_selector.change();
