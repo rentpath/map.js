@@ -5,7 +5,7 @@ define(['jquery'], function ($) {
             var Slide = {
                 sliders:{},
                 loaded:[],
-                image_width:140,
+                image_width:$(this).width(),
 
                 store_info:function (anchor_id, image_paths, href_val, result_id) {
 
@@ -35,7 +35,7 @@ define(['jquery'], function ($) {
                             slide_tag += "href='" + href_val + "'>";
                             slide_tag += "<img ";
                             slide_tag += "src='http://image.apartmentguide.com" + this;
-                            slide_tag += "' width='140px'";
+                            slide_tag += "' width='" + Slide.image_width + "px'";
                             slide_tag += " height='105px'";
                             slide_tag += ">";
                             slide_tag += "</a>";
@@ -50,7 +50,7 @@ define(['jquery'], function ($) {
                                 if (rightHotSpot.width() - Math.abs(rightHotSpot.position().left) > Slide.image_width) {
                                     process = true;
                                     rightHotSpot.animate({
-                                        right: '+=140px'
+                                        right: '+=' + Slide.image_width + 'px'
                                     }, 400, function () {
                                         var image_num = parseInt((Math.abs(rightHotSpot.position().left) / Slide.image_width + 1), 10),
                                             image_total = rightHotSpot.width() / Slide.image_width,
@@ -68,7 +68,7 @@ define(['jquery'], function ($) {
                                 if (leftHotSpot.position().left < 0) {
                                     process = true;
                                     leftHotSpot.animate({
-                                        right:'-=140px'
+                                        right:'-=' + Slide.image_width + 'px'
                                     }, 400, function () {
                                         var image_num = parseInt((Math.abs(leftHotSpot.position().left) / Slide.image_width + 1), 10),
                                             image_total = leftHotSpot.width() / Slide.image_width,
