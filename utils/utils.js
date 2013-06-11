@@ -486,6 +486,7 @@ define(['jquery', 'underscore'], function ($, _) {
   };
 
   (function() {
+    $('body').off('click', 'a.new_window'); // Band-aid to avoid double binding from other util.js
     $('body').on('click', 'a.new_window', function(e) {
       var url = $(this).attr("href");
       if (url) {
