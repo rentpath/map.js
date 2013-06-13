@@ -2,7 +2,7 @@
   "name": "jquery-autocomplete",
   "version": "0.0.2",
   "description": "jquery-autocomplete plugin",
-  "homepage": "httsp://github.com/dyve/jquery-autocomplete",
+  "homepage": "https://github.com/dyve/jquery-autocomplete",
   "jam": {
     "dependencies": {
       "jquery": null
