@@ -1,8 +1,8 @@
 {
   "name": "jquery-autocomplete",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "jquery-autocomplete plugin",
-  "homepage": "https://github.com/primedia/preserves",
+  "homepage": "httsp://github.com/dyve/jquery-autocomplete",
   "jam": {
     "dependencies": {
       "jquery": null
@@ -13,7 +13,7 @@
     ]
   },
   "author": {
-    "name": "Primedia"
+    "name": "Dylan Verheul"
   },
   "repositories": [
     {
