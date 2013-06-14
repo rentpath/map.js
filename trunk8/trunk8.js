@@ -173,7 +173,10 @@
         if ((typeof str !== 'string') || (length === 0)) {
           $.error('Invalid source string "' + str + '".');
         }
-        if ((bite_size < 0) || (bite_size > length)) {
+        if (bite_size < 0) {
+          bite_size = 0;
+        }
+        if (bite_size > length) {
           $.error('Invalid bite size "' + bite_size + '".');
         }
         else if (bite_size === 0) {
