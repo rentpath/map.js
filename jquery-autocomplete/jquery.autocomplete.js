@@ -98,8 +98,8 @@ define(['jquery'],function($){
             value = result[0];
             data = result.slice(1);
         } else if (type === 'object') {
-            value = result.value;
-            data = result.data;
+            value = result.name;
+            data = result;
         }
         value = String(value);
         if (typeof data !== 'object') {
@@ -824,7 +824,7 @@ define(['jquery'],function($){
     $.Autocompleter.prototype.createItemFromResult = function(result) {
         var self = this;
         var $li = $('<li/>');
-        $li.html(this.showResult(result.value, result.data));
+        $li.html(this.showResult(result.value));
         $li.data({value: result.value, data: result.data})
             .click(function() {
                 self.selectItem($li);
