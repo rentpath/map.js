@@ -4,9 +4,7 @@ define(['jquery'], function ($) {
         $.fn.lead_service = function(options) {
 
             var form_div = $(this);
-            /**
-           * show/hide bed bath fields before handing control over
-           */
+            // show/hide bed bath fields before handing control over
             var pre_update_form = function() {
 
                 $(".lead_ef_id").val($.cookie('ef_id'));
@@ -215,17 +213,16 @@ define(['jquery'], function ($) {
                 var caller = $(this);
                 if (this.beenSubmitted) return false;
                 this.beenSubmitted = true;
-                var status = 'epic fail';
+                var status = 'fail';
                 $.ajax({
                     url: '/v2/leads/ajax.js',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
-						status = 'success';
+                        status = 'success';
                         opts.lead_saved();
                     },
                     error: function(req, status, err) {
-                        status = 'error';
                         var parent = caller.parent();
                         caller.replaceWith(req.responseText);
                         pre_update_form();
@@ -235,12 +232,7 @@ define(['jquery'], function ($) {
                     },
                     complete: function() {
                       if (status == 'success') {
-						$('body').trigger('lead_submission');
-                        $("<div style='display:none' />").load('/lead_success');
-                      } else if (status == 'error') {
-                        $("<div style='display:none' />").load('/lead_err');
-                      } else if (status == 'epic fail') {
-                        $("<div style='display:none' />").load('/lead_fail');
+                        $('body').trigger('lead_submission');
                       }
                     }
                 });
@@ -264,4 +256,3 @@ define(['jquery'], function ($) {
         };
     })(jQuery);
 });
-/* 2012-04-26 11:13:21 -0400 */
