@@ -3,7 +3,7 @@ preserves
 
 js source files for jam server
 
-See [JAM.md in the idg repo](https://github.com/primedia/idg/blob/master/JAM.md) for instructions on setup and creating a package.
+See [JAM.md in the idg wiki](https://github.com/primedia/idg/wiki/Jam-Installation-and-Setup) for instructions on setup and creating a package.
 
 When creating a new package, checkout the `template` branch and create a branch named the same as your new package off of it:
 
@@ -25,4 +25,4 @@ Any changes made to a package must be noted by bumping the version in the `packa
 git checkout --track -b [package name] origin/[package name]
 ````
 
-Then the branch can be merged into master, tagged, and the package published to the Jam server as documented in [JAM.md](https://github.com/primedia/idg/blob/master/JAM.md).
+Then the branch can be merged into master, tagged, and the package published to the Jam server as documented in [JAM.md](https://github.com/primedia/idg/wiki/Jam-Installation-and-Setup).
