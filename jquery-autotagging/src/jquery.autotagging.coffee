@@ -206,9 +206,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       return
 
     setCookies: ->
-      userID    = $.cookie('WHUserID')
+      userID    = $.cookie('zid') or $.cookie('WHUserID')
       sessionID = $.cookie('WHSessionID')
-      timestamp = new Date().getTime()
+      timestamp = (new Date()).getTime()
 
       unless userID
         userID = timestamp
@@ -217,7 +217,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       unless sessionID
         sessionID = timestamp
         @firstVisit = timestamp
-        $.cookie('WHSessionID', sessionID, { path: '/' })
+        thirty_minutes = new Date()
+        thirty_minutes.setTime(timestamp + (30 * 60 * 1000))
+        $.cookie('WHSessionID', sessionID, { expires: thirty_minutes, path: '/' })
 
       @sessionID = sessionID
       @userID = userID
