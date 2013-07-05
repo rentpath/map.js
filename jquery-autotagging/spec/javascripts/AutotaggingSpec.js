@@ -171,5 +171,34 @@ describe("Autotagging Suite", function() {
         expect(wh.followHref).toEqual(false);
       });
     });
+
+    describe("#determineReferrer", function() {
+      beforeEach(function() {
+        testDocument = $('<div></div>');
+        testDocument.referrer = "rawr";
+      });
+
+      it('should use document.referrer when real_referrer is undefined', function() {
+        expect(wh.determineReferrer(testDocument)).toEqual("rawr");
+      });
+
+      it('should use real_referrer', function() {
+        $.cookie('real_referrer', 'woof');
+
+        expect(wh.determineReferrer(testDocument)).toEqual("woof");
+      });
+
+      it('should use document.referrer when real_referrer is null', function() {
+        $.cookie('real_referrer', null`);
+
+        expect(wh.determineReferrer(testDocument)).toEqual("rawr");
+      });
+
+      it('should use document.referrer when real_referrer is blank', function() {
+        $.cookie('real_referrer', ''`);
+
+        expect(wh.determineReferrer(testDocument)).toEqual("rawr");
+      });
+    });
   });
 });
