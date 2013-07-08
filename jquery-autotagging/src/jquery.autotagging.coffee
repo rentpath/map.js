@@ -109,7 +109,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj.os                      = @platform.OS
       obj.browser                 = @platform.browser
       obj.ver                     = @platform.version
-      obj.ref                     = @determineReferrer(document)
+      obj.ref                     = @determineReferrer(document, window)
       obj.registration            = if $.cookie('sgn') == '1' then 1 else 0
       obj.person_id               = $.cookie('zid') if $.cookie('sgn')?
 

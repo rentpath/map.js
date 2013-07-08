@@ -182,7 +182,7 @@ describe("Autotagging Suite", function() {
         };
       });
 
-      it('should use document.referrer when use_real_referrer is true', function() {
+      it('should use real_referrer when use_real_referrer is true', function() {
         $.cookie('real_referrer', 'woof');
         testWindow.location.href = "http://www.rentpathsite.com/?use_real_referrer=true"
         expect(wh.determineReferrer(testDocument, testWindow)).toEqual("woof");
@@ -192,28 +192,6 @@ describe("Autotagging Suite", function() {
         $.cookie('real_referrer', 'woof');
         testWindow.location.href = "http://www.rentpathsite.com/?use_real_referrer=false"
         expect(wh.determineReferrer(testDocument, testWindow)).toEqual("rawr");
-      });
-
-      it('should use document.referrer when real_referrer is undefined', function() {
-        expect(wh.determineReferrer(testDocument)).toEqual("rawr");
-      });
-
-      it('should use real_referrer', function() {
-        $.cookie('real_referrer', 'woof');
-
-        expect(wh.determineReferrer(testDocument)).toEqual("woof");
-      });
-
-      it('should use document.referrer when real_referrer is null', function() {
-        $.cookie('real_referrer', null`);
-
-        expect(wh.determineReferrer(testDocument)).toEqual("rawr");
-      });
-
-      it('should use document.referrer when real_referrer is blank', function()
-        $.cookie('real_referrer', ''`);
-
-        expect(wh.determineReferrer(testDocument)).toEqual("rawr");
       });
     });
   });

@@ -152,7 +152,7 @@
         obj.os = this.platform.OS;
         obj.browser = this.platform.browser;
         obj.ver = this.platform.version;
-        obj.ref = this.determineReferrer(document);
+        obj.ref = this.determineReferrer(document, window);
         obj.registration = $.cookie('sgn') === '1' ? 1 : 0;
         if ($.cookie('sgn') != null) {
           obj.person_id = $.cookie('zid');
