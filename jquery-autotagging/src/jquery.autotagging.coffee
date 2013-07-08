@@ -55,6 +55,12 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     determinePlatform: (win) ->
       @platform = browserdetect.platform(win)
 
+    determineReferrer: (doc, win) ->
+      if win.location.href.match(/\?use_real_referrer\=true/)
+        $.cookie('real_referrer')
+      else
+        doc.referrer
+
     elemClicked: (e, options={}) =>
       domTarget = e.target
       jQTarget = $(e.target)
@@ -103,7 +109,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       obj.os                      = @platform.OS
       obj.browser                 = @platform.browser
       obj.ver                     = @platform.version
-      obj.ref                     = if ($.cookie('real_referrer') != null && $.cookie('real_referrer').length == 0) then document.referrer else $.cookie('real_referrer')
+      obj.ref                     = @determineReferrer(document)
       obj.registration            = if $.cookie('sgn') == '1' then 1 else 0
       obj.person_id               = $.cookie('zid') if $.cookie('sgn')?
 

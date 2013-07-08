@@ -93,6 +93,14 @@
         return this.platform = browserdetect.platform(win);
       };
 
+      WH.prototype.determineReferrer = function(doc, win) {
+        if (win.location.href.match(/\?use_real_referrer\=true/)) {
+          return $.cookie('real_referrer');
+        } else {
+          return doc.referrer;
+        }
+      };
+
       WH.prototype.elemClicked = function(e, options) {
         var attr, attrs, domTarget, href, item, jQTarget, realName, subGroup, trackingData, value, _i, _len, _ref;
         if (options == null) {
@@ -144,7 +152,7 @@
         obj.os = this.platform.OS;
         obj.browser = this.platform.browser;
         obj.ver = this.platform.version;
-        obj.ref = $.cookie('real_referrer') !== null && $.cookie('real_referrer').length === 0 ? document.referrer : $.cookie('real_referrer');
+        obj.ref = this.determineReferrer(document);
         obj.registration = $.cookie('sgn') === '1' ? 1 : 0;
         if ($.cookie('sgn') != null) {
           obj.person_id = $.cookie('zid');
