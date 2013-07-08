@@ -93,11 +93,11 @@
         return this.platform = browserdetect.platform(win);
       };
 
-      WH.prototype.determineReferrer = function(doc) {
-        if ($.cookie('real_referrer') !== null && $.cookie('real_referrer').length === 0) {
-          return doc.referrer;
-        } else {
+      WH.prototype.determineReferrer = function(doc, win) {
+        if (win.location.href.match(/\?use_real_referrer\=true/)) {
           return $.cookie('real_referrer');
+        } else {
+          return doc.referrer;
         }
       };
 

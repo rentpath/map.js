@@ -55,11 +55,11 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     determinePlatform: (win) ->
       @platform = browserdetect.platform(win)
 
-    determineReferrer: (doc) ->
-      if ($.cookie('real_referrer') != null && $.cookie('real_referrer').length == 0)
-        doc.referrer
-      else
+    determineReferrer: (doc, win) ->
+      if win.location.href.match(/\?use_real_referrer\=true/)
         $.cookie('real_referrer')
+      else
+        doc.referrer
 
     elemClicked: (e, options={}) =>
       domTarget = e.target
