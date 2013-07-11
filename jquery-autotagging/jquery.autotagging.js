@@ -279,7 +279,7 @@
 
       WH.prototype.setCookies = function() {
         var sessionID, thirty_minutes, timestamp, userID;
-        userID = $.cookie('zid') || $.cookie('WHUserID');
+        userID = $.cookie('WHUserID');
         sessionID = $.cookie('WHSessionID');
         timestamp = (new Date()).getTime();
         if (!userID) {

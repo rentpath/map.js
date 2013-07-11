@@ -212,7 +212,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       return
 
     setCookies: ->
-      userID    = $.cookie('zid') or $.cookie('WHUserID')
+      userID    = $.cookie('WHUserID')
       sessionID = $.cookie('WHSessionID')
       timestamp = (new Date()).getTime()
 
