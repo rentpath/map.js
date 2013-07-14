@@ -211,21 +211,28 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       cb(rv.join('').replace(/^&/,'?'))
       return
 
+    getSessionID: (currentTime) ->
+      if $.cookie('WHSessionID') == null or $.cookie('WHLastAccessTime') == null
+        @firstVisit = currentTime
+        return currentTime
+      else if (currentTime - $.cookie('WHLastAccessTime')) >= (30 * 60 * 1000)
+        return currentTime
+      else
+        return $.cookie('WHSessionID')
+
     setCookies: ->
       userID    = $.cookie('WHUserID')
-      sessionID = $.cookie('WHSessionID')
       timestamp = (new Date()).getTime()
+      thirty_minutes = (new Date()).setTime(timestamp + (30 * 60 * 1000))
 
       unless userID
         userID = timestamp
         $.cookie('WHUserID', userID, { expires: 3650, path: '/' })
 
-      unless sessionID
-        sessionID = timestamp
-        @firstVisit = timestamp
-        thirty_minutes = new Date()
-        thirty_minutes.setTime(timestamp + (30 * 60 * 1000))
-        $.cookie('WHSessionID', sessionID, { expires: thirty_minutes, path: '/' })
+      sessionID = @getSessionID(timestamp)
+      
+      $.cookie('WHSessionID', sessionID, { expires: thirty_minutes, path: '/' })
+      $.cookie('WHLastAccessTime', timestamp, { expires: thirty_minutes, path: '/' })
 
       @sessionID = sessionID
       @userID = userID
