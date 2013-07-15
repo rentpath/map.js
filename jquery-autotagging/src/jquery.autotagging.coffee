@@ -1,5 +1,10 @@
 define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect) ->
   class WH
+    WH_SESSION_ID: 'WHSessionID'
+    WH_LAST_ACCESS_TIME: 'WHLastAccessTime'
+    WH_USER_ID: 'WHUserID'
+    THIRTY_MINUTES_IN_MS: 30 * 60 * 1000
+    TEN_YEARS_IN_DAYS: 3650
     cacheBuster:  0
     domain:       ''
     firstVisit:   null
@@ -211,11 +216,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       cb(rv.join('').replace(/^&/,'?'))
       return
 
-    WH_SESSION_ID: 'WHSessionID'
-    WH_LAST_ACCESS_TIME: 'WHLastAccessTime'
-    WH_USER_ID: 'WHUserID'
-    THIRTY_MINUTES_IN_MS: 30 * 60 * 1000
-
     getSessionID: (currentTime) ->
       if $.cookie(@WH_SESSION_ID) == null or $.cookie(@WH_LAST_ACCESS_TIME) == null
         @firstVisit = currentTime
@@ -232,7 +232,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
       unless userID
         userID = timestamp
-        $.cookie(@WH_USER_ID, userID, { expires: 3650, path: '/' })
+        $.cookie(@WH_USER_ID, userID, { expires: @TEN_YEARS_IN_DAYS, path: '/' })
 
       sessionID = @getSessionID(timestamp)
       

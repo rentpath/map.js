@@ -22,6 +22,16 @@
 
       }
 
+      WH.prototype.WH_SESSION_ID = 'WHSessionID';
+
+      WH.prototype.WH_LAST_ACCESS_TIME = 'WHLastAccessTime';
+
+      WH.prototype.WH_USER_ID = 'WHUserID';
+
+      WH.prototype.THIRTY_MINUTES_IN_MS = 30 * 60 * 1000;
+
+      WH.prototype.TEN_YEARS_IN_DAYS = 3650;
+
       WH.prototype.cacheBuster = 0;
 
       WH.prototype.domain = '';
@@ -284,14 +294,6 @@
         cb(rv.join('').replace(/^&/, '?'));
       };
 
-      WH.prototype.WH_SESSION_ID = 'WHSessionID';
-
-      WH.prototype.WH_LAST_ACCESS_TIME = 'WHLastAccessTime';
-
-      WH.prototype.WH_USER_ID = 'WHUserID';
-
-      WH.prototype.THIRTY_MINUTES_IN_MS = 30 * 60 * 1000;
-
       WH.prototype.getSessionID = function(currentTime) {
         if ($.cookie(this.WH_SESSION_ID) === null || $.cookie(this.WH_LAST_ACCESS_TIME) === null) {
           this.firstVisit = currentTime;
@@ -311,7 +313,7 @@
         if (!userID) {
           userID = timestamp;
           $.cookie(this.WH_USER_ID, userID, {
-            expires: 3650,
+            expires: this.TEN_YEARS_IN_DAYS,
             path: '/'
           });
         }
