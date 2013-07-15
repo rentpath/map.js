@@ -217,10 +217,11 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       return
 
     getSessionID: (currentTime) ->
-      if $.cookie(@WH_SESSION_ID) == null or $.cookie(@WH_LAST_ACCESS_TIME) == null
+      last_access_time = $.cookie(@WH_LAST_ACCESS_TIME) or currentTime
+      if $.cookie(@WH_SESSION_ID) == null
         @firstVisit = currentTime
         return currentTime
-      else if (currentTime - $.cookie(@WH_LAST_ACCESS_TIME)) >= @THIRTY_MINUTES_IN_MS
+      else if (currentTime - last_access_time) >= @THIRTY_MINUTES_IN_MS
         return currentTime
       else
         return $.cookie(@WH_SESSION_ID)

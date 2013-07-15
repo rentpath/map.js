@@ -295,10 +295,12 @@
       };
 
       WH.prototype.getSessionID = function(currentTime) {
-        if ($.cookie(this.WH_SESSION_ID) === null || $.cookie(this.WH_LAST_ACCESS_TIME) === null) {
+        var last_access_time;
+        last_access_time = $.cookie(this.WH_LAST_ACCESS_TIME) || currentTime;
+        if ($.cookie(this.WH_SESSION_ID) === null) {
           this.firstVisit = currentTime;
           return currentTime;
-        } else if ((currentTime - $.cookie(this.WH_LAST_ACCESS_TIME)) >= this.THIRTY_MINUTES_IN_MS) {
+        } else if ((currentTime - last_access_time) >= this.THIRTY_MINUTES_IN_MS) {
           return currentTime;
         } else {
           return $.cookie(this.WH_SESSION_ID);
