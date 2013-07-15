@@ -284,36 +284,44 @@
         cb(rv.join('').replace(/^&/, '?'));
       };
 
+      WH.prototype.WH_SESSION_ID = 'WHSessionID';
+
+      WH.prototype.WH_LAST_ACCESS_TIME = 'WHLastAccessTime';
+
+      WH.prototype.WH_USER_ID = 'WHUserID';
+
+      WH.prototype.THIRTY_MINUTES_IN_MS = 30 * 60 * 1000;
+
       WH.prototype.getSessionID = function(currentTime) {
-        if ($.cookie('WHSessionID') === null || $.cookie('WHLastAccessTime') === null) {
+        if ($.cookie(this.WH_SESSION_ID) === null || $.cookie(this.WH_LAST_ACCESS_TIME) === null) {
           this.firstVisit = currentTime;
           return currentTime;
-        } else if ((currentTime - $.cookie('WHLastAccessTime')) >= (30 * 60 * 1000)) {
+        } else if ((currentTime - $.cookie(this.WH_LAST_ACCESS_TIME)) >= this.THIRTY_MINUTES_IN_MS) {
           return currentTime;
         } else {
-          return $.cookie('WHSessionID');
+          return $.cookie(this.WH_SESSION_ID);
         }
       };
 
       WH.prototype.setCookies = function() {
-        var sessionID, thirty_minutes, timestamp, userID;
-        userID = $.cookie('WHUserID');
+        var sessionID, thirty_minutes_later, timestamp, userID;
+        userID = $.cookie(this.WH_USER_ID);
         timestamp = (new Date()).getTime();
-        thirty_minutes = (new Date()).setTime(timestamp + (30 * 60 * 1000));
+        thirty_minutes_later = (new Date()).setTime(timestamp + this.THIRTY_MINUTES_IN_MS);
         if (!userID) {
           userID = timestamp;
-          $.cookie('WHUserID', userID, {
+          $.cookie(this.WH_USER_ID, userID, {
             expires: 3650,
             path: '/'
           });
         }
         sessionID = this.getSessionID(timestamp);
-        $.cookie('WHSessionID', sessionID, {
-          expires: thirty_minutes,
+        $.cookie(this.WH_SESSION_ID, sessionID, {
+          expires: thirty_minutes_later,
           path: '/'
         });
-        $.cookie('WHLastAccessTime', timestamp, {
-          expires: thirty_minutes,
+        $.cookie(this.WH_LAST_ACCESS_TIME, timestamp, {
+          expires: thirty_minutes_later,
           path: '/'
         });
         this.sessionID = sessionID;
