@@ -1,5 +1,10 @@
 define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetect) ->
   class WH
+    WH_SESSION_ID: 'WHSessionID'
+    WH_LAST_ACCESS_TIME: 'WHLastAccessTime'
+    WH_USER_ID: 'WHUserID'
+    THIRTY_MINUTES_IN_MS: 30 * 60 * 1000
+    TEN_YEARS_IN_DAYS: 3650
     cacheBuster:  0
     domain:       ''
     firstVisit:   null
@@ -211,21 +216,28 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       cb(rv.join('').replace(/^&/,'?'))
       return
 
+    getSessionID: (currentTime) ->
+      if $.cookie(@WH_SESSION_ID) == null or $.cookie(@WH_LAST_ACCESS_TIME) == null
+        @firstVisit = currentTime
+        return currentTime
+      else if (currentTime - $.cookie(@WH_LAST_ACCESS_TIME)) >= @THIRTY_MINUTES_IN_MS
+        return currentTime
+      else
+        return $.cookie(@WH_SESSION_ID)
+    
     setCookies: ->
-      userID    = $.cookie('WHUserID')
-      sessionID = $.cookie('WHSessionID')
+      userID    = $.cookie(@WH_USER_ID)
       timestamp = (new Date()).getTime()
+      thirty_minutes_later = (new Date()).setTime(timestamp + @THIRTY_MINUTES_IN_MS)
 
       unless userID
         userID = timestamp
-        $.cookie('WHUserID', userID, { expires: 3650, path: '/' })
+        $.cookie(@WH_USER_ID, userID, { expires: @TEN_YEARS_IN_DAYS, path: '/' })
 
-      unless sessionID
-        sessionID = timestamp
-        @firstVisit = timestamp
-        thirty_minutes = new Date()
-        thirty_minutes.setTime(timestamp + (30 * 60 * 1000))
-        $.cookie('WHSessionID', sessionID, { expires: thirty_minutes, path: '/' })
+      sessionID = @getSessionID(timestamp)
+      
+      $.cookie(@WH_SESSION_ID, sessionID, { expires: thirty_minutes_later, path: '/' })
+      $.cookie(@WH_LAST_ACCESS_TIME, timestamp, { expires: thirty_minutes_later, path: '/' })
 
       @sessionID = sessionID
       @userID = userID
