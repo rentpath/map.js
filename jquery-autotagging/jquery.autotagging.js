@@ -304,7 +304,6 @@
         var sessionID, timestamp, userID;
         userID = $.cookie(this.WH_USER_ID);
         timestamp = (new Date()).getTime();
-        this.thirty_minutes_later = (new Date()).setTime(timestamp + this.THIRTY_MINUTES_IN_MS);
         if (!userID) {
           userID = timestamp;
           $.cookie(this.WH_USER_ID, userID, {
@@ -314,11 +313,9 @@
         }
         sessionID = this.getSessionID(timestamp);
         $.cookie(this.WH_SESSION_ID, sessionID, {
-          expires: this.thirty_minutes_later,
           path: '/'
         });
         $.cookie(this.WH_LAST_ACCESS_TIME, timestamp, {
-          expires: this.thirty_minutes_later,
           path: '/'
         });
         this.sessionID = sessionID;
