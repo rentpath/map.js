@@ -129,8 +129,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
     _submitPasswordReset: ($form) ->
       $.ajax
         type: 'POST'
-        data: $form.serialize()
-        url: "#{zutron_host}/password_reset"
+        url: "#{zutron_host}/password_reset?#{$form.serialize()}"
         beforeSend: (xhr) ->
           xhr.overrideMimeType "text/json"
           xhr.setRequestHeader "Accept", "application/json"
