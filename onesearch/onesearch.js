@@ -605,6 +605,7 @@ define(['jquery'], function (jQuery) {
             $(target(event)).addClass(CLASSES.ACTIVE);
             select();
             input.focus();
+            jQuery("body").trigger({ type: "onesearch-autocompletion-clicked" });
             return false;
           }).mousedown(function () {
             config.mouseDownOnSelect = true;
