@@ -236,6 +236,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
     _triggerModal: ($div) =>
         @_clearErrors $div
         $div.prm_dialog_open()
+        $div.find('#email, #auth_key').val(@my.zmail) if @my.zmail
         $div.find(':input').filter(':visible:first').focus()
         $div.on "click", "a.close", ->
           $div.prm_dialog_close()
