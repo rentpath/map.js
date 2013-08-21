@@ -4,6 +4,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
       @_overrideDependencies()
 
       @my =
+        zmail: $.cookie 'zmail'
         zid: $.cookie 'zid'
         session: $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
         currentUrl: window.location.href
@@ -75,6 +76,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
             @_stayOrLeave $form
             $("#zutron_login_form, #zutron_registration").prm_dialog_close()
             @_setSessionType()
+            @_setEmail $form.find("#email").val()
             events.trigger('event/emailRegistrationSuccess', data)
             @_redirectOnSuccess data, $form
           else
@@ -96,6 +98,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
             @_stayOrLeave $form
             $("#zutron_login_form, #zutron_registration").prm_dialog_close()
             @_setSessionType()
+            @_setEmail $form.find("#auth_key").val()
             events.trigger('event/loginSuccess', data)
             @_redirectOnSuccess data, $form
           else
@@ -120,6 +123,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
               error = {'email': data.error}
               @_generateErrors error, $form.parent().find ".errors", 'changeEmailSuccessError'
             else
+              @_setEmail(new_email.email)
               events.trigger('event/changeEmailSuccess', data)
               $('#zutron_account_form').prm_dialog_close()
               @_triggerModal $("#zutron_success_form")
@@ -295,6 +299,10 @@ define ['jquery', 'primedia_events'], ($, events) ->
 
     _setSessionType: () ->
       $.cookie 'z_type_email', 'profile' #user registered by email
+
+    _setEmail: (email) ->
+      @my.zmail = email
+      $.cookie 'zmail', email
 
     _overrideDependencies: ->
       @MOBILE = window.location.host.match(/(^m\.|^local\.m\.)/)?
