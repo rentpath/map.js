@@ -12,6 +12,7 @@
         var _this = this;
         this._overrideDependencies();
         this.my = {
+          zmail: $.cookie('zmail'),
           zid: $.cookie('zid'),
           session: $.cookie("sgn") === "temp" || $.cookie("sgn") === "perm",
           currentUrl: window.location.href,
@@ -108,6 +109,7 @@
               _this._stayOrLeave($form);
               $("#zutron_login_form, #zutron_registration").prm_dialog_close();
               _this._setSessionType();
+              _this._setEmail($form.find("#email").val());
               events.trigger('event/emailRegistrationSuccess', data);
               return _this._redirectOnSuccess(data, $form);
             } else {
@@ -136,6 +138,7 @@
               _this._stayOrLeave($form);
               $("#zutron_login_form, #zutron_registration").prm_dialog_close();
               _this._setSessionType();
+              _this._setEmail($form.find("#auth_key").val());
               events.trigger('event/loginSuccess', data);
               return _this._redirectOnSuccess(data, $form);
             } else {
@@ -172,6 +175,7 @@
               };
               return _this._generateErrors(error, $form.parent().find(".errors", 'changeEmailSuccessError'));
             } else {
+              _this._setEmail(new_email.email);
               events.trigger('event/changeEmailSuccess', data);
               $('#zutron_account_form').prm_dialog_close();
               return _this._triggerModal($("#zutron_success_form"));
@@ -353,6 +357,9 @@
       Login.prototype._triggerModal = function($div) {
         this._clearErrors($div);
         $div.prm_dialog_open();
+        if (this.my.zmail) {
+          $div.find('#email, #auth_key').val(this.my.zmail);
+        }
         $div.find(':input').filter(':visible:first').focus();
         $div.on("click", "a.close", function() {
           return $div.prm_dialog_close();
@@ -446,6 +453,11 @@
 
       Login.prototype._setSessionType = function() {
         return $.cookie('z_type_email', 'profile');
+      };
+
+      Login.prototype._setEmail = function(email) {
+        this.my.zmail = email;
+        return $.cookie('zmail', email);
       };
 
       Login.prototype._overrideDependencies = function() {

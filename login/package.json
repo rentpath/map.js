@@ -1,6 +1,6 @@
 {
   "name": "login",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Login Module for Z",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
@@ -12,7 +12,7 @@
     "include": ["login.js"]
   },
   "author": {
-    "name": "Primedia"
+    "name": "RentPath"
   },
   "repositories": [
     {
