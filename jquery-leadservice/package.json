@@ -1,11 +1,12 @@
 {
   "name": "jquery-leadservice",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "jquery-leadservice plugin",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
     "dependencies": {
-      "jquery": null
+      "jquery": null,
+      "jquery-cookie-rjs": "0.0.1"
     },
     "main": "jquery.leadservice.js",
     "include": [

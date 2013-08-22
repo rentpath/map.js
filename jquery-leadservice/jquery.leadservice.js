@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', 'jquery-cookie-rjs'], function ($) {
     //TODO: Rewrite all variables and function calls with underscores -BNS
     (function($) {
         $.fn.lead_service = function(options) {
