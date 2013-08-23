@@ -26,7 +26,7 @@ define ['jquery', 'primedia_events'], ($, events) ->
     toggleRegistrationDiv: ($div) ->
       unless @my.session
         @wireupSocialLinks $div.show()
-        $.each @my.popupTypes, (type) =>
+        $.each @my.popupTypes, (index, type) =>
           @_bindForms type
 
     expireCookie: (cookie) ->
