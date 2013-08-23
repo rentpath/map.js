@@ -11,7 +11,6 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
                 $('.lead_search_state').val($.cookie('long_state'));
                 $('.lead_search_city').val($.cookie('city'));
                 $('.lead_search_zip').val($.cookie('zip'));
-
                 // Hide show dynamic attributes
                 if (options.show_hide_params && !options.is_mobile) {
                     // Show Last Name if specified
@@ -168,19 +167,16 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
             };
 
             var updateFields = function() {
-                // update form from cookie
-                updateFromCookie(); 
-
-                // re-draw the form
+                updateFromCookie();
                 pre_update_form();
-                opts.update_form(); 
-                
-                // re-bind the submit behavior
-                $('.lead_form', form_div).submit(submitLead);
-
-                // show form                
-                form_div.show();                
-            }
+                opts.update_form();
+                $('.lead_form', form_div).submit(
+                    submitLead
+                );
+                if(!opts.form_params.is_mobile){
+                    form_div.show();
+                }
+            };
 
             var formLoad = function() {
                 if (opts.form_params.is_mobile)
@@ -206,6 +202,7 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
                 $.each(params.required_fields, function(k,v){
                     uri += "lead[required_fields][]=" + v + "&";
                 });
+
                 delete params.required_fields;
 
                 $.each(params, function(k, v) {
@@ -249,6 +246,7 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
             var thankYou = function() {
                 form_div.html('Thank you!');
             };
+
             var updateForm = function() {};
 
             var defaults = {
