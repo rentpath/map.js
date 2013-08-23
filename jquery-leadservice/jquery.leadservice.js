@@ -13,7 +13,7 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
                 $('.lead_search_zip').val($.cookie('zip'));
 
                 // Hide show dynamic attributes
-                if (options.show_hide_params) {
+                if (options.show_hide_params && !options.is_mobile) {
                     // Show Last Name if specified
                     if (options.show_hide_params.last_name_required == "1") {
                         $('.lead_last_name').show();
@@ -167,21 +167,28 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
                 }
             };
 
-            var formLoad = function() {
-                url = buildNewUrl(opts.form_params);
-                // build new lead url
-                form_div.load(url,
-                function() {
-                    // update form from cookie
-                    updateFromCookie();
+            var updateFields = function() {
+                // update form from cookie
+                updateFromCookie(); 
 
-                    pre_update_form();
-                    opts.update_form();
-                    // re-draw the form
-                    $('.lead_form', form_div).submit(submitLead);
-                    // re-bind the submit behavior
-                    form_div.show();
-                });
+                // re-draw the form
+                pre_update_form();
+                opts.update_form(); 
+                
+                // re-bind the submit behavior
+                $('.lead_form', form_div).submit(submitLead);
+
+                // show form                
+                form_div.show();                
+            }
+
+            var formLoad = function() {
+                if (opts.form_params.is_mobile)
+                    updateFields();
+                else {
+                    url = buildNewUrl(opts.form_params);
+                    form_div.load(url, updateFields);
+                }
             };
 
             var buildNewUrl = function(params) {
