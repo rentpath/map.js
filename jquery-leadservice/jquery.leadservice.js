@@ -95,7 +95,6 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
 
                         $('.lead_move_date').hide();
                     }
-
                 }
             };
 
@@ -170,9 +169,7 @@ define(['jquery', 'jquery-cookie-rjs'], function ($) {
                 updateFromCookie();
                 pre_update_form();
                 opts.update_form();
-                $('.lead_form', form_div).submit(
-                    submitLead
-                );
+                $('.lead_form', form_div).submit(submitLead);
                 if(!opts.form_params.is_mobile){
                     form_div.show();
                 }
