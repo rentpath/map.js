@@ -11,7 +11,7 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
         $('.lead_search_city').val($.cookie('city'));
         $('.lead_search_zip').val($.cookie('zip'));
         // Hide show dynamic attributes
-        if (options.show_hide_params) {
+        if (options.show_hide_params && !options.form_params.disable_ajax) {
           // Show Last Name if specified
           if (options.show_hide_params.last_name_required == "1") {
             $('.lead_last_name').show();
@@ -169,7 +169,9 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
         pre_update_form();
         opts.update_form();
         $('.lead_form', form_div).submit(submitLead);
-        form_div.show();
+        if(!opts.form_params.disable_ajax){
+          form_div.show();
+        }
       };
 
       var formLoad = function() {
