@@ -10,6 +10,6 @@ with API v1, and the 2.x.x version should be used with API v2.
 Mobile Web Apps
 ===============
 
-Version v2.3+
+Versions v2.0.3 +
 
 On mobile devices, it is not always desirable to load forms via ajax. By rendering the form inline and passing { disable_ajax: true } via lead_service form_params, you can boost your mobile web apps performance by limiting requests.
