@@ -5,13 +5,8 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
       var form_div = $(this);
       // show/hide bed bath fields before handing control over
       var pre_update_form = function() {
-
-        $(".lead_ef_id").val($.cookie('ef_id'));
-        $('.lead_search_state').val($.cookie('long_state'));
-        $('.lead_search_city').val($.cookie('city'));
-        $('.lead_search_zip').val($.cookie('zip'));
         // Hide show dynamic attributes
-        if (options.show_hide_params && !options.form_params.disable_ajax) {
+        if (options.show_hide_params) {
           // Show Last Name if specified
           if (options.show_hide_params.last_name_required == "1") {
             $('.lead_last_name').show();
@@ -133,9 +128,14 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
         return cookieObj;
       };
 
-      var updateFromCookie = function() {
+      var updateFromCookies = function() {
         var cookie = getCookieObj();
         var form = form_div.find('form');
+
+        $(".lead_ef_id").val($.cookie('ef_id'));
+        $('.lead_search_state').val($.cookie('long_state'));
+        $('.lead_search_city').val($.cookie('city'));
+        $('.lead_search_zip').val($.cookie('zip'));
 
         if (cookie) {
           var brochure = cookie.optInBrochure === '1' ? true : false;
@@ -165,13 +165,15 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
       };
 
       var updateFields = function() {
-        updateFromCookie();
-        pre_update_form();
+        updateFromCookies();
         opts.update_form();
-        $('.lead_form', form_div).submit(submitLead);
+
         if(!opts.form_params.disable_ajax){
+          pre_update_form();
           form_div.show();
         }
+
+        $('.lead_form', form_div).submit(submitLead);
       };
 
       var formLoad = function() {
@@ -210,10 +212,9 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
       };
 
       var submitLead = function() {
-        var caller = $(this);
+        var caller = $(this), status = 'fail';
         if (this.beenSubmitted) return false;
         this.beenSubmitted = true;
-        var status = 'fail';
         $.ajax({
           url: '/v2/leads/ajax.js',
           type: 'POST',
@@ -225,14 +226,15 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
           error: function(req, status, err) {
             var parent = caller.parent();
             if (opts.form_params.disable_ajax) {
+              caller[0].beenSubmitted = false;
               errors = $(req.responseText).find('.full_errors');
-              form_div.find('form').prepend(errors);
+              form_div.find('.errors').html(errors);
             } else {
               caller.replaceWith(req.responseText);
+              pre_update_form();
+              $('.lead_form', parent).submit(submitLead);
             }
-            pre_update_form();
             opts.update_form();
-            $('.lead_form', parent).submit(submitLead);
             return false;
           },
           complete: function() {
