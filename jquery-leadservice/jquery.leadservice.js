@@ -3,11 +3,8 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
     $.fn.lead_service = function(options) {
 
       var form_div = $(this);
-      // show/hide bed bath fields before handing control over
       var pre_update_form = function() {
-        // Hide show dynamic attributes
         if (options.show_hide_params) {
-          // Show Last Name if specified
           if (options.show_hide_params.last_name_required == "1") {
             $('.lead_last_name').show();
           } else {
@@ -36,7 +33,6 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
             $('em#baths').hide();
           }
 
-          // Show price range if specified
           if (options.show_hide_params.show_price_range == "1") {
             $('div.price_range').show();
           } else {
@@ -48,7 +44,6 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
             $('em#price_range').hide();
           }
 
-          // Show reason for move if specified
           if (options.show_hide_params.show_reason_for_move == "1") {
             $('.reason_for_move').show();
           } else {
@@ -60,14 +55,12 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
             $('em#reason_for_move').hide();
           }
 
-          // Show confirmation email if required
           if (options.show_hide_params.confirm_email_required == "1") {
             $('.lead_confirm_email').show();
           } else {
             $('.lead_confirm_email').hide();
           }
 
-          // Show move date or move date preference if required
           if (options.show_hide_params.show_move_date == "1") {
             $('.lead_move_date').show();
 
@@ -167,12 +160,7 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
       var updateFields = function() {
         updateFromCookies();
         opts.update_form();
-
-        if(!opts.form_params.disable_ajax){
-          pre_update_form();
-          form_div.show();
-        }
-
+        pre_update_form();
         $('.lead_form', form_div).submit(submitLead);
       };
 
