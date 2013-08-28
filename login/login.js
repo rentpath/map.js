@@ -58,7 +58,7 @@
 
       Login.prototype.wireupSocialLinks = function($div) {
         var baseUrl, fbLink, googleLink, twitterLink;
-        baseUrl = "" + zutron_host + "?zid_id=" + this.my.zid + "&referrer=" + this.my.currentUrl + "&technique=";
+        baseUrl = "" + zutron_host + "?zid_id=" + this.my.zid + "&referrer=" + (encodeURIComponent(this.my.currentUrl)) + "&technique=";
         fbLink = $div.find("a.icon_facebook48");
         twitterLink = $div.find("a.icon_twitter48");
         googleLink = $div.find("a.icon_google_plus48");
