@@ -84,7 +84,7 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           el = _ref[_i];
           if (el.tagName.toLowerCase().match(this.parentTagsAllowed)) {
-            return this.getId($(el));
+            return this.firstClass($(el));
           }
         }
       };
@@ -223,6 +223,10 @@
         return this.fire({
           type: 'pageview'
         });
+      };
+
+      WH.prototype.getId = function(elem) {
+        return elem.attr('id') || this.firstClass(elem);
       };
 
       WH.prototype.firstClass = function(elem) {

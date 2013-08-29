@@ -71,7 +71,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       jQTarget = $(e.target)
       attrs = domTarget.attributes
 
-      item = getId(jQTarget) or ''
+      item = @getId(jQTarget) or ''
       subGroup = @determineParent(jQTarget) or ''
       value = jQTarget.text() or ''
 
@@ -168,7 +168,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @fire { type: 'pageview' }
 
     getId: (elem) ->
-      return elem.attr('id') or firstClass(elem)
+      return elem.attr('id') or @firstClass(elem)
 
     firstClass: (elem) ->
       return unless klasses = elem.attr('class')
@@ -228,7 +228,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         return currentTime
       else
         return $.cookie(@WH_SESSION_ID)
-    
+
     setCookies: ->
       userID    = $.cookie(@WH_USER_ID)
       timestamp = (new Date()).getTime()
@@ -238,7 +238,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         $.cookie(@WH_USER_ID, userID, { expires: @TEN_YEARS_IN_DAYS, path: '/' })
 
       sessionID = @getSessionID(timestamp)
-      
+
       $.cookie(@WH_SESSION_ID, sessionID, { path: '/' })
       $.cookie(@WH_LAST_ACCESS_TIME, timestamp, { path: '/' })
 
