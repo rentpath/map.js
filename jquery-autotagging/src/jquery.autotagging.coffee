@@ -71,7 +71,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       jQTarget = $(e.target)
       attrs = domTarget.attributes
 
-      item = @firstClass(jQTarget) or ''
+      item = getId(jQTarget) or ''
       subGroup = @determineParent(jQTarget) or ''
       value = jQTarget.text() or ''
 
@@ -166,6 +166,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
     firePageViewTag: ->
       @fire { type: 'pageview' }
+
+    getId: (elem) ->
+      return elem.attr('id') or firstClass(elem)
 
     firstClass: (elem) ->
       return unless klasses = elem.attr('class')

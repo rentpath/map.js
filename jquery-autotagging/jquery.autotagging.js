@@ -84,7 +84,7 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           el = _ref[_i];
           if (el.tagName.toLowerCase().match(this.parentTagsAllowed)) {
-            return this.firstClass($(el));
+            return this.getId($(el));
           }
         }
       };
@@ -119,7 +119,7 @@
         domTarget = e.target;
         jQTarget = $(e.target);
         attrs = domTarget.attributes;
-        item = this.firstClass(jQTarget) || '';
+        item = this.getId(jQTarget) || '';
         subGroup = this.determineParent(jQTarget) || '';
         value = jQTarget.text() || '';
         trackingData = {
