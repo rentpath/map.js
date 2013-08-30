@@ -226,7 +226,13 @@
       };
 
       WH.prototype.getId = function(elem) {
-        return elem.attr('id') || this.firstClass(elem);
+        var id;
+        id = elem.attr('id');
+        if (!id && console) {
+          console.log('no id found for ' + elem.html());
+          id = this.firstClass(elem);
+        }
+        return id;
       };
 
       WH.prototype.firstClass = function(elem) {

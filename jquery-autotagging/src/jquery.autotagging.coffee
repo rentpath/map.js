@@ -168,7 +168,11 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @fire { type: 'pageview' }
 
     getId: (elem) ->
-      return elem.attr('id') or @firstClass(elem)
+      id = elem.attr('id')
+      if !id and console
+        console.log ('no id found for ' + elem[0].outerHTML)
+        id = @firstClass(elem)
+      id
 
     firstClass: (elem) ->
       return unless klasses = elem.attr('class')
