@@ -100,14 +100,14 @@ describe("Autotagging Suite", function() {
       expect(wh.firedTime()).toEqual(now);
     });
 
-    it('#getId yields the id of the element', function() {
+    it('#getItemId yields the id of the element', function() {
       testElement = $("<div id='foo'></div>");
-      expect(wh.getId(testElement)).toEqual('foo');
+      expect(wh.getItemId(testElement)).toEqual('foo');
     });
 
-    it('#getId yields the first class of the element when no id present', function() {
+    it('#getItemId yields the first class of the element when no id present', function() {
       testElement = $("<div class='first second third'></div>");
-      expect(wh.getId(testElement)).toEqual('first');
+      expect(wh.getItemId(testElement)).toEqual('first');
     });
 
     it('#firstClass yields the first class name of the element', function() {
