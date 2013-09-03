@@ -52,7 +52,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
           if !id
             id = @firstClass($(el))
             if console
-              console.log ('getParent: no id found for ' + $(el)[0].outerHTML)
+              console.log ('getParent: no id found for ' + $(el)[0].outerHTML.substring(0,60))
           if console
             console.log ('getParent returning ' + id)
           id
