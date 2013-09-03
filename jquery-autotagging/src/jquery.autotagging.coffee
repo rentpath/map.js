@@ -24,7 +24,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @domain            = document.location.host
       @exclusionList     = opts.exclusionList || []
       @fireCallback      = opts.fireCallback
-      @parentTagsAllowed = opts.parentTagsAllowed || /div|ul/
       @path              = "#{document.location.pathname}#{document.location.search}"
       @warehouseURL      = opts.warehouseURL
       @opts              = opts
@@ -45,17 +44,15 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     clearOneTimeData: =>
       @oneTimeData = undefined
 
-    getParentId: (elem) ->
+    getSubgroupId: (elem) ->
+      id = null
       for el in elem.parents()
-        if el.tagName.toLowerCase().match(@parentTagsAllowed)
-          id = $(el).attr('id')
-          if !id
-            id = @firstClass($(el))
-            if console
-              console.log ('getParent: no id found for ' + $(el)[0].outerHTML.substring(0,60))
-          if console
-            console.log ('getParent returning ' + id)
-          return id
+        id = $(el).attr('id')
+        if id
+          break
+      if console
+        console.log ('getSubgroupId returning ' + id)
+      return id
 
     determineWindowDimensions: (obj) ->
       obj = $(obj)
@@ -76,11 +73,14 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
     elemClicked: (e, options={}) =>
       domTarget = e.target
-      jQTarget = $(e.target)
       attrs = domTarget.attributes
+      jQTarget = $(e.target)
 
-      item = @getId(jQTarget) or ''
-      subGroup = @getParentId(jQTarget) or ''
+      if jQTarget[0].tagName.toLowerCase() != 'a'
+        jQTarget = jQTarget.parent()
+
+      item = @getItemId(jQTarget) or ''
+      subGroup = @getSubgroupId(jQTarget) or ''
       value = jQTarget.text() or ''
 
       trackingData = {
@@ -175,14 +175,14 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     firePageViewTag: ->
       @fire { type: 'pageview' }
 
-    getId: (elem) ->
+    getItemId: (elem) ->
       id = elem.attr('id')
       if !id
         id = @firstClass(elem)
         if console
-          console.log ('getId: no id found for ' + elem[0].outerHTML)
+          console.log ('getItemId: no id found for ' + elem[0].outerHTML.substr(0,60))
       if console
-        console.log ('getId returning ' + id)
+        console.log ('getItemId returning ' + id)
       id
 
     firstClass: (elem) ->
