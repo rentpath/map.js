@@ -45,9 +45,17 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
     clearOneTimeData: =>
       @oneTimeData = undefined
 
-    determineParent: (elem) ->
+    getParentId: (elem) ->
       for el in elem.parents()
-        return @firstClass($(el)) if el.tagName.toLowerCase().match(@parentTagsAllowed)
+        if el.tagName.toLowerCase().match(@parentTagsAllowed)
+          id = $(el).attr('id')
+          if !id
+            id = @firstClass($(el))
+            if console
+              console.log ('getParent: no id found for ' + $(el)[0].outerHTML)
+          if console
+            console.log ('getParent returning ' + id)
+          id
 
     determineWindowDimensions: (obj) ->
       obj = $(obj)
@@ -72,7 +80,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       attrs = domTarget.attributes
 
       item = @getId(jQTarget) or ''
-      subGroup = @determineParent(jQTarget) or ''
+      subGroup = @getParentId(jQTarget) or ''
       value = jQTarget.text() or ''
 
       trackingData = {
@@ -169,9 +177,12 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
 
     getId: (elem) ->
       id = elem.attr('id')
-      if !id and console
-        console.log ('no id found for ' + elem[0].outerHTML)
+      if !id
         id = @firstClass(elem)
+        if console
+          console.log ('getId: no id found for ' + elem[0].outerHTML)
+      if console
+        console.log ('getId returning ' + id)
       id
 
     firstClass: (elem) ->
