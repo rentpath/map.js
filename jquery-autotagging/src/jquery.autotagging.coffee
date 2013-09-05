@@ -76,7 +76,9 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       attrs = domTarget.attributes
       jQTarget = $(e.target)
 
-      if jQTarget[0].tagName.toLowerCase() != 'a'
+      # to handle links with internal elements, such as <span> tags.
+      clickedElementIsLink = jQTarget[0].tagName.toLowerCase().match(/a|input/)
+      if !clickedElementIsLink
         jQTarget = jQTarget.parent()
 
       item = @getItemId(jQTarget) or ''
