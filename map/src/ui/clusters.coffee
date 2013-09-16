@@ -1,6 +1,14 @@
 'use strict'
 
-define [ 'flight/lib/component', 'third-party/marker-clusterer', 'common/ag-utils' ], ( defineComponent, markerClusterer, Utils) ->
+define [
+  'flight/lib/component',
+  'marker-clusterer',
+  'utils'
+], (
+  defineComponent,
+  markerClusterer,
+  Utils
+) ->
 
   initMarkerClusters = ->
 
