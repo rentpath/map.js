@@ -2,7 +2,7 @@
 
 define [
   'flight/lib/component',
-  'common/ag-utils'
+  'utils'
 ], (
   defineComponent,
   utils

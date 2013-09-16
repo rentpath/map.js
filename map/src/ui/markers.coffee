@@ -3,17 +3,13 @@
 define [
   'flight/lib/component',
   'map/ui/clusters',
-  'common/ag-utils',
-  'common/lead-form',
-  'common/events',
-  'shared/ratings'
+  'utils',
+  'primedia_events'
 ], (
   defineComponent
   ,Clusters
   ,utils
-  ,leadForm
   ,events
-  ,ratings
 ) ->
 
   markersOverlay = ->

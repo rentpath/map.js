@@ -1,13 +1,19 @@
 'use strict'
 
-define [ 'flight/lib/component', 'common/ag-utils' ], ( defineComponent, utils) ->
+define [
+  'flight/lib/component',
+  'utils'
+], (
+  defineComponent,
+  utils
+) ->
 
   searchMapByAddress = ->
 
     @defaultAttrs
       icon: utils.assetURL() + "/images/nonsprite/map/map_pin_custom.png"
       addressSearchInputSel: '#searchTextField'
-      addressSearchErrorSel: '#address_search_error'            
+      addressSearchErrorSel: '#address_search_error'
       addressSearchBar: '#address_search'
       addressSearchLink: '#link_show_address_field'
 
@@ -25,7 +31,7 @@ define [ 'flight/lib/component', 'common/ag-utils' ], ( defineComponent, utils) 
       searchError = @$node.select(@attr.addressSearchErrorSel)
       searchInput.keyup (e) =>
         @addrSearchError.slideUp() if (searchErrorSel.is(':visible') && e.keyCode != 13)
-          
+
      @toggleAddressFieldDisplay = ->
        searchBar = @$node.select(@attr.addressSearchBar)
        searchLink = @$node.select(@attr.addressSearchLink)
