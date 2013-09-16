@@ -1,0 +1,25 @@
+{
+  "name": "map",
+  "version": "0.0.1",
+  "description": "Map Module for RentPath Sites",
+  "homepage": "https://github.com/primedia/preserves",
+  "jam": {
+    "dependencies": {
+        "flight": "1.0.2",
+        "primedia_events": null,
+        "utils": null
+    },
+    "main": "map_ui.js",
+    "include": ["map_ui.js"]
+  },
+  "author": {
+    "name": "RentPath"
+  },
+  "repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/primedia/preserves.git"
+    }
+  ],
+  "github": "https://github.com/primedia/preserves.git"
+}
