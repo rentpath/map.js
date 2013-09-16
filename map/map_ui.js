@@ -3,7 +3,7 @@
   'use strict';
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['map/ui/base_map', 'map/hybrid_list'], function(BaseMap, HybridList) {
+  define(['map/ui/base_map'], function(BaseMap) {
     var MapCanvas, MapUi;
     MapCanvas = (function() {
       function MapCanvas(canvas) {
@@ -53,8 +53,7 @@
       MapUi.initialize = function() {
         var mapCanvas;
         mapCanvas = new MapCanvas("#map_canvas");
-        BaseMap.attachTo(mapCanvas.canvas);
-        return HybridList.attachTo('#hybrid_list');
+        return BaseMap.attachTo(mapCanvas.canvas);
       };
 
       return MapUi;

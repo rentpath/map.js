@@ -1,6 +1,6 @@
 'use strict'
 
-define ['map/ui/base_map', 'map/hybrid_list'], (BaseMap, HybridList) ->
+define ['map/ui/base_map'], (BaseMap) ->
 
   class MapCanvas
     constructor: (@canvas) ->
@@ -28,6 +28,5 @@ define ['map/ui/base_map', 'map/hybrid_list'], (BaseMap, HybridList) ->
     @initialize: =>
       mapCanvas = new MapCanvas("#map_canvas")
       BaseMap.attachTo(mapCanvas.canvas)
-      HybridList.attachTo('#hybrid_list')
 
   return MapUi.initialize
