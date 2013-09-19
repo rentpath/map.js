@@ -165,7 +165,7 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
       };
 
       var formLoad = function() {
-        if (opts.form_params.disable_ajax)
+        if (opts.disable_ajax)
           updateFields();
         else {
           url = buildNewUrl(opts.form_params);
@@ -212,18 +212,10 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
             opts.lead_saved();
           },
           error: function(req, status, err) {
-            var parent = caller.parent();
-            if (opts.form_params.disable_ajax) {
+            if(opts.disable_ajax){
               caller[0].beenSubmitted = false;
-              errors = $(req.responseText).find('.full_errors');
-              form_div.find('.errors').html(errors);
-            } else {
-              caller.replaceWith(req.responseText);
-              pre_update_form();
-              $('.lead_form', parent).submit(submitLead);
             }
-            opts.update_form();
-            return false;
+            opts.lead_error(req, status, err);
           },
           complete: function() {
             if (status == 'success') {
@@ -234,6 +226,15 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
         return false;
       };
 
+      var handle_errors = function(req, status, err){
+        var parent = caller.parent();
+        caller.replaceWith(req.responseText);
+        pre_update_form();
+        $('.lead_form', parent).submit(submitLead);
+        opts.update_form();
+        return false;
+      };
+
       var thankYou = function() {
         form_div.html('Thank you!');
       };
@@ -241,9 +242,12 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
       var updateForm = function() {};
 
       var defaults = {
-        update_form: updateForm,
-        lead_saved: thankYou
+        update_form:  updateForm,
+        lead_saved:   thankYou,
+        lead_error:   handle_errors,
+        disable_ajax: false
       };
+
       var opts = jQuery.extend(defaults, options);
 
       return this.each(function() {
