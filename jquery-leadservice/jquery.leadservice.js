@@ -1,7 +1,7 @@
 define(['jquery', 'jquery-cookie-rjs'], function($) {
   (function($) {
     $.fn.lead_service = function(options) {
-
+      var caller;
       var form_div = $(this);
       var pre_update_form = function() {
         if (options.show_hide_params) {
@@ -200,7 +200,8 @@ define(['jquery', 'jquery-cookie-rjs'], function($) {
       };
 
       var submitLead = function() {
-        var caller = $(this), status = 'fail';
+        caller = $(this);
+        var status = 'fail';
         if (this.beenSubmitted) return false;
         this.beenSubmitted = true;
         $.ajax({
