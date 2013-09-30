@@ -25,7 +25,10 @@ define [
        mapPinShadow: utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
 
     @initAttr = (ev, data) ->
-      @attr.gMap = data.gMap
+      @attr.gMap = data.gMap if data.gMap
+      @attr.mapPin = data.mapPin if data.mapPin
+      @attr.mapPinFree = data.mapPinFree if data.mapPinFree
+      @attr.mapPinShadow = data.mapPinShadow if data.mapPinShadow
 
     @render = (ev, data) ->
       @addMarkers(data)
@@ -110,6 +113,7 @@ define [
 
     @after 'initialize', ->
       @on document, 'mapRenderedFirst', @initAttr
+      @on document, 'markersUpdateAttr', @initAttr
       @on document, 'markersDataAvailable', @render
       @on document, 'uiMapZoom', @updateListingsCount
       @on document, 'animatePin', @markerAnimation

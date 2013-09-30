@@ -15,7 +15,18 @@
         mapPinShadow: utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
       });
       this.initAttr = function(ev, data) {
-        return this.attr.gMap = data.gMap;
+        if (data.gMap) {
+          this.attr.gMap = data.gMap;
+        }
+        if (data.mapPin) {
+          this.attr.mapPin = data.mapPin;
+        }
+        if (data.mapPinFree) {
+          this.attr.mapPinFree = data.mapPinFree;
+        }
+        if (data.mapPinShadow) {
+          return this.attr.mapPinShadow = data.mapPinShadow;
+        }
       };
       this.render = function(ev, data) {
         return this.addMarkers(data);
@@ -138,6 +149,7 @@
       };
       return this.after('initialize', function() {
         this.on(document, 'mapRenderedFirst', this.initAttr);
+        this.on(document, 'markersUpdateAttr', this.initAttr);
         this.on(document, 'markersDataAvailable', this.render);
         this.on(document, 'uiMapZoom', this.updateListingsCount);
         this.on(document, 'animatePin', this.markerAnimation);
