@@ -1,6 +1,6 @@
 {
-  "name": "flight-rentpath",
-  "version": "1.0.2",
+  "name": "flight",
+  "version": "1.0.2-fork",
   "description": "Clientside component infrastructure",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
