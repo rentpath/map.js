@@ -1,0 +1,25 @@
+{
+  "name": "rp-criteo",
+  "version": "0.0.1",
+  "description": "Init Criteo JS",
+  "homepage": "https://github.com/primedia/preserves",
+  "jam": {
+    "dependencies": {
+      "jquery": null
+    },
+    "main": "rp-criteo.js",
+    "include": [
+      "rp-criteo.js"
+    ]
+  },
+  "author": {
+    "name": "Primedia"
+  },
+  "repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/primedia/preserves.git"
+    }
+  ],
+  "github": "https://github.com/primedia/preserves.git"
+}
