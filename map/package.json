@@ -7,7 +7,7 @@
     "dependencies": {
       "jquery": null,
       "es5-shim": null,
-      "flight": "1.0.2",
+      "flight-rentpath": "1.0.2",
       "marker-clusterer": null,
       "primedia_events": null,
       "utils": null
