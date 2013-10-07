@@ -3,7 +3,7 @@
   define(["jquery"], function($) {
     var criteo, getCriteo;
     criteo = function() {
-      
+
     var crtg_nid="1842";
     var crtg_cookiename="cto_trulia";
     var crtg_varname="crtg_content";

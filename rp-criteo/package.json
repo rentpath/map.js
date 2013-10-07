@@ -7,9 +7,9 @@
     "dependencies": {
       "jquery": null
     },
-    "main": "rp-criteo.js",
+    "main": "rp-crit-eo.js",
     "include": [
-      "rp-criteo.js"
+      "rp-crit-eo.js"
     ]
   },
   "author": {
