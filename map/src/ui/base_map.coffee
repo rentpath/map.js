@@ -50,11 +50,12 @@ define [
       @addCustomMarker()
 
     @fireOurMapEventsOnce = () ->
-      @addOverlayToMap()
       clearInterval(@intervalId)
       @trigger document, 'mapRenderedFirst', @mapRenderedFirstData()
       @trigger document, 'mapRendered',  @mapRenderedFirstData()
       @trigger document, 'uiInitMarkerCluster', @mapChangedData()
+      @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
+
 
     @handleOurMapEvents = (event_type) ->
       google.maps.event.addListener @attr.gMap, 'zoom_changed', =>
@@ -72,10 +73,12 @@ define [
       eventsHash = @attr.gMapEvents
       eventsHash['center_changed'] = false if @attr.infoWindowOpen == true
       clearInterval(@intervalId)
-      @addOverlayToMap if eventsHash['center_changed'] == true
-      @trigger document, 'uiMapZoomForListings', @mapChangedData() if eventsHash['zoom_changed'] == true
-      @trigger document, 'mapRendered', @mapChangedData() if eventsHash['center_changed'] == true && @attr.infoWindowOpen == false
-      @trigger document, 'uiInitMarkerCluster', @mapChangedData() if eventsHash['center_changed'] == true
+      if eventsHash['center_changed']
+        @trigger document, 'uiMapZoomForListings', @mapChangedData()
+        @trigger document, 'mapRendered', @mapChangedData() unless @attr.infoWindowOpen
+        @trigger document, 'uiInitMarkerCluster', @mapChangedData()
+        @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
+
       @resetOurEventHash()
 
     @resetOurEventHash = () ->
@@ -83,11 +86,6 @@ define [
       @attr.gMapEvents['center_changed'] = false
       @attr.infoWindowOpen = false
       return
-
-    @addOverlayToMap = ->
-      @attr.overlay = new google.maps.OverlayView()
-      @attr.overlay.draw = ->
-      @attr.overlay.setMap @attr.gMap
 
     @defineGoogleMapOptions = () ->
       lat = @data.latitude || @attr.latitude

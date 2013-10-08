@@ -5,6 +5,7 @@ define [
   ,'map/ui/markers'
   ,'map/ui/markers_info_window'
   ,'map/ui/search_map_by_address'
+  ,'map/ui/neighborhoods'
 ], (
   ,BaseMap
   ,Clusters
@@ -12,6 +13,7 @@ define [
   ,Markers
   ,MarkerInfoWindow
   ,SearchMapByAddress
+  ,NeighborhoodLayer
 ) ->
 
   return {
@@ -21,5 +23,6 @@ define [
     Markers: Markers,
     MarkerInfoWindow: MarkerInfoWindow,
     SearchMapByAddress: SearchMapByAddress
+    NeighborhoodLayer: NeighborhoodLayer
   }
 
