@@ -21,6 +21,7 @@
       "ui/markers.js",
       "ui/markers_info_window.js",
       "ui/search_map_by_address.js",
+      "ui/neighborhoods.js",
       "utils/distance_conversion.js"
     ]
   },

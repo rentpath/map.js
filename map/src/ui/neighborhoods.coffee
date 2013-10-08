@@ -3,11 +3,13 @@
 define [
   'underscore'
   'flight/lib/component',
-  'js/third-party/fusiontip.js'
+  'lib/fusiontip/fusiontip',
+  'lib/accounting/accounting'
 ], (
   _,
   defineComponent,
-  fusionTip
+  fusionTip,
+  accounting
 ) ->
 
   neighborhoodsOverlay = ->
@@ -21,12 +23,25 @@ define [
       toggleLink: undefined
       toggleControl: undefined
       data: undefined
+      infoTemplate: undefined
       polygonOptions:
         fillColor: "fffaf0"
         fillOpacity: 0.1
         strokeColor: "8b8378"
         strokeOpacity: 0.8
         strokeWeight: 1
+
+      infoWindowData:
+        state: undefined
+        hood: undefined
+        population: undefined
+        growth: undefined
+        density: undefined
+        males: undefined
+        females: undefined
+        median_income: undefined
+        average_income: undefined
+
 
     @hoodQuery = (data) ->
       where = "LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
@@ -101,48 +116,48 @@ define [
         key: @attr.apiKey
 
     @addListeners = ->
-      google.maps.event.addListener @attr.hoodLayer, 'click', (e) =>
-        @buildInfoWindow(e)
+      if @attr.infoTemplate
+        google.maps.event.addListener @attr.hoodLayer, 'click', (e) =>
+          @buildInfoWindow(e)
 
     @buildInfoWindow = (event) ->
-      template = []
+      @buildInfoData(event)
+      event.infoWindowHtml = _.template(@attr.infoTemplate, @attr.infoWindowData)
+
+    @buildInfoData = (event) ->
       row = event.row
-
       unless _.isEmpty(row)
-        template.push "<p>Neigborhood: #{row.HOOD_NAME.value}</p>" if row.HOOD_NAME
-        template.push "<p>State: #{row.STATENAME.value}</p>" if row.STATENAME
+        @attr.infoWindowData.state = row.HOOD_NAME.value
+        @attr.infoWindowData.hood = row.STATENAME.value
 
-        data = @getOnboardHTML(row)
-        if data
-          template.push data
+        @buildOnboardData(row)
 
-      event.infoWindowHtml = template.join('')
+    @buildOnboardData = (row) ->
+      return unless @attr.enableOnboardCalls
 
-    @getOnboardHTML = (row) ->
-      return undefined unless @attr.enableOnboardCalls
-
-      template = []
-      if data = JSON.parse(@getOnboardData(row).responseText)
-        unless _.isEmpty(data)
-          demographic = data.demographic
-          template.push "<p>Population: #{demographic.population}</p>" if demographic.population
-          template.push "<p>Growth Since 2000: #{demographic.growth}</p>" if demographic.growth
-          template.push "<p>Density: #{demographic.density}</p>" if demographic.density
-          template.push "<p>Male Population: #{demographic.males}%</p>" if demographic.males
-          template.push "<p>Female Population: #{demographic.females}%</p>" if demographic.females
-          template.push "<p>Medium Income: $#{Number(demographic.median_income).toFixed(2)}</p>" if demographic.median_income
-          template.push "<p>Average Income: $#{Number(demographic.average_income).toFixed(2)}</p>" if demographic.average_income
-
-      template.join('')
+      data = JSON.parse(@getOnboardData(row).responseText)
+      unless _.isEmpty(data)
+        demographic = data.demographic
+        for key, value of @attr.infoWindowData
+          if demographic[key]
+            @attr.infoWindowData[key] = @formatValue(key, demographic[key])
+        console.log @attr.infoWindowData
+    @formatValue = (key, value) ->
+      switch key
+        when 'median_income', 'average_income'
+          accounting.formatMoney(value)
+        when 'population'
+          accounting.formatNumber(value)
+        else
+          value
 
     @getOnboardData = (row) ->
       return {} if _.isEmpty(row)
-      query = []
 
+      query = []
       query.push "state=#{@toDashes(row.STATENAME.value)}"
       query.push "city=#{@toDashes(row.MARKET.value)}"
       query.push "neighborhood=#{@toDashes(row.HOOD_NAME.value)}"
-
 
       xhr = $.ajax
         url: "/meta/community?rectype=NH&#{query.join('&')}"

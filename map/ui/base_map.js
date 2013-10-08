@@ -55,11 +55,11 @@
         return this.addCustomMarker();
       };
       this.fireOurMapEventsOnce = function() {
-        this.addOverlayToMap();
         clearInterval(this.intervalId);
         this.trigger(document, 'mapRenderedFirst', this.mapRenderedFirstData());
         this.trigger(document, 'mapRendered', this.mapRenderedFirstData());
-        return this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
+        this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
+        return this.trigger(document, "uiNeighborhoodDataRequest", this.mapChangedDataBase());
       };
       this.handleOurMapEvents = function(event_type) {
         var _this = this;
@@ -83,17 +83,13 @@
           eventsHash['center_changed'] = false;
         }
         clearInterval(this.intervalId);
-        if (eventsHash['center_changed'] === true) {
-          this.addOverlayToMap;
-        }
-        if (eventsHash['zoom_changed'] === true) {
+        if (eventsHash['center_changed']) {
           this.trigger(document, 'uiMapZoomForListings', this.mapChangedData());
-        }
-        if (eventsHash['center_changed'] === true && this.attr.infoWindowOpen === false) {
-          this.trigger(document, 'mapRendered', this.mapChangedData());
-        }
-        if (eventsHash['center_changed'] === true) {
+          if (!this.attr.infoWindowOpen) {
+            this.trigger(document, 'mapRendered', this.mapChangedData());
+          }
           this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
+          this.trigger(document, "uiNeighborhoodDataRequest", this.mapChangedDataBase());
         }
         return this.resetOurEventHash();
       };
@@ -101,11 +97,6 @@
         this.attr.gMapEvents['zoom_changed'] = false;
         this.attr.gMapEvents['center_changed'] = false;
         this.attr.infoWindowOpen = false;
-      };
-      this.addOverlayToMap = function() {
-        this.attr.overlay = new google.maps.OverlayView();
-        this.attr.overlay.draw = function() {};
-        return this.attr.overlay.setMap(this.attr.gMap);
       };
       this.defineGoogleMapOptions = function() {
         var gCenter, lat, lng;
