@@ -158,7 +158,7 @@
   google.maps.FusionTablesLayer.prototype.enableMapTips = function(opts) {
     opts = opts || {};
 
-    var maptip = new FusionTipOverlay(null, null);
+    var maptip = new FusionTipOverlay(opts);
     var me = this;
     var currentLatLng = null;
     var currentCursor = null;
