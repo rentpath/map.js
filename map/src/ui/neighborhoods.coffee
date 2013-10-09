@@ -25,7 +25,7 @@ define [
       toggleControl: undefined
       data: undefined
       infoTemplate: undefined
-      tipStyle: ''
+      tipStyle: {}
       polygonOptions:
         fillColor: "fffaf0"
         fillOpacity: 0.1

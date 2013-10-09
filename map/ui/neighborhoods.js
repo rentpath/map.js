@@ -15,7 +15,7 @@
         toggleControl: void 0,
         data: void 0,
         infoTemplate: void 0,
-        tipStyle: '',
+        tipStyle: {},
         polygonOptions: {
           fillColor: "fffaf0",
           fillOpacity: 0.1,
