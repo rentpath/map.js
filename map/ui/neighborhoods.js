@@ -6,6 +6,7 @@
     neighborhoodsOverlay = function() {
       this.defaultAttrs({
         enableOnboardCalls: false,
+        enableMouseover: false,
         tableId: void 0,
         apiKey: void 0,
         hoodLayer: void 0,
@@ -14,6 +15,7 @@
         toggleControl: void 0,
         data: void 0,
         infoTemplate: void 0,
+        tipStyle: '',
         polygonOptions: {
           fillColor: "fffaf0",
           fillOpacity: 0.1,
@@ -49,10 +51,15 @@
         this.attr.gMap = data.gMap;
         this.attr.data = data;
         this.setupLayer(data);
-        this.buildMouseOverWindow();
+        this.setupMouseOver(data);
         this.addListeners();
         this.setupToggle();
         return this.attr.hoodLayer.setMap(this.attr.gMap);
+      };
+      this.setupMouseOver = function(data) {
+        if (this.attr.enableMouseover) {
+          return this.buildMouseOverWindow();
+        }
       };
       this.setupLayer = function(data) {
         var query;
@@ -93,8 +100,7 @@
         if (this.attr.hoodLayer.getMap()) {
           return this.attr.hoodLayer.setMap(null);
         } else {
-          this.setupLayer(this.attr.data);
-          this.buildMouseOverWindow();
+          this.setupMouseOver(this.attr.data);
           this.addListeners();
           return this.attr.hoodLayer.setMap(this.attr.gMap);
         }
@@ -107,7 +113,8 @@
           suppressMapTips: false,
           delay: 200,
           tolerance: 8,
-          key: this.attr.apiKey
+          key: this.attr.apiKey,
+          style: this.attr.tipStyle
         });
       };
       this.addListeners = function() {
@@ -132,7 +139,7 @@
         }
       };
       this.buildOnboardData = function(row) {
-        var data, demographic, key, value, _ref;
+        var data, demographic, key, value, _ref, _results;
         if (!this.attr.enableOnboardCalls) {
           return;
         }
@@ -140,13 +147,16 @@
         if (!_.isEmpty(data)) {
           demographic = data.demographic;
           _ref = this.attr.infoWindowData;
+          _results = [];
           for (key in _ref) {
             value = _ref[key];
             if (demographic[key]) {
-              this.attr.infoWindowData[key] = this.formatValue(key, demographic[key]);
+              _results.push(this.attr.infoWindowData[key] = this.formatValue(key, demographic[key]));
+            } else {
+              _results.push(void 0);
             }
           }
-          return console.log(this.attr.infoWindowData);
+          return _results;
         }
       };
       this.formatValue = function(key, value) {

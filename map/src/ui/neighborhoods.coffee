@@ -16,6 +16,7 @@ define [
 
     @defaultAttrs
       enableOnboardCalls: false
+      enableMouseover: false
       tableId: undefined
       apiKey: undefined
       hoodLayer: undefined
@@ -56,16 +57,15 @@ define [
 
       @attr.gMap = data.gMap
       @attr.data = data
-
       @setupLayer(data)
-
-      @buildMouseOverWindow()
-
+      @setupMouseOver(data)
       @addListeners()
-
       @setupToggle()
-
       @attr.hoodLayer.setMap(@attr.gMap)
+
+    @setupMouseOver = (data) ->
+      if @attr.enableMouseover
+        @buildMouseOverWindow()
 
     @setupLayer = (data) ->
       query = @hoodQuery(data)
@@ -101,8 +101,7 @@ define [
       if @attr.hoodLayer.getMap()
         @attr.hoodLayer.setMap(null);
       else
-        @setupLayer(@attr.data)
-        @buildMouseOverWindow()
+        @setupMouseOver(@attr.data)
         @addListeners()
         @attr.hoodLayer.setMap(@attr.gMap)
 
@@ -179,3 +178,4 @@ define [
       return
 
   return defineComponent(neighborhoodsOverlay)
+
