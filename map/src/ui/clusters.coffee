@@ -37,7 +37,11 @@ define [
     @initClusterer = (ev, data) ->
       @attr.markerClusterer = new MarkerClusterer(data.gMap, [], @mapClusterOptions())
 
+    @setClusterImage = (ev, data) ->
+      @attr.mapPinCluster = data.pinsClusterImage
+
     @after 'initialize', () ->
       @on document, 'mapRenderedFirst', @initClusterer
+      @on document, 'clusterImageChange', @setClusterImage
 
   return initMarkerClusters
