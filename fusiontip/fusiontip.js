@@ -198,7 +198,7 @@
 
 
     function queryFusion() {
-      if (queryPending)
+      if (queryPending || opts.suppressMapTips)
         return;
       var latlng = currentLatLng;
       var prj = maptip.getProjection();
