@@ -25,11 +25,12 @@ define [
       toggleControl: undefined
       data: undefined
       infoTemplate: undefined
-      tipStyle: {}
+      tipStyle: ''
+      mouseTipDelay: 200
       polygonOptions:
-        fillColor: "fffaf0"
+        fillColor: "F5F5DC"
         fillOpacity: 0.1
-        strokeColor: "8b8378"
+        strokeColor: "4D4D4D"
         strokeOpacity: 0.8
         strokeWeight: 1
 
@@ -58,12 +59,10 @@ define [
       @attr.gMap = data.gMap
       @attr.data = data
       @setupLayer(data)
-      @setupMouseOver(data)
-      @addListeners()
-      @setupToggle()
       @attr.hoodLayer.setMap(@attr.gMap)
+      @setupMouseOver()
 
-    @setupMouseOver = (data) ->
+    @setupMouseOver = () ->
       if @attr.enableMouseover
         @buildMouseOverWindow()
 
@@ -72,16 +71,17 @@ define [
 
       if @attr.hoodLayer?
         @attr.hoodLayer.setMap(null)
-        google.maps.event.clearInstanceListeners(@attr.hoodLayer);
         @attr.hoodLayer.setQuery(query)
-
-      @attr.hoodLayer = new google.maps.FusionTablesLayer(
-        map: @attr.gMap
-        query: query
-        styles: [
-          polygonOptions: @attr.polygonOptions
-        ]
-      )
+      else
+        @attr.hoodLayer = new google.maps.FusionTablesLayer(
+          map: @attr.gMap
+          query: query
+          styles: [
+            polygonOptions: @attr.polygonOptions
+          ]
+        )
+        @addListeners()
+        @setupToggle()
 
     @setupToggle = ->
       @positionToggleControl()
@@ -95,15 +95,14 @@ define [
       if @attr.toggleControl
         control = $('<div/>')
         control.append($(@attr.toggleControl))
-        @attr.gMap.controls[google.maps.ControlPosition.TOP_LEFT].push(control[0])
+        @attr.gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(control[0])
 
     @toggleLayer = ->
       if @attr.hoodLayer.getMap()
-        @attr.hoodLayer.setMap(null);
+        @attr.hoodLayer.setMap(null)
       else
-        @setupMouseOver(@attr.data)
-        @addListeners()
         @attr.hoodLayer.setMap(@attr.gMap)
+        @setupMouseOver()
 
     @buildMouseOverWindow = ->
       @attr.hoodLayer.enableMapTips
@@ -111,7 +110,7 @@ define [
         from: @attr.tableId # fusion table name
         geometryColumn: "geometry" # geometry column name
         suppressMapTips: false # optional, whether to show map tips. default false
-        delay: 200 # milliseconds mouse pause before send a server query. default 300.
+        delay: @attr.mouseTipDelay # milliseconds mouse pause before send a server query. default 300.
         tolerance: 8 # tolerance in pixel around mouse. default is 6.
         key: @attr.apiKey
         style: @attr.tipStyle

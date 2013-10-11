@@ -15,11 +15,12 @@
         toggleControl: void 0,
         data: void 0,
         infoTemplate: void 0,
-        tipStyle: {},
+        tipStyle: '',
+        mouseTipDelay: 200,
         polygonOptions: {
-          fillColor: "fffaf0",
+          fillColor: "F5F5DC",
           fillOpacity: 0.1,
-          strokeColor: "8b8378",
+          strokeColor: "4D4D4D",
           strokeOpacity: 0.8,
           strokeWeight: 1
         },
@@ -51,12 +52,10 @@
         this.attr.gMap = data.gMap;
         this.attr.data = data;
         this.setupLayer(data);
-        this.setupMouseOver(data);
-        this.addListeners();
-        this.setupToggle();
-        return this.attr.hoodLayer.setMap(this.attr.gMap);
+        this.attr.hoodLayer.setMap(this.attr.gMap);
+        return this.setupMouseOver();
       };
-      this.setupMouseOver = function(data) {
+      this.setupMouseOver = function() {
         if (this.attr.enableMouseover) {
           return this.buildMouseOverWindow();
         }
@@ -66,18 +65,20 @@
         query = this.hoodQuery(data);
         if (this.attr.hoodLayer != null) {
           this.attr.hoodLayer.setMap(null);
-          google.maps.event.clearInstanceListeners(this.attr.hoodLayer);
-          this.attr.hoodLayer.setQuery(query);
+          return this.attr.hoodLayer.setQuery(query);
+        } else {
+          this.attr.hoodLayer = new google.maps.FusionTablesLayer({
+            map: this.attr.gMap,
+            query: query,
+            styles: [
+              {
+                polygonOptions: this.attr.polygonOptions
+              }
+            ]
+          });
+          this.addListeners();
+          return this.setupToggle();
         }
-        return this.attr.hoodLayer = new google.maps.FusionTablesLayer({
-          map: this.attr.gMap,
-          query: query,
-          styles: [
-            {
-              polygonOptions: this.attr.polygonOptions
-            }
-          ]
-        });
       };
       this.setupToggle = function() {
         this.positionToggleControl();
@@ -93,16 +94,15 @@
         if (this.attr.toggleControl) {
           control = $('<div/>');
           control.append($(this.attr.toggleControl));
-          return this.attr.gMap.controls[google.maps.ControlPosition.TOP_LEFT].push(control[0]);
+          return this.attr.gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(control[0]);
         }
       };
       this.toggleLayer = function() {
         if (this.attr.hoodLayer.getMap()) {
           return this.attr.hoodLayer.setMap(null);
         } else {
-          this.setupMouseOver(this.attr.data);
-          this.addListeners();
-          return this.attr.hoodLayer.setMap(this.attr.gMap);
+          this.attr.hoodLayer.setMap(this.attr.gMap);
+          return this.setupMouseOver();
         }
       };
       this.buildMouseOverWindow = function() {
@@ -111,7 +111,7 @@
           from: this.attr.tableId,
           geometryColumn: "geometry",
           suppressMapTips: false,
-          delay: 200,
+          delay: this.attr.mouseTipDelay,
           tolerance: 8,
           key: this.attr.apiKey,
           style: this.attr.tipStyle
