@@ -29,7 +29,7 @@
     if (this.style_) {
       for (var x in this.style_) {
         if (this.style_.hasOwnProperty(x)) {
-          div.style[x] = this.style_[x]
+          div.style[x] = this.style_[x];
         }
       }
     }
@@ -41,7 +41,7 @@
   };
   FusionTipOverlay.prototype.draw = function() {
     var overlayProjection = this.getProjection();
-    if (this.latlng_) {
+    if (this.latlng_ && overlayProjection) {
       var sw = overlayProjection.fromLatLngToDivPixel(this.latlng_);
       var div = this.div_;
       div.style.left = sw.x + 'px';
@@ -79,7 +79,7 @@
         curleft += obj.offsetLeft;
         curtop += obj.offsetTop;
         obj = obj.offsetParent;
-      } while (obj != null);
+      } while (obj !== null);
     }
     return {
       x: curleft,
@@ -90,7 +90,7 @@
     var posx = 0;
     var posy = 0;
     if (!e)
-      var e = window.event;
+      e = window.event;
     if (e.pageX || e.pageY) {
       posx = e.pageX;
       posy = e.pageY;
@@ -122,7 +122,7 @@
   }
 
   function isSameRow(row1, row2) {
-    if (row2 == null)
+    if (row2 === null)
       return false;
     for (var x in row1) {
       if (row1.hasOwnProperty(x)) {
@@ -202,6 +202,10 @@
         return;
       var latlng = currentLatLng;
       var prj = maptip.getProjection();
+
+      if (!prj){
+        return;
+      }
       var px = prj.fromLatLngToDivPixel(latlng);
       px.x -= tol;
       px.y += tol;
@@ -361,12 +365,10 @@
    * @param {Object} map
    */
   google.maps.FusionTablesLayer.prototype.setMap = function(map) {
-    if (map == null) {
+    if (map === null) {
       this.disableMapTips();
     }
     _setMap_.call(this, map);
   };
 
 })();
-
-
