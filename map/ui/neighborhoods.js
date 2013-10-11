@@ -17,6 +17,7 @@
         infoTemplate: void 0,
         tipStyle: '',
         mouseTipDelay: 200,
+        suppressMapTips: false,
         polygonOptions: {
           fillColor: "F5F5DC",
           fillOpacity: 0.1,
@@ -110,7 +111,7 @@
           select: "HOOD_NAME, STATENAME",
           from: this.attr.tableId,
           geometryColumn: "geometry",
-          suppressMapTips: false,
+          suppressMapTips: this.attr.suppressMapTips,
           delay: this.attr.mouseTipDelay,
           tolerance: 8,
           key: this.attr.apiKey,
