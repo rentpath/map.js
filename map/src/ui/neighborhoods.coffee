@@ -28,6 +28,7 @@ define [
       tipStyle: ''
       mouseTipDelay: 200
       suppressMapTips: false
+      minimalZommLevel: 12
       polygonOptions:
         fillColor: "F5F5DC"
         fillOpacity: 0.1
@@ -55,7 +56,7 @@ define [
         where: where
 
     @addHoodsLayer = (ev, data) ->
-      return if !data or !data.gMap or data.gMap.getZoom() < 11
+      return if !data or !data.gMap or data.gMap.getZoom() < @attr.minimalZommLevel
 
       @attr.gMap = data.gMap
       @attr.data = data

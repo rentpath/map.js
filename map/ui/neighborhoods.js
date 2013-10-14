@@ -18,6 +18,7 @@
         tipStyle: '',
         mouseTipDelay: 200,
         suppressMapTips: false,
+        minimalZommLevel: 12,
         polygonOptions: {
           fillColor: "F5F5DC",
           fillOpacity: 0.1,
@@ -47,7 +48,7 @@
         };
       };
       this.addHoodsLayer = function(ev, data) {
-        if (!data || !data.gMap || data.gMap.getZoom() < 11) {
+        if (!data || !data.gMap || data.gMap.getZoom() < this.attr.minimalZommLevel) {
           return;
         }
         this.attr.gMap = data.gMap;
