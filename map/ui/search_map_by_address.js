@@ -9,33 +9,36 @@
         addressSearchInputSel: '#searchTextField',
         addressSearchErrorSel: '#address_search_error',
         addressSearchBar: '#address_search',
-        addressSearchLink: '#link_show_address_field'
+        addressSearchLink: '#link_show_address_field',
+        autocomplete: void 0
       });
-      this.initSearchMarker = function() {
-        var autocomplete, input;
-        input = this.$node.select(this.attr.addressSearchInputSel)[0];
-        autocomplete = new google.maps.places.Autocomplete(input);
-        autocomplete.bindTo('bounds', this.attr.gMap);
-        autocomplete.setTypes([]);
+      this.initSearchMarker = function(ev, data) {
+        var input;
+        this.map = data.gMap;
+        input = this.$node.find(this.attr.addressSearchInputSel)[0];
+        this.attr.autocomplete = new google.maps.places.Autocomplete(input);
+        this.attr.autocomplete.bindTo('bounds', this.map);
+        this.attr.autocomplete.setTypes([]);
         this.handleAddressTextChange();
         this.toggleAddressFieldDisplay();
+        this.setPlaceListener();
       };
       this.handleAddressTextChange = function() {
         var searchError, searchInput,
           _this = this;
-        searchInput = this.$node.select(this.attr.addressSearchInputSel);
-        searchError = this.$node.select(this.attr.addressSearchErrorSel);
+        searchInput = this.$node.find(this.attr.addressSearchInputSel);
+        searchError = this.$node.find(this.attr.addressSearchErrorSel);
         return searchInput.keyup(function(e) {
-          if (searchErrorSel.is(':visible') && e.keyCode !== 13) {
-            return _this.addrSearchError.slideUp();
+          if (searchError.is(':visible') && e.keyCode !== 13) {
+            return searchError.slideUp();
           }
         });
       };
       this.toggleAddressFieldDisplay = function() {
         var searchBar, searchLink,
           _this = this;
-        searchBar = this.$node.select(this.attr.addressSearchBar);
-        searchLink = this.$node.select(this.attr.addressSearchLink);
+        searchBar = this.$node.find(this.attr.addressSearchBar);
+        searchLink = this.$node.find(this.attr.addressSearchLink);
         return searchLink.click(function() {
           if (searchBar.is(":visible")) {
             searchBar.hide(100);
@@ -46,6 +49,54 @@
             return searchLink.text("Hide address bar");
           }
         });
+      };
+      this.setPlaceListener = function() {
+        var autocomplete,
+          _this = this;
+        autocomplete = this.attr.autocomplete;
+        this.currentSearchPin = this.setSearchPinOptions();
+        return google.maps.event.addListener(autocomplete, "place_changed", function() {
+          var place;
+          place = autocomplete.getPlace();
+          if (place && place.geometry) {
+            _this.location = place.geometry.location;
+            _this.setAddressPin();
+            return _this.searchPinAutoTag();
+          } else {
+            return _this.addError("Please Select An Address From the List");
+          }
+        });
+      };
+      this.addError = function(errorText) {
+        $(this.attr.addressSearchErrorSel).html(errorText);
+        return $(this.attr.addressSearchErrorSel).slideDown();
+      };
+      this.setAddressPin = function() {
+        this.currentSearchPin.setPosition(this.location);
+        this.map.setCenter(this.location);
+        this.map.setZoom(13);
+        return this.currentSearchPin.setVisible;
+      };
+      this.setSearchPinOptions = function() {
+        return new google.maps.Marker({
+          position: this.location,
+          map: this.map,
+          icon: this.attr.icon,
+          draggable: true
+        });
+      };
+      this.searchPinAutoTag = function() {
+        var obj;
+        obj = {
+          cg: 'map',
+          sg: 'pinDrop',
+          item: 'geoCode',
+          value: this.currentSearchPin.position.lng() + ',' + this.currentSearchPin.position.lat(),
+          radius: null,
+          listingCount: null,
+          ltc: null
+        };
+        return WH.fire(obj);
       };
       return this.after('initialize', function() {
         return this.on(document, 'mapRenderedFirst', this.initSearchMarker);
