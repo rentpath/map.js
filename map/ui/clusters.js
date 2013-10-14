@@ -33,8 +33,13 @@
       this.initClusterer = function(ev, data) {
         return this.attr.markerClusterer = new MarkerClusterer(data.gMap, [], this.mapClusterOptions());
       };
+      this.setClusterImage = function(ev, data) {
+        this.attr.mapPinCluster = data.pinsClusterImage;
+        return this.off(document, 'clusterImageChange');
+      };
       return this.after('initialize', function() {
-        return this.on(document, 'mapRenderedFirst', this.initClusterer);
+        this.on(document, 'mapRenderedFirst', this.initClusterer);
+        return this.on(document, 'clusterImageChange', this.setClusterImage);
       });
     };
     return initMarkerClusters;
