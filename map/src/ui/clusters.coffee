@@ -39,6 +39,7 @@ define [
 
     @setClusterImage = (ev, data) ->
       @attr.mapPinCluster = data.pinsClusterImage
+      @off document, 'clusterImageChange'
 
     @after 'initialize', () ->
       @on document, 'mapRenderedFirst', @initClusterer
