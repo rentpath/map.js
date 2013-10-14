@@ -1,16 +1,18 @@
 {
   "name": "map",
-  "version": "0.0.7",
+  "version": "0.0.8-flight",
   "description": "Map Module for RentPath Sites",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
     "dependencies": {
       "jquery": null,
       "es5-shim": null,
-      "flight": "1.0.2",
+      "flight": "1.0.2-fork",
       "marker-clusterer": null,
       "primedia_events": null,
-      "utils": null
+      "utils": null,
+      "accounting":null,
+      "fusiontip":null
     },
     "main": "map.js",
     "include": [

@@ -3,8 +3,8 @@
 define [
   'underscore'
   'flight/lib/component',
-  'lib/fusiontip/fusiontip',
-  'lib/accounting/accounting'
+  'fusiontip',
+  'accounting'
 ], (
   _,
   defineComponent,
