@@ -108,7 +108,7 @@ define [
 
     @buildMouseOverWindow = ->
       @attr.hoodLayer.enableMapTips
-        select: "HOOD_NAME, STATENAME" # list of columns to query, typially need only one column.
+        select: "HOOD_NAME" # list of columns to query, typially need only one column.
         from: @attr.tableId # fusion table name
         geometryColumn: "geometry" # geometry column name
         suppressMapTips: @attr.suppressMapTips # optional, whether to show map tips. default false
@@ -129,8 +129,8 @@ define [
     @buildInfoData = (event) ->
       row = event.row
       unless _.isEmpty(row)
-        @attr.infoWindowData.state = row.HOOD_NAME.value
-        @attr.infoWindowData.hood = row.STATENAME.value
+        @attr.infoWindowData.state = row.STATENAME.value
+        @attr.infoWindowData.hood = row.HOOD_NAME.value
 
         @buildOnboardData(row)
 

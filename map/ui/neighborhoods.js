@@ -109,7 +109,7 @@
       };
       this.buildMouseOverWindow = function() {
         return this.attr.hoodLayer.enableMapTips({
-          select: "HOOD_NAME, STATENAME",
+          select: "HOOD_NAME",
           from: this.attr.tableId,
           geometryColumn: "geometry",
           suppressMapTips: this.attr.suppressMapTips,
@@ -135,8 +135,8 @@
         var row;
         row = event.row;
         if (!_.isEmpty(row)) {
-          this.attr.infoWindowData.state = row.HOOD_NAME.value;
-          this.attr.infoWindowData.hood = row.STATENAME.value;
+          this.attr.infoWindowData.state = row.STATENAME.value;
+          this.attr.infoWindowData.hood = row.HOOD_NAME.value;
           return this.buildOnboardData(row);
         }
       };
