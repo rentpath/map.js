@@ -168,6 +168,12 @@
         return data;
       };
       this.mapChangedData = function() {
+        var data;
+        data = this.mapChangedDataBase();
+        data.sort = 'distance';
+        return data;
+      };
+      this.mapChangedDataBase = function() {
         return {
           gMap: this.attr.gMap,
           latitude: this.latitude(),
@@ -176,7 +182,11 @@
           lat1: this.southWestLatitude(),
           lng1: this.southWestLongitude(),
           lat2: this.northEastLatitude(),
-          lng2: this.northEastLongitude()
+          lng2: this.northEastLongitude(),
+          zip: this.geoData().zip,
+          city: this.geoData().city,
+          state: this.geoData().state,
+          hood: this.geoData().hood
         };
       };
       this.zoomCircle = function() {

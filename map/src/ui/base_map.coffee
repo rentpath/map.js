@@ -148,6 +148,11 @@ define [
       data
 
     @mapChangedData = ->
+      data = @mapChangedDataBase()
+      data.sort = 'distance'
+      data
+
+    @mapChangedDataBase = ->
       {
         gMap: @attr.gMap
         latitude: @latitude()
@@ -157,6 +162,10 @@ define [
         lng1: @southWestLongitude()
         lat2: @northEastLatitude()
         lng2: @northEastLongitude()
+        zip: @geoData().zip
+        city: @geoData().city
+        state: @geoData().state
+        hood: @geoData().hood
       }
 
     @zoomCircle = ->
