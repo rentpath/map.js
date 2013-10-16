@@ -25,6 +25,7 @@
       "ui/search_map_by_address.js",
       "ui/neighborhoods.js",
       "utils/distance_conversion.js"
+      "utils/mobile_detection.js"
     ]
   },
   "author": {

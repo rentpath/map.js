@@ -3,13 +3,15 @@
 define [
   'underscore'
   'flight/lib/component',
-  'fusiontip',
-  'accounting'
+  'lib/fusiontip/fusiontip',
+  'lib/accounting/accounting'
+  'map/utils/mobile_detection'
 ], (
   _,
   defineComponent,
   fusionTip,
-  accounting
+  accounting,
+  mobileDetection
 ) ->
 
   neighborhoodsOverlay = ->
@@ -30,11 +32,17 @@ define [
       suppressMapTips: false
       minimalZommLevel: 12
       polygonOptions:
-        fillColor: "F5F5DC"
+        fillColor: "BC8F8F"
         fillOpacity: 0.1
         strokeColor: "4D4D4D"
         strokeOpacity: 0.8
         strokeWeight: 1
+
+      polygonOptionsCurrent:
+        fillOpacity: 0.5
+        strokeColor: '4D4D4D'
+        strokeOpacity: 0.7,
+        strokeWeight: 2
 
       infoWindowData:
         state: undefined
@@ -47,6 +55,7 @@ define [
         median_income: undefined
         average_income: undefined
 
+    @infoWindow = new google.maps.InfoWindow()
 
     @hoodQuery = (data) ->
       where = "LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
@@ -65,7 +74,7 @@ define [
       @setupMouseOver()
 
     @setupMouseOver = () ->
-      if @attr.enableMouseover
+      if !@isMobile() && @attr.enableMouseover
         @buildMouseOverWindow()
 
     @setupLayer = (data) ->
@@ -78,8 +87,12 @@ define [
         @attr.hoodLayer = new google.maps.FusionTablesLayer(
           map: @attr.gMap
           query: query
+          suppressInfoWindows: true
           styles: [
             polygonOptions: @attr.polygonOptions
+          ,
+            where: "HOOD_NAME = '#{@toSpaces(data.hood)}'"
+            polygonOptions: @attr.polygonOptionsCurrent
           ]
         )
         @addListeners()
@@ -120,14 +133,18 @@ define [
     @addListeners = ->
       if @attr.infoTemplate
         google.maps.event.addListener @attr.hoodLayer, 'click', (e) =>
-          @buildInfoWindow(e)
+           $(document).trigger 'neighborhoodClicked', { row: e.row, location: e.latLng }
 
-    @buildInfoWindow = (event) ->
-      @buildInfoData(event)
+    @buildInfoWindow = (event, data) ->
+      @trigger document, 'uiNHoodInfoWindowDataRequest'
+      @buildInfoData(event, data)
       event.infoWindowHtml = _.template(@attr.infoTemplate, @attr.infoWindowData)
+      @infoWindow.setContent(event.infoWindowHtml)
+      @infoWindow.setPosition(data.location)
+      @infoWindow.open(@attr.gMap)
 
-    @buildInfoData = (event) ->
-      row = event.row
+    @buildInfoData = (event, data) ->
+      row = data.row
       unless _.isEmpty(row)
         @attr.infoWindowData.state = row.STATENAME.value
         @attr.infoWindowData.hood = row.HOOD_NAME.value
@@ -174,9 +191,15 @@ define [
 
       value.replace(' ', '-')
 
+    @toSpaces = (value) ->
+      return '' unless value?
+
+      value.replace('-', ' ')
+
     @after 'initialize', ->
       @on document, 'uiNeighborhoodDataRequest', @addHoodsLayer
+      @on document, 'neighborhoodClicked', @buildInfoWindow
       return
 
-  return defineComponent(neighborhoodsOverlay)
+  return defineComponent(neighborhoodsOverlay, mobileDetection)
 
