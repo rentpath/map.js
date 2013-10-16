@@ -2,7 +2,7 @@
 
 define [
   'flight/lib/component',
-  'marker-clusterer',
+  'lib/marker-clusterer/marker-clusterer',
   'utils'
 ], (
   defineComponent,

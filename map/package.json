@@ -1,6 +1,6 @@
 {
   "name": "map",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Map Module for RentPath Sites",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
@@ -24,9 +24,10 @@
       "ui/markers_info_window.js",
       "ui/search_map_by_address.js",
       "ui/neighborhoods.js",
-      "utils/distance_conversion.js"
+      "utils/distance_conversion.js",
       "utils/mobile_detection.js"
     ]
+
   },
   "author": {
     "name": "RentPath"
