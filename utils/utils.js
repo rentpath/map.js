@@ -353,6 +353,24 @@ define(['jquery', 'underscore'], function ($, _) {
     return queryAsAssoc;
   };
 
+  var queryStringToParams = function(queryString) {
+    var queryAsAssoc = {};
+    if (queryString === null || typeof(queryString) === 'undefined' || queryString.length == 0) {
+      queryString = top.location.search.substring(1);
+    }
+    var keyValues = queryString.split(/&/);
+    if (keyValues.length > 0) {
+      for (var i = 0; i < keyValues.length; i++) {
+        var key = keyValues[i].split('=');
+        if (key[0].length > 0 && key[1].length > 0) {
+          queryAsAssoc[key[0]] = key[1];
+        }
+      }
+    }
+
+    return queryAsAssoc;
+  };
+
   var toQueryString = function(queryHash) {
     return _.map(queryHash,function(val, key) {
       return key + '=' + val;
