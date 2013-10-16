@@ -440,6 +440,7 @@ define(['jquery', 'underscore'], function ($, _) {
     addRefinementToUrl:addRefinementToUrl,
     showDfp:showDfp,
     isSem:isSem,
-    tabSwitcher: tabSwitcher
+    tabSwitcher: tabSwitcher,
+    queryStringToParams: queryStringToParams
   };
 });
