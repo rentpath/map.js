@@ -15,7 +15,6 @@ define [
       addressSearchInputSel: '#searchTextField'
       addressSearchErrorSel: '#address_search_error'            
       addressSearchBar: '#address_search'
-      addressSearchLink: '#link_show_address_field'
       autocomplete: undefined
 
     @initSearchMarker = (ev, data) ->
@@ -36,16 +35,9 @@ define [
         searchError.slideUp() if (searchError.is(':visible') && e.keyCode != 13)
           
      @toggleAddressFieldDisplay = ->
-      searchBar = @$node.find(@attr.addressSearchBar)
-      searchLink = @$node.find(@attr.addressSearchLink)
-      searchLink.click =>
-        if searchBar.is(":visible")
-          searchBar.hide 100
-          searchLink.text "Add an address"
-        else
-          searchBar.show 100
-          @$node.select(@attr.addressSearchInputSel).focus()
-          searchLink.text "Hide address bar"
+      searchBar = @$node
+      searchBar.show 100
+      @$node.select(@attr.addressSearchInputSel).focus()
 
     @setPlaceListener = () ->
       autocomplete = @attr.autocomplete

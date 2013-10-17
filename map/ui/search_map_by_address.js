@@ -9,7 +9,6 @@
         addressSearchInputSel: '#searchTextField',
         addressSearchErrorSel: '#address_search_error',
         addressSearchBar: '#address_search',
-        addressSearchLink: '#link_show_address_field',
         autocomplete: void 0
       });
       this.initSearchMarker = function(ev, data) {
@@ -35,20 +34,10 @@
         });
       };
       this.toggleAddressFieldDisplay = function() {
-        var searchBar, searchLink,
-          _this = this;
-        searchBar = this.$node.find(this.attr.addressSearchBar);
-        searchLink = this.$node.find(this.attr.addressSearchLink);
-        return searchLink.click(function() {
-          if (searchBar.is(":visible")) {
-            searchBar.hide(100);
-            return searchLink.text("Add an address");
-          } else {
-            searchBar.show(100);
-            _this.$node.select(_this.attr.addressSearchInputSel).focus();
-            return searchLink.text("Hide address bar");
-          }
-        });
+        var searchBar;
+        searchBar = this.$node;
+        searchBar.show(100);
+        return this.$node.select(this.attr.addressSearchInputSel).focus();
       };
       this.setPlaceListener = function() {
         var autocomplete,
