@@ -410,6 +410,10 @@ define(['jquery', 'underscore'], function ($, _) {
     return $('meta[name="show_dfp"]').attr('content') === 'true' ? true : false;
   };
 
+  var isMap = function() {
+      return window.location.pathname.match(/^\/map/);
+  };
+
   var isSem = function() {
     return (localStorage.getItem("campaign_id") || localStorage.getItem("blthmpg")) ? true : false;
   };
@@ -439,6 +443,7 @@ define(['jquery', 'underscore'], function ($, _) {
     wireupSocialDialogs:wireupSocialDialogs,
     addRefinementToUrl:addRefinementToUrl,
     showDfp:showDfp,
+    isMap:isMap,
     isSem:isSem,
     tabSwitcher: tabSwitcher,
     queryStringToParams: queryStringToParams
