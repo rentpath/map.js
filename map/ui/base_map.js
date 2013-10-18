@@ -99,10 +99,9 @@
         this.attr.infoWindowOpen = false;
       };
       this.defineGoogleMapOptions = function() {
-        var gCenter, lat, lng;
-        lat = this.data.latitude || this.attr.latitude;
-        lng = this.data.longitude || this.attr.longitude;
-        gCenter = new google.maps.LatLng(lat, lng);
+        var gCenter, geo;
+        geo = this.getInitialGeo();
+        gCenter = new google.maps.LatLng(geo.lat, geo.lng);
         return {
           center: gCenter,
           zoom: this.radiusToZoom(this.geoDataRadiusMiles()),
@@ -204,8 +203,14 @@
       this.geoDataRadiusMiles = function() {
         return this.geoData().rad || 10;
       };
-      return this.geoData = function() {
+      this.geoData = function() {
         return this.attr.geoData || {};
+      };
+      return this.getInitialGeo = function() {
+        return {
+          lat: this.data.lat || this.data.latitude || this.attr.latitude,
+          lng: this.data.lng || this.data.longitude || this.attr.longitude
+        };
       };
     };
     return defineComponent(defaultMap);

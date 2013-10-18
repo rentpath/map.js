@@ -88,9 +88,8 @@ define [
       return
 
     @defineGoogleMapOptions = () ->
-      lat = @data.latitude || @attr.latitude
-      lng = @data.longitude || @attr.longitude
-      gCenter = new google.maps.LatLng(lat, lng)
+      geo = @getInitialGeo()
+      gCenter = new google.maps.LatLng(geo.lat, geo.lng)
       return {
         center: gCenter
         zoom: @radiusToZoom(@geoDataRadiusMiles())
@@ -183,5 +182,12 @@ define [
 
     @geoData = ->
       @attr.geoData || {}
+
+    @getInitialGeo = ->
+      {
+        lat: @data.lat || @data.latitude || @attr.latitude
+        lng: @data.lng || @data.longitude || @attr.longitude
+      }
+
 
   return defineComponent(defaultMap)
