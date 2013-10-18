@@ -12,8 +12,9 @@ define [
 
     @defaultAttrs
       icon: utils.assetURL() + "/images/nonsprite/map/map_pin_custom.png"
+      addressContainer: '#address_search_container'
       addressSearchInputSel: '#searchTextField'
-      addressSearchErrorSel: '#address_search_error'            
+      addressSearchErrorSel: '#address_search_error'
       addressSearchBar: '#address_search'
       autocomplete: undefined
 
@@ -26,14 +27,21 @@ define [
       @handleAddressTextChange()
       @toggleAddressFieldDisplay()
       @setPlaceListener()
+      @positionControl()
       return
+
+    @positionControl = ->
+      control = $('<div/>')
+      control.append($(@attr.addressContainer))
+      control.index = 2
+      @map.controls[google.maps.ControlPosition.TOP_RIGHT].push(control[0])
 
     @handleAddressTextChange = () ->
       searchInput = @$node.find(@attr.addressSearchInputSel)
       searchError = @$node.find(@attr.addressSearchErrorSel)
       searchInput.keyup (e) =>
         searchError.slideUp() if (searchError.is(':visible') && e.keyCode != 13)
-          
+
      @toggleAddressFieldDisplay = ->
       searchBar = @$node
       searchBar.show 100
@@ -54,12 +62,12 @@ define [
     @addError = (errorText) ->
       $(@attr.addressSearchErrorSel).html(errorText)
       $(@attr.addressSearchErrorSel).slideDown()
-      
+
     @setAddressPin = () ->
       @currentSearchPin.setPosition(@location)
       @map.setCenter @location
       @map.setZoom 13
-      @currentSearchPin.setVisible     
+      @currentSearchPin.setVisible
 
     @setSearchPinOptions = () ->
       new google.maps.Marker(
@@ -74,10 +82,10 @@ define [
         cg: 'map',
         sg: 'pinDrop',
         item: 'geoCode',
-        value: @currentSearchPin.position.lng() + ',' + @currentSearchPin.position.lat(), 
-        radius: null, 
+        value: @currentSearchPin.position.lng() + ',' + @currentSearchPin.position.lat(),
+        radius: null,
         listingCount: null
-        ltc: null, 
+        ltc: null,
       WH.fire obj
 
     @after 'initialize', ->

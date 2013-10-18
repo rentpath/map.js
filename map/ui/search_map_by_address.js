@@ -6,6 +6,7 @@
     searchMapByAddress = function() {
       this.defaultAttrs({
         icon: utils.assetURL() + "/images/nonsprite/map/map_pin_custom.png",
+        addressContainer: '#address_search_container',
         addressSearchInputSel: '#searchTextField',
         addressSearchErrorSel: '#address_search_error',
         addressSearchBar: '#address_search',
@@ -21,6 +22,14 @@
         this.handleAddressTextChange();
         this.toggleAddressFieldDisplay();
         this.setPlaceListener();
+        this.positionControl();
+      };
+      this.positionControl = function() {
+        var control;
+        control = $('<div/>');
+        control.append($(this.attr.addressContainer));
+        control.index = 2;
+        return this.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(control[0]);
       };
       this.handleAddressTextChange = function() {
         var searchError, searchInput,
