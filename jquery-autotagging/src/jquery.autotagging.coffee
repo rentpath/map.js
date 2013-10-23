@@ -241,8 +241,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       if $.cookie(@WH_SESSION_ID) == null
         @firstVisit = currentTime
         return currentTime
-      else if (currentTime - last_access_time) >= @THIRTY_MINUTES_IN_MS
-        return currentTime
       else
         return $.cookie(@WH_SESSION_ID)
 
