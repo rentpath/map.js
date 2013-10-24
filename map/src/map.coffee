@@ -16,13 +16,23 @@ define [
   ,SearchMapByAddress
 ) ->
 
+  # EXPECTED ARGUMENTS
+  # First element is an options object, sample bellow
+  # Add more options needed
+
+  # map:
+  #   geoData: geoData
+  #   canvas: '#map_canvas'
+  #   gMapOptions:
+  #     draggable: false
+  # addressBar: undefined
+  # hybridList: undefined
+
   initialize = ->
-    args = FlightUtils.toArray(arguments)
-    mapSel = args.shift()
-    addressSearchSel = args.shift()
-    geoData = args.pop()
-    BaseMap.attachTo(mapSel, {geoData: geoData})
-    MarkerInfoWindow.attachTo(mapSel)
-    SearchMapByAddress.attachTo(addressSearchSel)
+    args = arguments[0]
+
+    BaseMap.attachTo(args.map.canvas, args.map)
+    MarkerInfoWindow.attachTo(args.map.canvas)
+    SearchMapByAddress.attachTo(args.addressBar.selector) if args.addressBar
 
   return initialize

@@ -17,6 +17,9 @@ define [
       gMapEvents: {'center_changed': false, 'zoom_changed': false}
       infoWindowOpen: false
       overlay: undefined
+      draggable: true
+      geoData: {}
+      gMapOptions: {}
 
     @after 'initialize', ->
       @on document, 'mapDataAvailable', @initBaseMap
@@ -93,9 +96,9 @@ define [
       return {
         center: gCenter
         zoom: @radiusToZoom(@geoDataRadiusMiles())
-        minZoom: 1
         mapTypeId: google.maps.MapTypeId.ROADMAP
         scaleControl: true
+        draggable: @attr.gMapOptions.draggable
       }
 
     @radiusToZoom = (radius = 10) ->
