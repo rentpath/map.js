@@ -3,16 +3,13 @@
   define(['jquery', 'es5-shim/lib/es5-shim', 'es5-shim/lib/es5-sham', 'flight/lib/utils', 'map/ui/base_map', 'map/ui/markers_info_window', 'map/ui/search_map_by_address'], function($, es5Shim, es5Sham, FlightUtils, BaseMap, MarkerInfoWindow, SearchMapByAddress) {
     var initialize;
     initialize = function() {
-      var addressSearchSel, args, geoData, mapSel;
-      args = FlightUtils.toArray(arguments);
-      mapSel = args.shift();
-      addressSearchSel = args.shift();
-      geoData = args.pop();
-      BaseMap.attachTo(mapSel, {
-        geoData: geoData
-      });
-      MarkerInfoWindow.attachTo(mapSel);
-      return SearchMapByAddress.attachTo(addressSearchSel);
+      var args;
+      args = arguments[0];
+      BaseMap.attachTo(args.map.canvas, args.map);
+      MarkerInfoWindow.attachTo(args.map.canvas);
+      if (args.addressBar) {
+        return SearchMapByAddress.attachTo(args.addressBar.selector);
+      }
     };
     return initialize;
   });

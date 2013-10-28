@@ -13,7 +13,10 @@
           'zoom_changed': false
         },
         infoWindowOpen: false,
-        overlay: void 0
+        overlay: void 0,
+        draggable: true,
+        geoData: {},
+        gMapOptions: {}
       });
       this.after('initialize', function() {
         var _this = this;
@@ -105,9 +108,9 @@
         return {
           center: gCenter,
           zoom: this.radiusToZoom(this.geoDataRadiusMiles()),
-          minZoom: 1,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
-          scaleControl: true
+          scaleControl: true,
+          draggable: this.attr.gMapOptions.draggable
         };
       };
       this.radiusToZoom = function(radius) {
