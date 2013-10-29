@@ -30,7 +30,7 @@
         }
       };
       this.openInfoWindow = function(data) {
-        if (!this.currentOpenWindow) {
+        if (this.currentOpenWindow == null) {
           this.currentOpenWindow = new google.maps.InfoWindow();
         }
         this.currentOpenWindow.setContent(data);

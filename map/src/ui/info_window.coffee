@@ -31,7 +31,7 @@ define [
       @currentOpenWindow.close() if @currentOpenWindow
 
     @openInfoWindow = (data) ->
-      @currentOpenWindow = new google.maps.InfoWindow() unless @currentOpenWindow
+      @currentOpenWindow ?= new google.maps.InfoWindow()
       @currentOpenWindow.setContent data
       @currentOpenWindow.open @attr.gMap, @attr.gMarker
 
