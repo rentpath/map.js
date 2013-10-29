@@ -4,11 +4,13 @@
   define(['flight/lib/component', 'utils'], function(defineComponent, utils) {
     var infoWindow;
     infoWindow = function() {
+      ({
+        currentOpenWindow: null,
+        eventsWired: false
+      });
       this.defaultAttrs({
         gMap: {},
-        gMarker: {},
-        gmapInfoWindows: {},
-        currentOpenWindow: {}
+        gMarker: {}
       });
       this.showInfoWindowOnMarkerClick = function(ev, data) {
         this.attr.gMarker = data.gMarker;
@@ -18,39 +20,34 @@
         });
       };
       this.render = function(ev, data) {
-        var gInfoWindow;
-        this.closeOpenInfoWindows();
-        gInfoWindow = this.openInfoWindow(data);
-        return this.wireUpEvents(gInfoWindow);
+        this.closeOpenInfoWindow();
+        this.openInfoWindow(data);
+        return this.wireUpEvents();
       };
-      this.closeOpenInfoWindows = function() {
-        if (!$.isEmptyObject(this.attr.currentOpenWindow)) {
-          return this.attr.currentOpenWindow.close();
+      this.closeOpenInfoWindow = function() {
+        if (this.currentOpenWindow) {
+          return this.currentOpenWindow.close();
         }
       };
       this.openInfoWindow = function(data) {
-        var gInfoWindow;
-        gInfoWindow = new google.maps.InfoWindow();
-        gInfoWindow.setContent(data);
-        gInfoWindow.open(this.attr.gMap, this.attr.gMarker);
-        return this.attr.currentOpenWindow = gInfoWindow;
+        if (!this.currentOpenWindow) {
+          this.currentOpenWindow = new google.maps.InfoWindow();
+        }
+        this.currentOpenWindow.setContent(data);
+        return this.currentOpenWindow.open(this.attr.gMap, this.attr.gMarker);
       };
-      this.wireUpEvents = function(gInfoWindow) {
-        var _this = this;
-        google.maps.event.addListener(gInfoWindow, 'closeclick', function() {
-          return $(document).trigger('uiInfoWindowClosed');
-        });
-        return google.maps.event.addListener(gInfoWindow, 'domready', function() {
-          return $(document).trigger('uiInfoWindowRendered', {
-            marker: _this.attr.gMarker,
-            infoWindow: gInfoWindow
+      this.wireUpEvents = function() {
+        if (this.currentOpenWindow && !this.eventsWired) {
+          google.maps.event.addListener(this.currentOpenWindow, 'closeclick', function() {
+            return $(document).trigger('uiInfoWindowClosed');
           });
-        });
+          return this.eventsWired = true;
+        }
       };
       return this.after('initialize', function() {
         this.on(document, 'markerClicked', this.showInfoWindowOnMarkerClick);
         this.on(document, 'infoWindowDataAvailable', this.render);
-        return this.on(document, 'uiCloseOpenInfoWindows', this.closeOpenInfoWindows);
+        return this.on(document, 'uiCloseOpenInfoWindows', this.closeOpenInfoWindow);
       });
     };
     return infoWindow;
