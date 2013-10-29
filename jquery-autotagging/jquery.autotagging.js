@@ -293,8 +293,6 @@
         if ($.cookie(this.WH_SESSION_ID) === null) {
           this.firstVisit = currentTime;
           return currentTime;
-        } else if ((currentTime - last_access_time) >= this.THIRTY_MINUTES_IN_MS) {
-          return currentTime;
         } else {
           return $.cookie(this.WH_SESSION_ID);
         }
