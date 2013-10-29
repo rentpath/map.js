@@ -29,14 +29,14 @@
       });
       this.initBaseMap = function(ev, data) {
         this.data = data || {};
-        return this.render();
+        return this.firstRender();
       };
       this.consolidateMapChangeEvents = function(ev, data) {
         var _this = this;
-        google.maps.event.addListener(data.gMap, 'zoom_changed', function() {
+        google.maps.event.addListenerOnce(data.gMap, 'zoom_changed', function() {
           return _this.trigger(document, 'uiMapZoom', _this.mapChangedData());
         });
-        return google.maps.event.addListener(data.gMap, 'dragend', function() {
+        return google.maps.event.addListenerOnce(data.gMap, 'dragend', function() {
           return _this.trigger(document, 'uiMapDrag', _this.mapChangedData());
         });
       };
@@ -48,7 +48,7 @@
         return google.maps.event.trigger(this.attr.gMap, 'resize');
       };
       this.intervalId = null;
-      this.render = function() {
+      this.firstRender = function() {
         var _this = this;
         this.attr.gMap = new google.maps.Map(this.node, this.defineGoogleMapOptions());
         google.maps.event.addListenerOnce(this.attr.gMap, 'idle', function() {

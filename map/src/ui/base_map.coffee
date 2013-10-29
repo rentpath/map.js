@@ -31,12 +31,12 @@ define [
 
     @initBaseMap = (ev, data) ->
       @data = data || {}
-      @render()
+      @firstRender()
 
     @consolidateMapChangeEvents = (ev, data) ->
-      google.maps.event.addListener data.gMap, 'zoom_changed', =>
+      google.maps.event.addListenerOnce data.gMap, 'zoom_changed', =>
         @trigger document, 'uiMapZoom', @mapChangedData()
-      google.maps.event.addListener data.gMap, 'dragend', =>
+      google.maps.event.addListenerOnce data.gMap, 'dragend', =>
         @trigger document, 'uiMapDrag', @mapChangedData()
 
     @resizeMapContainer = (ev, data) ->
@@ -45,7 +45,7 @@ define [
 
     @intervalId = null
 
-    @render = () ->
+    @firstRender = () ->
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
       google.maps.event.addListenerOnce @attr.gMap, 'idle', =>
         @fireOurMapEventsOnce()
