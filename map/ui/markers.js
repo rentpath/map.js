@@ -32,21 +32,24 @@
         return this.addMarkers(data);
       };
       this.addMarkers = function(data) {
-        var _this = this;
+        var all_markers,
+          _this = this;
         this.attr.markerClusterer.clearMarkers();
         this.attr.markers = [];
         this.attr.markersIndex = {};
+        all_markers = [];
         $.each(data.listings, function(n, d) {
           var m;
           m = _this.createMarker(d);
+          all_markers.push(m);
           _this.sendCustomMarkerTrigger(m);
-          _this.attr.markerClusterer.addMarker(m);
           _this.attr.markers.push({
             googleMarker: m,
             markerData: d
           });
           _this.attr.markersIndex[d.id] = _this.attr.markers.length - 1;
         });
+        this.attr.markerClusterer.addMarkers(all_markers);
         this.updateListingsCount();
         return this.trigger('uiSetMarkerInfoWindow');
       };

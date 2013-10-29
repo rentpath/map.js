@@ -37,13 +37,15 @@ define [
       @attr.markerClusterer.clearMarkers()
       @attr.markers = []
       @attr.markersIndex = {}
+      all_markers = []
       $.each data.listings, (n, d) =>
         m = @createMarker(d)
+        all_markers.push(m)
         @sendCustomMarkerTrigger(m)
-        @attr.markerClusterer.addMarker(m)
         @attr.markers.push {googleMarker: m, markerData: d}
         @attr.markersIndex[d.id] = @attr.markers.length - 1
         return
+      @attr.markerClusterer.addMarkers(all_markers)
       @updateListingsCount()
       @trigger 'uiSetMarkerInfoWindow'
 
