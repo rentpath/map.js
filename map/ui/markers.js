@@ -59,7 +59,6 @@
           map: this.attr.gMap,
           icon: this.iconBasedOnType(datum),
           shadow: this.shadowBaseOnType(datum),
-          optimized: this.optimizedBasedOnHost(datum),
           title: this.markerTitle(datum),
           datumId: datum.id
         });

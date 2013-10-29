@@ -55,7 +55,6 @@ define [
         map: @attr.gMap
         icon: @iconBasedOnType(datum)
         shadow: @shadowBaseOnType(datum)
-        optimized: @optimizedBasedOnHost(datum)
         title: @markerTitle(datum) # @setListingTitleBaseOnHost(listing)
         datumId: datum.id
       )
