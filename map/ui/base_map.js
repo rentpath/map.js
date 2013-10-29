@@ -41,10 +41,12 @@
         });
       };
       this.resizeMapContainer = function(ev, data) {
-        this.$node.css({
-          height: data.height,
-          width: data.width
-        });
+        if (data && data.width && data.height) {
+          this.$node.css({
+            height: data.height,
+            width: data.width
+          });
+        }
         return google.maps.event.trigger(this.attr.gMap, 'resize');
       };
       this.intervalId = null;

@@ -40,7 +40,8 @@ define [
         @trigger document, 'uiMapDrag', @mapChangedData()
 
     @resizeMapContainer = (ev, data) ->
-      @$node.css({ height: data.height, width: data.width })
+      if data && data.width && data.height
+        @$node.css({ height: data.height, width: data.width })
       google.maps.event.trigger @attr.gMap, 'resize'
 
     @intervalId = null
