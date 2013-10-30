@@ -195,19 +195,17 @@
           if (requestURL.length > 2048 && navigator.userAgent.indexOf('MSIE') >= 0) {
             requestURL = requestURL.substring(0, 2043) + "&tu=1";
           }
-          if (_this.warehouseTag) {
-            _this.warehouseTag[0].src = requestURL;
-          } else {
+          if (!_this.warehouseTag) {
             _this.warehouseTag = $('<img/>', {
               id: 'PRMWarehouseTag',
               border: '0',
               width: '1',
-              height: '1',
-              src: requestURL
+              height: '1'
             });
           }
           _this.warehouseTag.onload = $('body').trigger('WH_pixel_success_' + obj.type);
           _this.warehouseTag.onerror = $('body').trigger('WH_pixel_error_' + obj.type);
+          _this.warehouseTag[0].src = requestURL;
           if (_this.lastLinkClicked != null) {
             lastLinkRedirect = function(e) {
               if (!((_this.lastLinkClicked != null) && (_this.lastLinkClicked.indexOf != null))) {
