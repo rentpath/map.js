@@ -23,6 +23,8 @@ define [
        mapPin: utils.assetURL() + "/images/nonsprite/map/map_pin_red4.png"
        mapPinFree: utils.assetURL() + "/images/nonsprite/map/map_pin_free2.png"
        mapPinShadow: utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
+       markerOptions:
+        fitBounds: false
 
     @initAttr = (ev, data) ->
       @attr.gMap = data.gMap if data.gMap
@@ -47,6 +49,7 @@ define [
         return
       @attr.markerClusterer.addMarkers(all_markers)
       @updateListingsCount()
+      @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
       @trigger 'uiSetMarkerInfoWindow'
 
     @createMarker = (datum) ->

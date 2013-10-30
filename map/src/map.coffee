@@ -32,7 +32,7 @@ define [
     args = arguments[0]
 
     BaseMap.attachTo(args.map.canvas, args.map)
-    MarkerInfoWindow.attachTo(args.map.canvas)
+    MarkerInfoWindow.attachTo(args.map.canvas, args.markers)
     SearchMapByAddress.attachTo(args.addressBar.selector) if args.addressBar
 
   return initialize

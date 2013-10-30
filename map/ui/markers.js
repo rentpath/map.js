@@ -12,7 +12,10 @@
         markerClusterer: void 0,
         mapPin: utils.assetURL() + "/images/nonsprite/map/map_pin_red4.png",
         mapPinFree: utils.assetURL() + "/images/nonsprite/map/map_pin_free2.png",
-        mapPinShadow: utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
+        mapPinShadow: utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png",
+        markerOptions: {
+          fitBounds: false
+        }
       });
       this.initAttr = function(ev, data) {
         if (data.gMap) {
@@ -51,6 +54,9 @@
         });
         this.attr.markerClusterer.addMarkers(all_markers);
         this.updateListingsCount();
+        if (this.attr.markerOptions.fitBounds) {
+          this.attr.markerClusterer.fitMapToMarkers();
+        }
         return this.trigger('uiSetMarkerInfoWindow');
       };
       this.createMarker = function(datum) {

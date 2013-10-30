@@ -12,7 +12,11 @@ define [
 
   markersInfoWindow = ->
 
+    @defaultAttrs
+      markerOptions:
+        fitBounds: false
+
     @after 'initialize', ->
-      Markers.attachTo(@node)
+      Markers.attachTo(@node, markerOptions: @attr.markerOptions)
 
   defineComponent(markersInfoWindow, InfoWindow)

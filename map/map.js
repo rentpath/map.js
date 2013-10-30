@@ -6,7 +6,7 @@
       var args;
       args = arguments[0];
       BaseMap.attachTo(args.map.canvas, args.map);
-      MarkerInfoWindow.attachTo(args.map.canvas);
+      MarkerInfoWindow.attachTo(args.map.canvas, args.markers);
       if (args.addressBar) {
         return SearchMapByAddress.attachTo(args.addressBar.selector);
       }
