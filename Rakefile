@@ -1,4 +1,5 @@
 VERSION_STRING_REGEX = /"version":\s+"(\d+).(\d+).(\d+)(?:(-.+)?(\d+)?)?"/
+VERSION_NUMBER_REGEX = /"version": "([\d\.\-a-zA-Z]+)",/
 
 namespace :bump do
   [:major, :minor, :patch].each do |level|
@@ -12,7 +13,10 @@ end
 
 desc "Tag and publish the package"
 task :release do
-
+  tag_package
+  push_tag
+  compile_coffee
+  publish_to_jam
 end
 
 def package
@@ -56,5 +60,29 @@ def bump_version(level)
   end
 
   File.open(package_json, 'w') { |f| f.write package_json_contents }
+end
+
+def tag_package
+  puts "Creating tag: #{package}-v#{current_version}..."
+  `git tag -a #{package}-v#{current_version} -m '#{package} version #{current_version}'`
+end
+
+def push_tag
+  puts "Pushing newly created tag..."
+  `git push --tags`
+end
+
+def compile_coffee
+  puts "Compiling any coffeescript..."
+  `coffee -c --output #{package}/ #{package}/src/`
+end
+
+def publish_to_jam
+  puts "Publishing to jam server..."
+  `jam publish --no-auth #{package}`
+end
+
+def current_version
+  @current_version ||= File.read(package_json).match(VERSION_NUMBER_REGEX).captures.first
 end
 
