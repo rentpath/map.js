@@ -10,11 +10,12 @@ define [
 
   infoWindow = ->
 
+    currentOpenWindow: null
+    eventsWired: false
+
     @defaultAttrs
       gMap: {}
       gMarker: {}
-      gmapInfoWindows: {}
-      currentOpenWindow: {}
 
     @showInfoWindowOnMarkerClick = (ev, data) ->
       @attr.gMarker = data.gMarker
@@ -22,28 +23,27 @@ define [
       @trigger document, 'uiInfoWindowDataRequest', listingId: @attr.gMarker.datumId
 
     @render = (ev, data) ->
-      @closeOpenInfoWindows()
-      gInfoWindow = @openInfoWindow(data)
-      @wireUpEvents(gInfoWindow)
+      @closeOpenInfoWindow()
+      @openInfoWindow(data)
+      @wireUpEvents()
 
-    @closeOpenInfoWindows = ->
-      @attr.currentOpenWindow.close() unless $.isEmptyObject(@attr.currentOpenWindow)
+    @closeOpenInfoWindow = ->
+      @currentOpenWindow.close() if @currentOpenWindow
 
     @openInfoWindow = (data) ->
-      gInfoWindow = new google.maps.InfoWindow()
-      gInfoWindow.setContent data
-      gInfoWindow.open @attr.gMap, @attr.gMarker
-      @attr.currentOpenWindow = gInfoWindow
+      @currentOpenWindow ?= new google.maps.InfoWindow()
+      @currentOpenWindow.setContent data
+      @currentOpenWindow.open @attr.gMap, @attr.gMarker
 
-    @wireUpEvents = (gInfoWindow) ->
-      google.maps.event.addListener gInfoWindow, 'closeclick', ->
-        $(document).trigger 'uiInfoWindowClosed'
-      google.maps.event.addListener gInfoWindow, 'domready', =>
-        $(document).trigger 'uiInfoWindowRendered', marker: @attr.gMarker, infoWindow: gInfoWindow
+    @wireUpEvents = ->
+      if @currentOpenWindow && !@eventsWired
+        google.maps.event.addListener @currentOpenWindow, 'closeclick', ->
+          $(document).trigger 'uiInfoWindowClosed'
+        @eventsWired = true
 
     @after 'initialize', ->
       @on document, 'markerClicked', @showInfoWindowOnMarkerClick
       @on document, 'infoWindowDataAvailable', @render
-      @on document, 'uiCloseOpenInfoWindows', @closeOpenInfoWindows
+      @on document, 'uiCloseOpenInfoWindows', @closeOpenInfoWindow
 
   return infoWindow
