@@ -1,6 +1,6 @@
 'use strict'
 
-define ['flight/lib/component', 'underscore', 'common/templates', 'common/ag-utils'], (defineComponent, _, templates, utils) ->
+define ['flight/lib/component', 'underscore', 'utils'], (defineComponent, _, utils) ->
 
   infoWindowData = ->
 
