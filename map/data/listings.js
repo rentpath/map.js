@@ -6,7 +6,8 @@
     listingsData = function() {
       this.defaultAttrs({
         executeOnce: false,
-        hybridView: true
+        hybridView: true,
+        hybridSearchRoute: "/map_view/listings"
       });
       this.getListings = function(ev, queryData) {
         var _this = this;
@@ -14,7 +15,7 @@
           return {};
         }
         return this.xhr = $.ajax({
-          url: "/map_view/listings?" + this.decodedQueryData(queryData),
+          url: "" + this.hybridSearchRoute + "?" + (this.decodedQueryData(queryData)),
           success: function(data) {
             return _this.trigger('listingDataAvailable', {
               htmlData: data,

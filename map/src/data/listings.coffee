@@ -7,11 +7,12 @@ define [ 'flight/lib/component', 'common/ag-utils', "map/utils/distance_conversi
     @defaultAttrs
       executeOnce: false
       hybridView: true
+      hybridSearchRoute: "/map_view/listings"
 
     @getListings = (ev, queryData) ->
       return {} if !@isListVisible() || !@attr.hybridView
       @xhr = $.ajax
-        url: "/map_view/listings?" + @decodedQueryData(queryData)
+        url: "#{@hybridSearchRoute}?#{@decodedQueryData(queryData)}"
         success: (data) =>
           @trigger 'listingDataAvailable', htmlData: data, query: queryData
         complete: ->

@@ -4,9 +4,12 @@ define ['flight/lib/component', 'underscore', 'common/templates', 'common/ag-uti
 
   infoWindowData = ->
 
+    @defaultAttrs
+      pinRoute: "/map/pin/"
+
     @getData = (ev, data) ->
       @xhr = $.ajax
-        url: "/map/pin/" + data.listingId
+        url: "#{@pinRoute}#{data.listingId}"
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->

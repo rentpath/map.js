@@ -4,10 +4,13 @@
   define(['flight/lib/component', 'underscore', 'common/templates', 'common/ag-utils'], function(defineComponent, _, templates, utils) {
     var infoWindowData;
     infoWindowData = function() {
+      this.defaultAttrs({
+        pinRoute: "/map/pin/"
+      });
       this.getData = function(ev, data) {
         var _this = this;
         return this.xhr = $.ajax({
-          url: "/map/pin/" + data.listingId,
+          url: "" + this.pinRoute + data.listingId,
           success: function(ajaxData) {
             return $(document).trigger("infoWindowDataAvailable", ajaxData);
           },
