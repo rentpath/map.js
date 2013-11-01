@@ -17,7 +17,7 @@
           return {};
         }
         return this.xhr = $.ajax({
-          url: "" + this.hybridSearchRoute + "?" + (this.decodedQueryData(queryData)),
+          url: "" + this.attr.hybridSearchRoute + "?" + (this.decodedQueryData(queryData)),
           success: function(data) {
             return _this.trigger('listingDataAvailable', {
               htmlData: data,
@@ -39,7 +39,7 @@
         var _this = this;
         data.sort = 'distance';
         return this.xhr = $.ajax({
-          url: "" + this.mapPinsRoute + "?" + (this.decodedQueryData(data)),
+          url: "" + this.attr.mapPinsRoute + "?" + (this.decodedQueryData(data)),
           success: function(data) {
             _this.trigger('markersDataAvailable', _this.addTitle(data));
             return _this.trigger('markersDataAvailableOnce', _this.resetEvents());
@@ -58,7 +58,7 @@
         return data;
       };
       this.setListingTitleBasedOnHost = function(listing) {
-        if (window.location.hostname === this.hostname) {
+        if (window.location.hostname === this.attr.hostname) {
           return listing.name;
         } else {
           if (listing.name != null) {

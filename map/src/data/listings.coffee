@@ -14,7 +14,7 @@ define [ 'flight/lib/component', 'utils', "../utils/distance_conversion",  ], ( 
     @getListings = (ev, queryData) ->
       return {} if !@isListVisible() || !@attr.hybridView
       @xhr = $.ajax
-        url: "#{@hybridSearchRoute}?#{@decodedQueryData(queryData)}"
+        url: "#{@attr.hybridSearchRoute}?#{@decodedQueryData(queryData)}"
         success: (data) =>
           @trigger 'listingDataAvailable', htmlData: data, query: queryData
         complete: ->
@@ -29,7 +29,7 @@ define [ 'flight/lib/component', 'utils', "../utils/distance_conversion",  ], ( 
     @getMarkers = (ev, data) ->
       data.sort = 'distance'
       @xhr = $.ajax
-        url: "#{@mapPinsRoute}?#{@decodedQueryData(data)}"
+        url: "#{@attr.mapPinsRoute}?#{@decodedQueryData(data)}"
         success: (data) =>
           @trigger 'markersDataAvailable', @addTitle data
           @trigger 'markersDataAvailableOnce', @resetEvents()
@@ -43,7 +43,7 @@ define [ 'flight/lib/component', 'utils', "../utils/distance_conversion",  ], ( 
       data
 
     @setListingTitleBasedOnHost = (listing) ->
-      if window.location.hostname is @hostname
+      if window.location.hostname is @attr.hostname
         listing.name
       else
         listing.name.replace(/[^a-zA-Z0-9]+/g, "_") if listing.name?

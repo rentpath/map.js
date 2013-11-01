@@ -10,7 +10,7 @@
       this.getData = function(ev, data) {
         var _this = this;
         return this.xhr = $.ajax({
-          url: "" + this.pinRoute + data.listingId,
+          url: "" + this.attr.pinRoute + data.listingId,
           success: function(ajaxData) {
             return $(document).trigger("infoWindowDataAvailable", ajaxData);
           },

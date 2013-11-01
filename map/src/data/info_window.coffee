@@ -9,7 +9,7 @@ define ['flight/lib/component', 'underscore', 'utils'], (defineComponent, _, uti
 
     @getData = (ev, data) ->
       @xhr = $.ajax
-        url: "#{@pinRoute}#{data.listingId}"
+        url: "#{@attr.pinRoute}#{data.listingId}"
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->
