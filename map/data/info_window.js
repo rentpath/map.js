@@ -14,9 +14,7 @@
           success: function(ajaxData) {
             return $(document).trigger("infoWindowDataAvailable", ajaxData);
           },
-          complete: function() {
-            return utils.hideSpinner();
-          }
+          complete: function() {}
         });
       };
       return this.after('initialize', function() {

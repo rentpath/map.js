@@ -7,13 +7,14 @@ define ['flight/lib/component', 'underscore', 'utils'], (defineComponent, _, uti
     @defaultAttrs
       pinRoute: "/map/pin/"
 
+
     @getData = (ev, data) ->
       @xhr = $.ajax
         url: "#{@attr.pinRoute}#{data.listingId}"
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->
-          utils.hideSpinner()
+          #utils.hideSpinner()
 
     @after 'initialize', ->
       @on document, 'uiInfoWindowDataRequest', @getData
