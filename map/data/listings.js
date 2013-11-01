@@ -7,7 +7,9 @@
       this.defaultAttrs({
         executeOnce: false,
         hybridView: true,
-        hybridSearchRoute: "/map_view/listings"
+        hybridSearchRoute: "/map_view/listings",
+        mapPinsRoute: "/map/pins.json",
+        hostname: "www.apartmentguide.com"
       });
       this.getListings = function(ev, queryData) {
         var _this = this;
@@ -37,7 +39,7 @@
         var _this = this;
         data.sort = 'distance';
         return this.xhr = $.ajax({
-          url: "/map/pins.json?" + this.decodedQueryData(data),
+          url: "" + this.mapPinsRoute + "?" + (this.decodedQueryData(data)),
           success: function(data) {
             _this.trigger('markersDataAvailable', _this.addTitle(data));
             return _this.trigger('markersDataAvailableOnce', _this.resetEvents());
@@ -56,7 +58,7 @@
         return data;
       };
       this.setListingTitleBasedOnHost = function(listing) {
-        if (window.location.hostname === "www.apartmentguide.com") {
+        if (window.location.hostname === this.hostname) {
           return listing.name;
         } else {
           if (listing.name != null) {

@@ -8,6 +8,8 @@ define [ 'flight/lib/component', 'common/ag-utils', "map/utils/distance_conversi
       executeOnce: false
       hybridView: true
       hybridSearchRoute: "/map_view/listings"
+      mapPinsRoute:  "/map/pins.json"
+      hostname: "www.apartmentguide.com"
 
     @getListings = (ev, queryData) ->
       return {} if !@isListVisible() || !@attr.hybridView
@@ -27,7 +29,7 @@ define [ 'flight/lib/component', 'common/ag-utils', "map/utils/distance_conversi
     @getMarkers = (ev, data) ->
       data.sort = 'distance'
       @xhr = $.ajax
-        url: "/map/pins.json?" + @decodedQueryData(data)
+        url: "#{@mapPinsRoute}?#{@decodedQueryData(data)}"
         success: (data) =>
           @trigger 'markersDataAvailable', @addTitle data
           @trigger 'markersDataAvailableOnce', @resetEvents()
@@ -41,7 +43,7 @@ define [ 'flight/lib/component', 'common/ag-utils', "map/utils/distance_conversi
       data
 
     @setListingTitleBasedOnHost = (listing) ->
-      if window.location.hostname is "www.apartmentguide.com"
+      if window.location.hostname is @hostname
         listing.name
       else
         listing.name.replace(/[^a-zA-Z0-9]+/g, "_") if listing.name?
