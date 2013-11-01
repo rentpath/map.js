@@ -17,8 +17,8 @@
     "main": "map.js",
     "include": [
       "map.js",
-      "listings/map/data/listings",
-      "listings/map/data/info_window",
+      "data/listings",
+      "data/info_window",
       "ui/base_map.js",
       "ui/clusters.js",
       "ui/info_window.js",
