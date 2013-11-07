@@ -2,6 +2,7 @@ define(['jquery'], function (jQuery) {
   var ONESEARCH_OPTIONS;
   var INVALID_QUERIES = [""];
   var PROCESSING = false;
+
   if (typeof (jQuery) != "undefined") {
     jQuery.fn.onesearch = function (options) {
       setupOptions(options);
@@ -38,9 +39,11 @@ define(['jquery'], function (jQuery) {
         PROCESSING = true;
       });
     };
+
     Search = function (controller) {
       this.controller = controller;
     };
+
     Search.prototype.execute = function (query) {
       var newQuery = query.replace(/=/g, '');
       if (this.invalid(query)) {
@@ -177,6 +180,7 @@ define(['jquery'], function (jQuery) {
           return this.trigger("unautocomplete");
         }
       });
+
       $.Autocompleter = function (input, options) {
         var KEY = {
           UP: 38,
@@ -196,6 +200,7 @@ define(['jquery'], function (jQuery) {
         var cache = $.Autocompleter.Cache(options);
         var hasFocus = 0;
         var lastKeyPressCode;
+        var searchTermTimer;
         var config = {
           mouseDownOnSelect: false
         };
@@ -209,6 +214,8 @@ define(['jquery'], function (jQuery) {
         });
         $input.bind(($.browser.opera ? "keypress" : "keydown") + ".autocomplete", function (event) {
           lastKeyPressCode = event.keyCode;
+          resetSearchTermTimer();
+
           switch (event.keyCode) {
           case KEY.UP:
             event.preventDefault();
@@ -307,6 +314,23 @@ define(['jquery'], function (jQuery) {
           $input.unbind();
           $(input.form).unbind(".autocomplete");
         });
+
+        function resetSearchTermTimer() {
+          clearTimeout(searchTermTimer);
+
+          searchTermTimer = setTimeout(fireSearchTermWhTag, 1000);
+        };
+
+        function fireSearchTermWhTag() {
+
+          var userSearchValue = $('.user_search').val();
+
+          WH.fire({ sg: 'SearchBox',
+            value: userSearchValue,
+            type: 'keypress'
+          });
+
+        };
 
         function selectCurrent() {
           var selected = select.selected();
