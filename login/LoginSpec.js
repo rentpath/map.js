@@ -13,12 +13,11 @@
     beforeEach(function() {
       var ready;
       ready = false;
-      require(['../../login', 'jasmine-jquery'], function(Login) {
+      require(['../../login', '../../jasmine-jquery'], function(Login) {
         Login.init();
         login = Login.instance;
         testWindow = $('<div></div>');
-        ready = true;
-        return loadFixtures("login.html");
+        return ready = true;
       });
       return waitsFor(function() {
         return ready;
@@ -34,24 +33,7 @@
         return expect($.cookie('zmail')).toEqual(sampleEmail);
       });
     });
-    return describe("#_toggleLogIn", function() {
-      describe("with a temp or perm session", function() {
-        beforeEach(function() {
-          login.my.session = "temp";
-          return $.cookie('z_type_email', '');
-        });
-        it("hides register link", function() {
-          login._toggleLogIn();
-          return expect($('a.register').parent()).toHaveClass('hidden');
-        });
-        return it("hides the account link when z_type_email", function() {
-          $.cookie('z_type_email', 'profile');
-          login._toggleLogIn();
-          return expect($('a.account').parent()).not.toHaveClass('hidden');
-        });
-      });
-      return describe("without a session", function() {});
-    });
+    return describe("#_toggleLogIn", function() {});
   });
 
 }).call(this);
