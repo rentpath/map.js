@@ -33,17 +33,20 @@ describe "Login", ->
 
   describe "#_toggleLogIn", ->
 
-
     describe "with a temp or perm session", ->
 
-     beforeEach ->
+      beforeEach ->
         login.my.session = "temp"
         $.cookie('z_type_email', '')
 
       it "hides register link", ->
-
         login._toggleLogIn()
         expect($('a.register').parent()).toHaveClass('hidden')
+
+      it "flips the login link class", ->
+        loginLink = $('a.login')
+        expect(loginLink).toHaveClass('logout')
+        expect(loginLink).not.toHaveClass('login')
 
       it "hides the account link when z_type_email", ->
         $.cookie('z_type_email', 'profile')
