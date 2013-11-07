@@ -2,7 +2,7 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['jquery', 'primedia_events'], function($, events) {
+  define(['jquery', 'primedia_events', 'jquery-cookie-rjs'], function($, events) {
     var Login;
     Login = (function() {
       function Login() {
