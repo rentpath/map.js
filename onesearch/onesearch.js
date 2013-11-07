@@ -322,14 +322,14 @@ define(['jquery'], function (jQuery) {
         };
 
         function fireSearchTermWhTag() {
-
           var userSearchValue = $('.user_search').val();
+          var value = userSearchValue == '' ? 'ClearedSearchBox' : userSearchValue;
 
-          WH.fire({ sg: 'SearchBox',
-            value: userSearchValue,
-            type: 'keypress'
+          WH.fire({
+            sg:    'SearchBox',
+            value: value,
+            type:  'keypress'
           });
-
         };
 
         function selectCurrent() {
