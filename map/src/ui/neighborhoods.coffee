@@ -58,11 +58,13 @@ define [
     @infoWindow = new google.maps.InfoWindow()
 
     @hoodQuery = (data) ->
+      # where = "LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
+      # query =
+      #   select: "geometry",
+      #   from: @attr.tableId,
+      #   where: where
+
       where = "LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
-      query =
-        select: "geometry",
-        from: @attr.tableId,
-        where: where
 
     @addHoodsLayer = (ev, data) ->
       return if !data or !data.gMap or data.gMap.getZoom() < @attr.minimalZommLevel
@@ -84,19 +86,70 @@ define [
         @attr.hoodLayer.setMap(null)
         @attr.hoodLayer.setQuery(query)
       else
-        @attr.hoodLayer = new google.maps.FusionTablesLayer(
-          map: @attr.gMap
-          query: query
-          suppressInfoWindows: true
-          styles: [
-            polygonOptions: @attr.polygonOptions
-          ,
-            where: "HOOD_NAME = '#{@toSpaces(data.hood)}'"
-            polygonOptions: @attr.polygonOptionsCurrent
-          ]
-        )
-        @addListeners()
-        @setupToggle()
+        # @attr.hoodLayer = new google.maps.FusionTablesLayer(
+        #   map: @attr.gMap
+        #   query: query
+        #   suppressInfoWindows: true
+        #   styles: [
+        #     polygonOptions: @attr.polygonOptions
+        #   ,
+        #     where: "HOOD_NAME = '#{@toSpaces(data.hood)}'"
+        #     polygonOptions: @attr.polygonOptionsCurrent
+        #   ]
+        # )
+        # @addListeners()
+        # @setupToggle()
+
+    @getData = (data) ->
+      # Initialize JSONP request
+      script = document.createElement("script")
+      url = ["https://www.googleapis.com/fusiontables/v1/query?"]
+      url.push "sql="
+      query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM #{@attr.tableId}"
+      encodedQuery = encodeURIComponent(query)
+      url.push encodedQuery
+      url.push "&callback=drawMap"
+      url.push "&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ"
+      script.src = url.join("")
+      body = document.getElementsByTagName("body")[0]
+      body.appendChild script
+
+    @drawMap = (data) ->
+      rows = data["rows"]
+      for i of rows
+        unless rows[i][0] is "Antarctica"
+          newCoordinates = []
+          geometries = rows[i][1]["geometries"]
+          if geometries
+            for j of geometries
+              newCoordinates.push @constructNewCoordinates(geometries[j])
+          else
+            newCoordinates = @constructNewCoordinates(rows[i][1]["geometry"])
+          randomnumber = Math.floor(Math.random() * 4)
+          country = new google.maps.Polygon(
+            paths: newCoordinates
+            strokeColor: colors[randomnumber]
+            strokeOpacity: 0
+            strokeWeight: 1
+            fillColor: colors[randomnumber]
+            fillOpacity: 0.3
+          )
+          google.maps.event.addListener country, "mouseover", ->
+            @setOptions fillOpacity: 1
+
+          google.maps.event.addListener country, "mouseout", ->
+            @setOptions fillOpacity: 0.3
+
+          country.setMap @attr.gMap
+
+
+    @constructNewCoordinates = (polygon) ->
+      newCoordinates = []
+      coordinates = polygon["coordinates"][0]
+      for i of coordinates
+        newCoordinates.push new google.maps.LatLng(coordinates[i][1], coordinates[i][0])
+      newCoordinates
+
 
     @setupToggle = ->
       @positionToggleControl()

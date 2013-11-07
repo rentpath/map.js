@@ -66,13 +66,8 @@
       });
       this.infoWindow = new google.maps.InfoWindow();
       this.hoodQuery = function(data) {
-        var query, where;
-        where = "LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
-        return query = {
-          select: "geometry",
-          from: this.attr.tableId,
-          where: where
-        };
+        var where;
+        return where = "LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
       };
       this.addHoodsLayer = function(ev, data) {
         if (!data || !data.gMap || data.gMap.getZoom() < this.attr.minimalZommLevel) {
@@ -96,22 +91,72 @@
           this.attr.hoodLayer.setMap(null);
           return this.attr.hoodLayer.setQuery(query);
         } else {
-          this.attr.hoodLayer = new google.maps.FusionTablesLayer({
-            map: this.attr.gMap,
-            query: query,
-            suppressInfoWindows: true,
-            styles: [
-              {
-                polygonOptions: this.attr.polygonOptions
-              }, {
-                where: "HOOD_NAME = '" + (this.toSpaces(data.hood)) + "'",
-                polygonOptions: this.attr.polygonOptionsCurrent
-              }
-            ]
-          });
-          this.addListeners();
-          return this.setupToggle();
+
         }
+      };
+      this.getData = function(data) {
+        var body, encodedQuery, query, script, url;
+        script = document.createElement("script");
+        url = ["https://www.googleapis.com/fusiontables/v1/query?"];
+        url.push("sql=");
+        query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM " + this.attr.tableId;
+        encodedQuery = encodeURIComponent(query);
+        url.push(encodedQuery);
+        url.push("&callback=drawMap");
+        url.push("&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ");
+        script.src = url.join("");
+        body = document.getElementsByTagName("body")[0];
+        return body.appendChild(script);
+      };
+      this.drawMap = function(data) {
+        var country, geometries, i, j, newCoordinates, randomnumber, rows, _results;
+        rows = data["rows"];
+        _results = [];
+        for (i in rows) {
+          if (rows[i][0] !== "Antarctica") {
+            newCoordinates = [];
+            geometries = rows[i][1]["geometries"];
+            if (geometries) {
+              for (j in geometries) {
+                newCoordinates.push(this.constructNewCoordinates(geometries[j]));
+              }
+            } else {
+              newCoordinates = this.constructNewCoordinates(rows[i][1]["geometry"]);
+            }
+            randomnumber = Math.floor(Math.random() * 4);
+            country = new google.maps.Polygon({
+              paths: newCoordinates,
+              strokeColor: colors[randomnumber],
+              strokeOpacity: 0,
+              strokeWeight: 1,
+              fillColor: colors[randomnumber],
+              fillOpacity: 0.3
+            });
+            google.maps.event.addListener(country, "mouseover", function() {
+              return this.setOptions({
+                fillOpacity: 1
+              });
+            });
+            google.maps.event.addListener(country, "mouseout", function() {
+              return this.setOptions({
+                fillOpacity: 0.3
+              });
+            });
+            _results.push(country.setMap(this.attr.gMap));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+      this.constructNewCoordinates = function(polygon) {
+        var coordinates, i, newCoordinates;
+        newCoordinates = [];
+        coordinates = polygon["coordinates"][0];
+        for (i in coordinates) {
+          newCoordinates.push(new google.maps.LatLng(coordinates[i][1], coordinates[i][0]));
+        }
+        return newCoordinates;
       };
       this.parseRow = function(row) {};
       this.setupToggle = function() {
