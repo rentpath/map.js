@@ -52,6 +52,7 @@
       this.intervalId = null;
       this.firstRender = function() {
         var _this = this;
+        google.maps.visualRefresh = true;
         this.attr.gMap = new google.maps.Map(this.node, this.defineGoogleMapOptions());
         google.maps.event.addListenerOnce(this.attr.gMap, 'idle', function() {
           _this.fireOurMapEventsOnce();

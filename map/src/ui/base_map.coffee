@@ -47,6 +47,10 @@ define [
     @intervalId = null
 
     @firstRender = () ->
+      # new version of gmap api 3.14 is the next stable version
+      # it inludes visualRefresh
+      google.maps.visualRefresh = true;
+
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
       google.maps.event.addListenerOnce @attr.gMap, 'idle', =>
         @fireOurMapEventsOnce()
