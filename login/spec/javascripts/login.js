@@ -5,10 +5,6 @@
   define(['jquery', 'primedia_events', 'jquery-cookie-rjs'], function($, events) {
     var Login;
     Login = (function() {
-      Login.prototype.hideIfLoggedInSelector = '.js_hidden_if_logged_in';
-
-      Login.prototype.hideIfLoggedOutSelector = '.js_hidden_if_logged_out';
-
       function Login() {
         this._triggerModal = __bind(this._triggerModal, this);
         this._submitEmailRegistration = __bind(this._submitEmailRegistration, this);
@@ -336,15 +332,11 @@
           $logLink.addClass("logout").removeClass("login");
           $('.link_text', $logLink).text('Log Out');
           if ($.cookie('z_type_email')) {
-            $changeLink.parent().removeClass('hidden');
+            return $changeLink.parent().removeClass('hidden');
           }
-          $(this.hideIfLoggedInSelector).addClass('hidden');
-          return $(this.hideIfLoggedOutSelector).removeClass('hidden');
         } else {
           $regLink.parent().removeClass('hidden');
-          $('a.logout .link_text').text('Log In');
-          $(this.hideIfLoggedInSelector).removeClass('hidden');
-          return $(this.hideIfLoggedOutSelector).addClass('hidden');
+          return $('a.logout .link_text').text('Log In');
         }
       };
 

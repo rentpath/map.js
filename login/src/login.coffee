@@ -1,5 +1,9 @@
-define ['jquery', 'primedia_events'], ($, events) ->
+define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
   class Login
+
+    hideIfLoggedInSelector: '.js_hidden_if_logged_in'
+    hideIfLoggedOutSelector: '.js_hidden_if_logged_out'
+
     constructor: ->
       @_overrideDependencies()
 
@@ -219,9 +223,13 @@ define ['jquery', 'primedia_events'], ($, events) ->
         $logLink.addClass("logout").removeClass("login")
         $('.link_text',$logLink).text('Log Out')
         $changeLink.parent().removeClass 'hidden' if $.cookie 'z_type_email'
+        $(@hideIfLoggedInSelector).addClass 'hidden'
+        $(@hideIfLoggedOutSelector).removeClass 'hidden'
       else
         $regLink.parent().removeClass 'hidden'
         $('a.logout .link_text').text('Log In')
+        $(@hideIfLoggedInSelector).removeClass 'hidden'
+        $(@hideIfLoggedOutSelector).addClass 'hidden'
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"
