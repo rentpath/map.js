@@ -44,13 +44,51 @@
           login._toggleLogIn();
           return expect($('a.register').parent()).toHaveClass('hidden');
         });
-        return it("hides the account link when z_type_email", function() {
+        it("flips the login link class", function() {
+          var loginLink;
+          loginLink = $('a.login');
+          login._toggleLogIn();
+          expect(loginLink).toHaveClass('logout');
+          return expect(loginLink).not.toHaveClass('login');
+        });
+        it("hides the account link when z_type_email", function() {
           $.cookie('z_type_email', 'profile');
           login._toggleLogIn();
           return expect($('a.account').parent()).not.toHaveClass('hidden');
         });
+        return it("sets the login link text to Log Out", function() {
+          var loginLink;
+          loginLink = $('a.login');
+          login._toggleLogIn();
+          return expect(loginLink).toHaveText('Log Out');
+        });
       });
-      return describe("without a session", function() {});
+      return describe("without a session", function() {
+        beforeEach(function() {
+          return login.my.session = "";
+        });
+        it("doesn't hide register link", function() {
+          login._toggleLogIn();
+          return expect($('a.register').parent()).not.toHaveClass('hidden');
+        });
+        it("flips the login link class", function() {
+          var loginLink;
+          loginLink = $('a.login');
+          login._toggleLogIn();
+          expect(loginLink).not.toHaveClass('logout');
+          return expect(loginLink).toHaveClass('login');
+        });
+        it("keeps the account link hidden", function() {
+          login._toggleLogIn();
+          return expect($('a.account').parent()).toHaveClass('hidden');
+        });
+        return it("sets the login link text to Log In", function() {
+          var loginLink;
+          loginLink = $('a.logout');
+          login._toggleLogIn();
+          return expect(loginLink).toHaveText('Log In');
+        });
+      });
     });
   });
 

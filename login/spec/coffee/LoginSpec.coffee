@@ -45,6 +45,7 @@ describe "Login", ->
 
       it "flips the login link class", ->
         loginLink = $('a.login')
+        login._toggleLogIn()
         expect(loginLink).toHaveClass('logout')
         expect(loginLink).not.toHaveClass('login')
 
@@ -53,7 +54,32 @@ describe "Login", ->
         login._toggleLogIn()
         expect($('a.account').parent()).not.toHaveClass('hidden')
 
+      it "sets the login link text to Log Out", ->
+        loginLink = $('a.login')
+        login._toggleLogIn()
+        expect(loginLink).toHaveText('Log Out')
+
     describe "without a session", ->
 
+      beforeEach ->
+        login.my.session = ""
 
+      it "doesn't hide register link", ->
+        login._toggleLogIn()
+        expect($('a.register').parent()).not.toHaveClass('hidden')
+
+      it "flips the login link class", ->
+        loginLink = $('a.login')
+        login._toggleLogIn()
+        expect(loginLink).not.toHaveClass('logout')
+        expect(loginLink).toHaveClass('login')
+
+      it "keeps the account link hidden", ->
+        login._toggleLogIn()
+        expect($('a.account').parent()).toHaveClass('hidden')
+
+      it "sets the login link text to Log In", ->
+        loginLink = $('a.logout')
+        login._toggleLogIn()
+        expect(loginLink).toHaveText('Log In')
 
