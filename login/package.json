@@ -5,7 +5,7 @@
   "homepage": "https://github.com/primedia/preserves",
 
   "jam": {
-    "packageDir": "vendor",
+    "packageDir": "vendor/jam",
     "baseUrl": ".",
     "dependencies": {
       "jquery": null,

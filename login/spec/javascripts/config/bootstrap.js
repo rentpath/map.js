@@ -1,8 +1,7 @@
 requirejs.config({
-  // baseUrl: "public/js/",
   waitSeconds: 120,
   paths: {
-    "jasmine-jquery": "vendor/jasmine-jquery",
-    "jasmine-flight": "vendor/jasmine-flight"
+    "jasmine-jquery": "vendor/js/jasmine-jquery",
+    "jasmine-flight": "vendor/js/jasmine-flight"
   }
 });
