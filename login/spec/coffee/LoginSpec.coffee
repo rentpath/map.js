@@ -59,6 +59,16 @@ describe "Login", ->
         login._toggleLogIn()
         expect(loginLink).toHaveText('Log Out')
 
+      it "hides marked elements based on logged in state", ->
+        login._toggleLogIn()
+        elements = $('.js_hidden_if_logged_in')
+        expect(elements).toHaveClass('hidden')
+
+      it "does not hide marked elements based on logged out state", ->
+        login._toggleLogIn()
+        elements = $('.js_hidden_if_logged_out')
+        expect(elements).not.toHaveClass('hidden')
+
     describe "without a session", ->
 
       beforeEach ->
@@ -83,3 +93,12 @@ describe "Login", ->
         login._toggleLogIn()
         expect(loginLink).toHaveText('Log In')
 
+      it "does not hide marked elements based on logged in state", ->
+        login._toggleLogIn()
+        elements = $('.js_hidden_if_logged_out')
+        expect(elements).toHaveClass('hidden')
+
+      it "hides marked elements based on logged out state", ->
+        login._toggleLogIn()
+        elements = $('.js_hidden_if_logged_in')
+        expect(elements).not.toHaveClass('hidden')

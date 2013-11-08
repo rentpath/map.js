@@ -56,11 +56,23 @@
           login._toggleLogIn();
           return expect($('a.account').parent()).not.toHaveClass('hidden');
         });
-        return it("sets the login link text to Log Out", function() {
+        it("sets the login link text to Log Out", function() {
           var loginLink;
           loginLink = $('a.login');
           login._toggleLogIn();
           return expect(loginLink).toHaveText('Log Out');
+        });
+        it("hides elements when they should be hidden", function() {
+          var elements;
+          login._toggleLogIn();
+          elements = $('.js_hidden_if_logged_in');
+          return expect(elements).toHaveClass('hidden');
+        });
+        return it("does not hide elements that should not be hidden", function() {
+          var elements;
+          login._toggleLogIn();
+          elements = $('.js_hidden_if_logged_out');
+          return expect(elements).not.toHaveClass('hidden');
         });
       });
       return describe("without a session", function() {
@@ -82,11 +94,23 @@
           login._toggleLogIn();
           return expect($('a.account').parent()).toHaveClass('hidden');
         });
-        return it("sets the login link text to Log In", function() {
+        it("sets the login link text to Log In", function() {
           var loginLink;
           loginLink = $('a.logout');
           login._toggleLogIn();
           return expect(loginLink).toHaveText('Log In');
+        });
+        it("does not hide elements that should be hidden", function() {
+          var elements;
+          login._toggleLogIn();
+          elements = $('.js_hidden_if_logged_out');
+          return expect(elements).toHaveClass('hidden');
+        });
+        return it("hides elements that should be hidden", function() {
+          var elements;
+          login._toggleLogIn();
+          elements = $('.js_hidden_if_logged_in');
+          return expect(elements).not.toHaveClass('hidden');
         });
       });
     });
