@@ -95,11 +95,6 @@ describe("Autotagging Suite", function() {
       });
     });
 
-    it ('firedTime returns the current time in epoch seconds', function() {
-      now = new Date().getTime();
-      expect(wh.firedTime()).toEqual(now);
-    });
-
     it('#getItemId yields the id of the element', function() {
       testElement = $("<div id='foo'></div>");
       expect(wh.getItemId(testElement)).toEqual('foo');
