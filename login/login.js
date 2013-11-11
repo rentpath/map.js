@@ -338,13 +338,17 @@
           if ($.cookie('z_type_email')) {
             $changeLink.parent().removeClass('hidden');
           }
-          $(this.hideIfLoggedInSelector).addClass('hidden');
-          return $(this.hideIfLoggedOutSelector).removeClass('hidden');
+          $(this.hideIfLoggedInSelector).hide();
+          return $(this.hideIfLoggedOutSelector).css({
+            display: ''
+          });
         } else {
           $regLink.parent().removeClass('hidden');
           $('a.logout .link_text').text('Log In');
-          $(this.hideIfLoggedInSelector).removeClass('hidden');
-          return $(this.hideIfLoggedOutSelector).addClass('hidden');
+          $(this.hideIfLoggedInSelector).css({
+            display: ''
+          });
+          return $(this.hideIfLoggedOutSelector).hide();
         }
       };
 

@@ -223,13 +223,13 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
         $logLink.addClass("logout").removeClass("login")
         $('.link_text',$logLink).text('Log Out')
         $changeLink.parent().removeClass 'hidden' if $.cookie 'z_type_email'
-        $(@hideIfLoggedInSelector).addClass 'hidden'
-        $(@hideIfLoggedOutSelector).removeClass 'hidden'
+        $(@hideIfLoggedInSelector).hide()
+        $(@hideIfLoggedOutSelector).css display: ''
       else
         $regLink.parent().removeClass 'hidden'
         $('a.logout .link_text').text('Log In')
-        $(@hideIfLoggedInSelector).removeClass 'hidden'
-        $(@hideIfLoggedOutSelector).addClass 'hidden'
+        $(@hideIfLoggedInSelector).css display: ''
+        $(@hideIfLoggedOutSelector).hide()
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"

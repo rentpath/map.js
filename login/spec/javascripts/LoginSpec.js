@@ -62,17 +62,21 @@
           login._toggleLogIn();
           return expect(loginLink).toHaveText('Log Out');
         });
-        it("hides elements when they should be hidden", function() {
+        it("hides marked elements based on logged in state", function() {
           var elements;
           login._toggleLogIn();
           elements = $('.js_hidden_if_logged_in');
-          return expect(elements).toHaveClass('hidden');
+          return expect(elements).toHaveCss({
+            display: 'none'
+          });
         });
-        return it("does not hide elements that should not be hidden", function() {
+        return it("does not hide marked elements based on logged out state", function() {
           var elements;
           login._toggleLogIn();
           elements = $('.js_hidden_if_logged_out');
-          return expect(elements).not.toHaveClass('hidden');
+          return expect(elements).not.toHaveCss({
+            display: 'none'
+          });
         });
       });
       return describe("without a session", function() {
@@ -100,17 +104,21 @@
           login._toggleLogIn();
           return expect(loginLink).toHaveText('Log In');
         });
-        it("does not hide elements that should be hidden", function() {
+        it("does not hide marked elements based on logged in state", function() {
           var elements;
           login._toggleLogIn();
           elements = $('.js_hidden_if_logged_out');
-          return expect(elements).toHaveClass('hidden');
+          return expect(elements).toHaveCss({
+            display: 'none'
+          });
         });
-        return it("hides elements that should be hidden", function() {
+        return it("hides marked elements based on logged out state", function() {
           var elements;
           login._toggleLogIn();
           elements = $('.js_hidden_if_logged_in');
-          return expect(elements).not.toHaveClass('hidden');
+          return expect(elements).not.toHaveCss({
+            display: 'none'
+          });
         });
       });
     });
