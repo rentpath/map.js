@@ -21,6 +21,16 @@ describe "Login", ->
     waitsFor ->
       return ready
 
+  describe "#_encodeURL", ->
+
+    it "encodes the hash", ->
+      url = "http://127.0.0.1/foo#bar"
+      expect(login._encodeURL(url)).toBe("http://127.0.0.1/foo%23bar")
+
+    it "does not add a trailing #", ->
+      url = "http://127.0.0.1/foo"
+      expect(login._encodeURL(url)).toBe("http://127.0.0.1/foo")
+
   describe "#_setEmail", ->
 
     it "assigns the zmail", ->

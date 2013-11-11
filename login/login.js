@@ -38,6 +38,13 @@
         });
       }
 
+      Login.prototype._encodeURL = function(href) {
+        var hash, path, _ref;
+        _ref = href.split('#'), path = _ref[0], hash = _ref[1];
+        hash = hash ? encodeURIComponent("#" + hash) : "";
+        return path + hash;
+      };
+
       Login.prototype.toggleRegistrationDiv = function($div) {
         var _this = this;
         if (!this.my.session) {

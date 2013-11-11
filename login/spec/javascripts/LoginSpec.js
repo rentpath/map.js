@@ -24,6 +24,18 @@
         return ready;
       });
     });
+    describe("#_encodeURL", function() {
+      it("encodes the hash", function() {
+        var url;
+        url = "http://127.0.0.1/foo#bar";
+        return expect(login._encodeURL(url)).toBe("http://127.0.0.1/foo%23bar");
+      });
+      return it("does not add a trailing #", function() {
+        var url;
+        url = "http://127.0.0.1/foo";
+        return expect(login._encodeURL(url)).toBe("http://127.0.0.1/foo");
+      });
+    });
     describe("#_setEmail", function() {
       it("assigns the zmail", function() {
         login._setEmail(sampleEmail);
