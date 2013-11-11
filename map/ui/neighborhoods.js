@@ -94,23 +94,23 @@
         }
       };
       this.getData = function(data) {
-        var body, encodedQuery, query, script, url;
-        window.gMap = this.attr.gMap;
-        script = document.createElement("script");
-        url = ["https://www.googleapis.com/fusiontables/v1/query?"];
-        url.push("sql=");
+        var query, url,
+          _this = this;
+        url = ["https://www.googleapis.com/fusiontables/v1/query?sql="];
         query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM " + this.attr.tableId + " " + (this.hoodQuery(data));
-        console.log(query);
-        encodedQuery = encodeURIComponent(query);
-        url.push(encodedQuery);
-        url.push("&callback=drawMap");
+        url.push(encodeURIComponent(query));
         url.push("&key=" + this.attr.apiKey);
-        script.src = url.join("");
-        body = document.getElementsByTagName("body")[0];
-        return body.appendChild(script);
+        return $.ajax({
+          url: url.join(""),
+          dataType: "jsonp",
+          success: function(data) {
+            return _this.drawMap(data);
+          }
+        });
       };
-      window.drawMap = function(data) {
+      this.drawMap = function(data) {
         var geometries, hoodLayer, i, j, newCoordinates, rows, _results;
+        console.log('drawMap');
         rows = data["rows"];
         _results = [];
         for (i in rows) {
@@ -121,10 +121,10 @@
           geometries = rows[i][0].geometry;
           if (geometries) {
             for (j in geometries) {
-              newCoordinates.push(window.constructNewCoordinates(geometries));
+              newCoordinates.push(this.constructNewCoordinates(geometries));
             }
           } else {
-            newCoordinates = window.constructNewCoordinates(rows[i][1].geometry);
+            newCoordinates = this.constructNewCoordinates(rows[i][1].geometry);
           }
           hoodLayer = new google.maps.Polygon({
             paths: newCoordinates,
@@ -145,11 +145,11 @@
               fillOpacity: 0.0
             });
           });
-          _results.push(hoodLayer.setMap(window.gMap));
+          _results.push(hoodLayer.setMap(this.attr.gMap));
         }
         return _results;
       };
-      window.constructNewCoordinates = function(polygon) {
+      this.constructNewCoordinates = function(polygon) {
         var coordinates, i, newCoordinates;
         newCoordinates = [];
         coordinates = polygon["coordinates"][0];

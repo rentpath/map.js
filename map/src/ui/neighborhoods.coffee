@@ -102,25 +102,20 @@ define [
         # @setupToggle()
 
     @getData = (data) ->
-      # Initialize JSONP request
-      script = document.createElement("script")
-      url = ["https://www.googleapis.com/fusiontables/v1/query?"]
-      url.push "sql="
+      url = ["https://www.googleapis.com/fusiontables/v1/query?sql="]
       query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM #{@attr.tableId} #{@hoodQuery(data)}"
-      console.log query
-      encodedQuery = encodeURIComponent(query)
-      url.push encodedQuery
-      url.push "&callback=drawMap"
+      url.push encodeURIComponent(query)
       url.push "&key=#{@attr.apiKey}"
 
       $.ajax
         url: url.join("")
         dataType: "jsonp"
-        success: (data) ->
+        success: (data) =>
           @drawMap(data)
 
 
     @drawMap = (data) ->
+      console.log 'drawMap'
       rows = data["rows"]
       for i of rows
         continue unless rows[i][0]
@@ -128,9 +123,9 @@ define [
         geometries = rows[i][0].geometry
         if geometries
           for j of geometries
-            newCoordinates.push window.constructNewCoordinates(geometries)
+            newCoordinates.push @constructNewCoordinates(geometries)
         else
-          newCoordinates = window.constructNewCoordinates(rows[i][1].geometry)
+          newCoordinates = @constructNewCoordinates(rows[i][1].geometry)
         hoodLayer = new google.maps.Polygon(
           paths: newCoordinates
           fillColor: "#BC8F8F"
