@@ -1,7 +1,7 @@
 define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
   class Login
 
-    hideIfLoggedInSelector: '.js_hidden_if_logged_in'
+    hideIfLoggedInSelector:  '.js_hidden_if_logged_in'
     hideIfLoggedOutSelector: '.js_hidden_if_logged_out'
 
     constructor: ->
@@ -215,21 +215,40 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
         when "password_confirmation" then "Password Confirmation #{value}"
 
     _toggleLogIn: ->
-      $regLink = $("a.register")
-      $logLink = $("a.login")
-      $changeLink = $('a.account')
       if @my.session
-        $regLink.parent().addClass 'hidden'
-        $logLink.addClass("logout").removeClass("login")
-        $('.link_text',$logLink).text('Log Out')
-        $changeLink.parent().removeClass 'hidden' if $.cookie 'z_type_email'
-        $(@hideIfLoggedInSelector).hide()
-        $(@hideIfLoggedOutSelector).css display: ''
+        @_hideRegister()
+        @_showLogout()
+        @_showAccount()
+        @_toggleElementsWhenLoggedIn()
       else
-        $regLink.parent().removeClass 'hidden'
-        $('a.logout .link_text').text('Log In')
-        $(@hideIfLoggedInSelector).css display: ''
-        $(@hideIfLoggedOutSelector).hide()
+        @_showRegister()
+        @_showLogin()
+        @_toggleElementsWhenLoggedOut()
+
+    _showRegister: ->
+      $("a.register").parent().removeClass 'hidden'
+
+    _hideRegister: ->
+      $("a.register").parent().addClass 'hidden'
+
+    _showAccount: ->
+      $('a.account').parent().removeClass 'hidden' if $.cookie 'z_type_email'
+
+    _showLogout: ->
+      $logLink = $("a.login")
+      $logLink.addClass("logout").removeClass("login")
+      $('.link_text',$logLink).text('Log Out')
+
+    _showLogin: ->
+      $('a.logout .link_text').text('Log In')
+
+    _toggleElementsWhenLoggedIn: ->
+      $(@hideIfLoggedInSelector).hide()
+      $(@hideIfLoggedOutSelector).css display: ''
+
+    _toggleElementsWhenLoggedOut: ->
+      $(@hideIfLoggedInSelector).css display: ''
+      $(@hideIfLoggedOutSelector).hide()
 
     _bindForms: (type) ->
       formID = "#zutron_#{type}_form"

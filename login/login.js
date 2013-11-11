@@ -327,29 +327,55 @@
       };
 
       Login.prototype._toggleLogIn = function() {
-        var $changeLink, $logLink, $regLink;
-        $regLink = $("a.register");
-        $logLink = $("a.login");
-        $changeLink = $('a.account');
         if (this.my.session) {
-          $regLink.parent().addClass('hidden');
-          $logLink.addClass("logout").removeClass("login");
-          $('.link_text', $logLink).text('Log Out');
-          if ($.cookie('z_type_email')) {
-            $changeLink.parent().removeClass('hidden');
-          }
-          $(this.hideIfLoggedInSelector).hide();
-          return $(this.hideIfLoggedOutSelector).css({
-            display: ''
-          });
+          this._hideRegister();
+          this._showLogout();
+          this._showAccount();
+          return this._toggleElementsWhenLoggedIn();
         } else {
-          $regLink.parent().removeClass('hidden');
-          $('a.logout .link_text').text('Log In');
-          $(this.hideIfLoggedInSelector).css({
-            display: ''
-          });
-          return $(this.hideIfLoggedOutSelector).hide();
+          this._showRegister();
+          this._showLogin();
+          return this._toggleElementsWhenLoggedOut();
         }
+      };
+
+      Login.prototype._showRegister = function() {
+        return $("a.register").parent().removeClass('hidden');
+      };
+
+      Login.prototype._hideRegister = function() {
+        return $("a.register").parent().addClass('hidden');
+      };
+
+      Login.prototype._showAccount = function() {
+        if ($.cookie('z_type_email')) {
+          return $('a.account').parent().removeClass('hidden');
+        }
+      };
+
+      Login.prototype._showLogout = function() {
+        var $logLink;
+        $logLink = $("a.login");
+        $logLink.addClass("logout").removeClass("login");
+        return $('.link_text', $logLink).text('Log Out');
+      };
+
+      Login.prototype._showLogin = function() {
+        return $('a.logout .link_text').text('Log In');
+      };
+
+      Login.prototype._toggleElementsWhenLoggedIn = function() {
+        $(this.hideIfLoggedInSelector).hide();
+        return $(this.hideIfLoggedOutSelector).css({
+          display: ''
+        });
+      };
+
+      Login.prototype._toggleElementsWhenLoggedOut = function() {
+        $(this.hideIfLoggedInSelector).css({
+          display: ''
+        });
+        return $(this.hideIfLoggedOutSelector).hide();
       };
 
       Login.prototype._bindForms = function(type) {
