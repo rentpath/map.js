@@ -67,7 +67,7 @@
       this.infoWindow = new google.maps.InfoWindow();
       this.hoodQuery = function(data) {
         var where;
-        return where = "LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
+        return where = "WHERE LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
       };
       this.addHoodsLayer = function(ev, data) {
         if (!data || !data.gMap || data.gMap.getZoom() < this.attr.minimalZommLevel) {
@@ -76,7 +76,6 @@
         this.attr.gMap = data.gMap;
         this.attr.data = data;
         this.setupLayer(data);
-        this.attr.hoodLayer.setMap(this.attr.gMap);
         return this.setupMouseOver();
       };
       this.setupMouseOver = function() {
@@ -91,65 +90,66 @@
           this.attr.hoodLayer.setMap(null);
           return this.attr.hoodLayer.setQuery(query);
         } else {
-
+          return this.getData(data);
         }
       };
       this.getData = function(data) {
         var body, encodedQuery, query, script, url;
+        window.gMap = this.attr.gMap;
         script = document.createElement("script");
         url = ["https://www.googleapis.com/fusiontables/v1/query?"];
         url.push("sql=");
-        query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM " + this.attr.tableId;
+        query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM " + this.attr.tableId + " " + (this.hoodQuery(data));
+        console.log(query);
         encodedQuery = encodeURIComponent(query);
         url.push(encodedQuery);
         url.push("&callback=drawMap");
-        url.push("&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ");
+        url.push("&key=" + this.attr.apiKey);
         script.src = url.join("");
         body = document.getElementsByTagName("body")[0];
         return body.appendChild(script);
       };
-      this.drawMap = function(data) {
-        var country, geometries, i, j, newCoordinates, randomnumber, rows, _results;
+      window.drawMap = function(data) {
+        var geometries, hoodLayer, i, j, newCoordinates, rows, _results;
         rows = data["rows"];
         _results = [];
         for (i in rows) {
-          if (rows[i][0] !== "Antarctica") {
-            newCoordinates = [];
-            geometries = rows[i][1]["geometries"];
-            if (geometries) {
-              for (j in geometries) {
-                newCoordinates.push(this.constructNewCoordinates(geometries[j]));
-              }
-            } else {
-              newCoordinates = this.constructNewCoordinates(rows[i][1]["geometry"]);
-            }
-            randomnumber = Math.floor(Math.random() * 4);
-            country = new google.maps.Polygon({
-              paths: newCoordinates,
-              strokeColor: colors[randomnumber],
-              strokeOpacity: 0,
-              strokeWeight: 1,
-              fillColor: colors[randomnumber],
-              fillOpacity: 0.3
-            });
-            google.maps.event.addListener(country, "mouseover", function() {
-              return this.setOptions({
-                fillOpacity: 1
-              });
-            });
-            google.maps.event.addListener(country, "mouseout", function() {
-              return this.setOptions({
-                fillOpacity: 0.3
-              });
-            });
-            _results.push(country.setMap(this.attr.gMap));
-          } else {
-            _results.push(void 0);
+          if (!rows[i][0]) {
+            continue;
           }
+          newCoordinates = [];
+          geometries = rows[i][0].geometry;
+          if (geometries) {
+            for (j in geometries) {
+              newCoordinates.push(window.constructNewCoordinates(geometries));
+            }
+          } else {
+            newCoordinates = window.constructNewCoordinates(rows[i][1].geometry);
+          }
+          hoodLayer = new google.maps.Polygon({
+            paths: newCoordinates,
+            fillColor: "#BC8F8F",
+            fillOpacity: 0.0,
+            strokeColor: "#4D4D4D",
+            strokeOpacity: 0.8,
+            strokeWeight: 1
+          });
+          google.maps.event.addListener(hoodLayer, "mouseover", function() {
+            return this.setOptions({
+              fillOpacity: 1,
+              strokeWeight: 1
+            });
+          });
+          google.maps.event.addListener(hoodLayer, "mouseout", function() {
+            return this.setOptions({
+              fillOpacity: 0.0
+            });
+          });
+          _results.push(hoodLayer.setMap(window.gMap));
         }
         return _results;
       };
-      this.constructNewCoordinates = function(polygon) {
+      window.constructNewCoordinates = function(polygon) {
         var coordinates, i, newCoordinates;
         newCoordinates = [];
         coordinates = polygon["coordinates"][0];

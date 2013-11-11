@@ -64,7 +64,7 @@ define [
       #   from: @attr.tableId,
       #   where: where
 
-      where = "LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
+      where = "WHERE LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
 
     @addHoodsLayer = (ev, data) ->
       return if !data or !data.gMap or data.gMap.getZoom() < @attr.minimalZommLevel
@@ -72,7 +72,7 @@ define [
       @attr.gMap = data.gMap
       @attr.data = data
       @setupLayer(data)
-      @attr.hoodLayer.setMap(@attr.gMap)
+      # @attr.hoodLayer.setMap(@attr.gMap)
       @setupMouseOver()
 
     @setupMouseOver = () ->
@@ -86,6 +86,7 @@ define [
         @attr.hoodLayer.setMap(null)
         @attr.hoodLayer.setQuery(query)
       else
+        @getData(data)
         # @attr.hoodLayer = new google.maps.FusionTablesLayer(
         #   map: @attr.gMap
         #   query: query
@@ -102,48 +103,51 @@ define [
 
     @getData = (data) ->
       # Initialize JSONP request
+      window.gMap = @attr.gMap
       script = document.createElement("script")
       url = ["https://www.googleapis.com/fusiontables/v1/query?"]
       url.push "sql="
-      query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM #{@attr.tableId}"
+      query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM #{@attr.tableId} #{@hoodQuery(data)}"
+      console.log query
       encodedQuery = encodeURIComponent(query)
       url.push encodedQuery
       url.push "&callback=drawMap"
-      url.push "&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ"
+      url.push "&key=#{@attr.apiKey}"
       script.src = url.join("")
       body = document.getElementsByTagName("body")[0]
       body.appendChild script
 
-    @drawMap = (data) ->
+
+    window.drawMap = (data) ->
       rows = data["rows"]
       for i of rows
-        unless rows[i][0] is "Antarctica"
-          newCoordinates = []
-          geometries = rows[i][1]["geometries"]
-          if geometries
-            for j of geometries
-              newCoordinates.push @constructNewCoordinates(geometries[j])
-          else
-            newCoordinates = @constructNewCoordinates(rows[i][1]["geometry"])
-          randomnumber = Math.floor(Math.random() * 4)
-          country = new google.maps.Polygon(
-            paths: newCoordinates
-            strokeColor: colors[randomnumber]
-            strokeOpacity: 0
-            strokeWeight: 1
-            fillColor: colors[randomnumber]
-            fillOpacity: 0.3
-          )
-          google.maps.event.addListener country, "mouseover", ->
-            @setOptions fillOpacity: 1
+        continue unless rows[i][0]
+        newCoordinates = []
+        geometries = rows[i][0].geometry
+        if geometries
+          for j of geometries
+            newCoordinates.push window.constructNewCoordinates(geometries)
+        else
+          newCoordinates = window.constructNewCoordinates(rows[i][1].geometry)
+        hoodLayer = new google.maps.Polygon(
+          paths: newCoordinates
+          fillColor: "#BC8F8F"
+          fillOpacity: 0.0
+          strokeColor: "#4D4D4D"
+          strokeOpacity: 0.8
+          strokeWeight: 1
+        )
 
-          google.maps.event.addListener country, "mouseout", ->
-            @setOptions fillOpacity: 0.3
+        google.maps.event.addListener hoodLayer, "mouseover", ->
+          @setOptions fillOpacity: 1, strokeWeight: 1
 
-          country.setMap @attr.gMap
+        google.maps.event.addListener hoodLayer, "mouseout", ->
+          @setOptions fillOpacity: 0.0
+
+        hoodLayer.setMap window.gMap
 
 
-    @constructNewCoordinates = (polygon) ->
+    window.constructNewCoordinates = (polygon) ->
       newCoordinates = []
       coordinates = polygon["coordinates"][0]
       for i of coordinates
