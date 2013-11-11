@@ -105,19 +105,19 @@ describe "Login", ->
       elements = $('.js_hidden_if_logged_in')
       expect(elements).not.toHaveCss(display: 'none')
 
-  describe "#_toggleLogIn", ->
+  describe "#_toggleSessionState", ->
 
-    for sessionName in ["temp","perm"]
+    for sessionType in ["temp","perm"]
 
-      describe "with a #{sessionName} session", ->
+      describe "with a #{sessionType} session", ->
 
         beforeEach ->
-          login.my.session = sessionName
+          login.my.session = sessionType
           spyOn login, '_hideRegister'
           spyOn login, '_showLogout'
           spyOn login, '_showAccount'
           spyOn login, '_toggleElementsWhenLoggedIn'
-          login._toggleLogIn()
+          login._toggleSessionState()
 
         it "hides register link", ->
           expect(login._hideRegister).toHaveBeenCalled()
@@ -138,7 +138,7 @@ describe "Login", ->
         spyOn login, '_showRegister'
         spyOn login, '_showLogin'
         spyOn login, '_toggleElementsWhenLoggedOut'
-        login._toggleLogIn()
+        login._toggleSessionState()
 
       it "shows register link", ->
         expect(login._showRegister).toHaveBeenCalled()

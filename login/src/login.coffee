@@ -19,7 +19,7 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
           @my.zid = $.cookie 'zid'
 
         @_welcomeMessage()
-        @_toggleLogIn()
+        @_toggleSessionState()
         @_enableLoginRegistration()
 
         $.each @my.popupTypes, (index, type) =>
@@ -214,7 +214,7 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
           if value then "Password #{value}" else ''
         when "password_confirmation" then "Password Confirmation #{value}"
 
-    _toggleLogIn: ->
+    _toggleSessionState: ->
       if @my.session
         @_hideRegister()
         @_showLogout()

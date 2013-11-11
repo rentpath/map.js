@@ -27,7 +27,7 @@
             return _this.my.zid = $.cookie('zid');
           });
           _this._welcomeMessage();
-          _this._toggleLogIn();
+          _this._toggleSessionState();
           _this._enableLoginRegistration();
           $.each(_this.my.popupTypes, function(index, type) {
             return _this._bindForms(type);
@@ -326,7 +326,7 @@
         }
       };
 
-      Login.prototype._toggleLogIn = function() {
+      Login.prototype._toggleSessionState = function() {
         if (this.my.session) {
           this._hideRegister();
           this._showLogout();

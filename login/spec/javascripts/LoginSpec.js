@@ -124,19 +124,19 @@
         });
       });
     });
-    return describe("#_toggleLogIn", function() {
-      var sessionName, _i, _len, _ref;
+    return describe("#_toggleSessionState", function() {
+      var sessionType, _i, _len, _ref;
       _ref = ["temp", "perm"];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        sessionName = _ref[_i];
-        describe("with a " + sessionName + " session", function() {
+        sessionType = _ref[_i];
+        describe("with a " + sessionType + " session", function() {
           beforeEach(function() {
-            login.my.session = sessionName;
+            login.my.session = sessionType;
             spyOn(login, '_hideRegister');
             spyOn(login, '_showLogout');
             spyOn(login, '_showAccount');
             spyOn(login, '_toggleElementsWhenLoggedIn');
-            return login._toggleLogIn();
+            return login._toggleSessionState();
           });
           it("hides register link", function() {
             return expect(login._hideRegister).toHaveBeenCalled();
@@ -158,7 +158,7 @@
           spyOn(login, '_showRegister');
           spyOn(login, '_showLogin');
           spyOn(login, '_toggleElementsWhenLoggedOut');
-          return login._toggleLogIn();
+          return login._toggleSessionState();
         });
         it("shows register link", function() {
           return expect(login._showRegister).toHaveBeenCalled();
