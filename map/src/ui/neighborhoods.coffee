@@ -103,7 +103,6 @@ define [
 
     @getData = (data) ->
       # Initialize JSONP request
-      window.gMap = @attr.gMap
       script = document.createElement("script")
       url = ["https://www.googleapis.com/fusiontables/v1/query?"]
       url.push "sql="
@@ -113,12 +112,15 @@ define [
       url.push encodedQuery
       url.push "&callback=drawMap"
       url.push "&key=#{@attr.apiKey}"
-      script.src = url.join("")
-      body = document.getElementsByTagName("body")[0]
-      body.appendChild script
+
+      $.ajax
+        url: url.join("")
+        dataType: "jsonp"
+        success: (data) ->
+          @drawMap(data)
 
 
-    window.drawMap = (data) ->
+    @drawMap = (data) ->
       rows = data["rows"]
       for i of rows
         continue unless rows[i][0]
@@ -144,10 +146,10 @@ define [
         google.maps.event.addListener hoodLayer, "mouseout", ->
           @setOptions fillOpacity: 0.0
 
-        hoodLayer.setMap window.gMap
+        hoodLayer.setMap @attr.gMap
 
 
-    window.constructNewCoordinates = (polygon) ->
+    @constructNewCoordinates = (polygon) ->
       newCoordinates = []
       coordinates = polygon["coordinates"][0]
       for i of coordinates
