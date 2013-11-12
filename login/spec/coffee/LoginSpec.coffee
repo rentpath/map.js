@@ -31,74 +31,120 @@ describe "Login", ->
       login._setEmail(sampleEmail)
       expect($.cookie('zmail')).toEqual(sampleEmail)
 
-  describe "#_toggleLogIn", ->
+  describe "#_showRegister", ->
 
-    describe "with a temp or perm session", ->
+    it "doesn't hide the link", ->
+      login._showRegister()
+      expect($('a.register').parent()).not.toHaveClass('hidden')
 
-      beforeEach ->
-        login.my.session = "temp"
-        $.cookie('z_type_email', '')
+  describe "#_hideRegister", ->
 
-      it "hides register link", ->
-        login._toggleLogIn()
-        expect($('a.register').parent()).toHaveClass('hidden')
+    it "hides the link", ->
+      login._hideRegister()
+      expect($('a.register').parent()).toHaveClass('hidden')
 
-      it "flips the login link class", ->
-        loginLink = $('a.login')
-        login._toggleLogIn()
-        expect(loginLink).toHaveClass('logout')
-        expect(loginLink).not.toHaveClass('login')
+  describe "#_showAccount", ->
 
-      it "hides the account link when z_type_email", ->
-        $.cookie('z_type_email', 'profile')
-        login._toggleLogIn()
-        expect($('a.account').parent()).not.toHaveClass('hidden')
+    it "keeps the account link hidden without z_type_email", ->
+      $.cookie('z_type_email', '')
+      login._showAccount()
+      expect($('a.account').parent()).toHaveClass('hidden')
 
-      it "sets the login link text to Log Out", ->
-        loginLink = $('a.login')
-        login._toggleLogIn()
-        expect(loginLink).toHaveText('Log Out')
+    it "hides the account link when z_type_email", ->
+      $.cookie('z_type_email', 'profile')
+      login._showAccount()
+      expect($('a.account').parent()).not.toHaveClass('hidden')
 
-      it "hides marked elements based on logged in state", ->
-        login._toggleLogIn()
-        elements = $('.js_hidden_if_logged_in')
-        expect(elements).toHaveClass('hidden')
+  describe "#_showLogout", ->
 
-      it "does not hide marked elements based on logged out state", ->
-        login._toggleLogIn()
-        elements = $('.js_hidden_if_logged_out')
-        expect(elements).not.toHaveClass('hidden')
+    it "flips the login link class", ->
+      loginLink = $('a.login')
+      login._showLogout()
+      expect(loginLink).toHaveClass('logout')
+      expect(loginLink).not.toHaveClass('login')
+
+    it "sets the login link text to Log Out", ->
+      loginLink = $('a.login')
+      login._showLogout()
+      expect(loginLink).toHaveText('Log Out')
+
+  describe "#_showLogin", ->
+
+    it "flips the login link class", ->
+      loginLink = $('a.login')
+      login._showLogin()
+      expect(loginLink).not.toHaveClass('logout')
+      expect(loginLink).toHaveClass('login')
+
+    it "sets the login link text to Log In", ->
+      loginLink = $('a.logout')
+      login._showLogin()
+      expect(loginLink).toHaveText('Log In')
+
+  describe "#_toggleElementsWhenLoggedIn", ->
+
+    it "hides marked elements based on logged in state", ->
+      login._toggleElementsWhenLoggedIn()
+      elements = $('.js_hidden_if_logged_in')
+      expect(elements).toHaveCss(display: 'none')
+
+    it "does not hide marked elements based on logged out state", ->
+      login._toggleElementsWhenLoggedIn()
+      elements = $('.js_hidden_if_logged_out')
+      expect(elements).not.toHaveCss(display: 'none')
+
+  describe "#_toggleElementsWhenLoggedOut", ->
+
+    it "does not hide marked elements based on logged in state", ->
+      login._toggleElementsWhenLoggedOut()
+      elements = $('.js_hidden_if_logged_out')
+      expect(elements).toHaveCss(display: 'none')
+
+    it "hides marked elements based on logged out state", ->
+      login._toggleElementsWhenLoggedOut()
+      elements = $('.js_hidden_if_logged_in')
+      expect(elements).not.toHaveCss(display: 'none')
+
+  describe "#_toggleSessionState", ->
+
+    for sessionType in ["temp","perm"]
+
+      describe "with a #{sessionType} session", ->
+
+        beforeEach ->
+          login.my.session = sessionType
+          spyOn login, '_hideRegister'
+          spyOn login, '_showLogout'
+          spyOn login, '_showAccount'
+          spyOn login, '_toggleElementsWhenLoggedIn'
+          login._toggleSessionState()
+
+        it "hides register link", ->
+          expect(login._hideRegister).toHaveBeenCalled()
+
+        it "shows logout", ->
+          expect(login._showLogout).toHaveBeenCalled()
+
+        it "shows account", ->
+          expect(login._showAccount).toHaveBeenCalled()
+
+        it "toggles elements when logged in", ->
+          expect(login._toggleElementsWhenLoggedIn).toHaveBeenCalled()
 
     describe "without a session", ->
 
       beforeEach ->
         login.my.session = ""
+        spyOn login, '_showRegister'
+        spyOn login, '_showLogin'
+        spyOn login, '_toggleElementsWhenLoggedOut'
+        login._toggleSessionState()
 
-      it "doesn't hide register link", ->
-        login._toggleLogIn()
-        expect($('a.register').parent()).not.toHaveClass('hidden')
+      it "shows register link", ->
+        expect(login._showRegister).toHaveBeenCalled()
 
-      it "flips the login link class", ->
-        loginLink = $('a.login')
-        login._toggleLogIn()
-        expect(loginLink).not.toHaveClass('logout')
-        expect(loginLink).toHaveClass('login')
+      it "shows login", ->
+        expect(login._showLogin).toHaveBeenCalled()
 
-      it "keeps the account link hidden", ->
-        login._toggleLogIn()
-        expect($('a.account').parent()).toHaveClass('hidden')
-
-      it "sets the login link text to Log In", ->
-        loginLink = $('a.logout')
-        login._toggleLogIn()
-        expect(loginLink).toHaveText('Log In')
-
-      it "does not hide marked elements based on logged in state", ->
-        login._toggleLogIn()
-        elements = $('.js_hidden_if_logged_out')
-        expect(elements).toHaveClass('hidden')
-
-      it "hides marked elements based on logged out state", ->
-        login._toggleLogIn()
-        elements = $('.js_hidden_if_logged_in')
-        expect(elements).not.toHaveClass('hidden')
+      it "toggles elements when logged out", ->
+        expect(login._toggleElementsWhenLoggedOut).toHaveBeenCalled()
