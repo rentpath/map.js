@@ -31,6 +31,25 @@ define [
       mouseTipDelay: 200
       suppressMapTips: false
       minimalZommLevel: 12
+      polyOptions:
+        clicked:
+          strokeColor: "#000"
+          strokeOpacity: .5
+          strokeWeight: 1
+          fillColor: "#000"
+          fillOpacity: .2
+
+        mouseover:
+          strokeColor: "#000"
+          strokeOpacity: .5
+          strokeWeight: 1
+          fillColor: "#000"
+          fillOpacity: .2
+
+        mouseout:
+          strokeWeight: 0
+          fillOpacity: 0
+
       polygonOptions:
         fillColor: "BC8F8F"
         fillOpacity: 0.1
@@ -150,6 +169,8 @@ define [
       for i of coordinates
         newCoordinates.push new google.maps.LatLng(coordinates[i][1], coordinates[i][0])
       newCoordinates
+
+    @parseRow = (row) ->
 
 
     @setupToggle = ->
