@@ -214,7 +214,9 @@ define(['jquery'], function (jQuery) {
         });
         $input.bind(($.browser.opera ? "keypress" : "keydown") + ".autocomplete", function (event) {
           lastKeyPressCode = event.keyCode;
-          resetSearchTermTimer();
+          if(typeof WH != 'undefined') {
+            resetSearchTermTimer();
+          }
 
           switch (event.keyCode) {
           case KEY.UP:
