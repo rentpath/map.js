@@ -19,6 +19,7 @@
         mouseTipDelay: 200,
         suppressMapTips: false,
         minimalZommLevel: 12,
+        polygons: [],
         polyOptions: {
           clicked: {
             strokeColor: "#000",
@@ -76,18 +77,14 @@
         }
         this.attr.gMap = data.gMap;
         this.attr.data = data;
-        this.getPolygonData(data);
-        return this.setupMouseOver();
+        return this.getKmlData(data);
       };
       this.setupMouseOver = function() {
         if (!this.isMobile() && this.attr.enableMouseover) {
           return this.buildMouseOverWindow();
         }
       };
-      this.setupLayer = function(data) {
-        return this.getPolygonData(data);
-      };
-      this.getPolygonData = function(data) {
+      this.getKmlData = function(data) {
         var url,
           _this = this;
         url = ["https://www.googleapis.com/fusiontables/v1/query?sql="];
@@ -101,35 +98,51 @@
           }
         });
       };
+      this.clearPolygons = function() {
+        var x, _i, _len, _ref;
+        if (!this.attr.polygons.length) {
+          return;
+        }
+        _ref = this.attr.polygons;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          x = _ref[_i];
+          if (x) {
+            x.setMap(null);
+          }
+        }
+        this.attr.polygons = [];
+      };
       this.buildPolygons = function(data) {
-        var hoodLayer, i, mouseOutOptions, mouseOverOptions, row, rows, _results;
+        var hoodData, hoodLayer, i, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions, polygonData, row, rows, _results;
         rows = data.rows;
+        this.clearPolygons();
         _results = [];
         for (i in rows) {
           if (!rows[i][0]) {
             continue;
           }
-          row = this.parseRow(rows[i]);
+          row = rows[i];
+          polygonData = this.buildPaths(row);
+          hoodData = this.buildHoodData(row);
           mouseOverOptions = this.attr.polyOptions.mouseover;
           mouseOutOptions = this.attr.polyOptions.mouseout;
+          isCurrentHood = this.attr.data.hood === hoodData.hood;
+          initialOptions = isCurrentHood ? mouseOverOptions : mouseOutOptions;
           hoodLayer = new google.maps.Polygon(_.extend({
-            paths: row.paths
-          }, mouseOutOptions));
+            paths: polygonData
+          }, initialOptions));
           google.maps.event.addListener(hoodLayer, "mouseover", function() {
             return this.setOptions(mouseOverOptions);
           });
-          google.maps.event.addListener(hoodLayer, "mouseout", function() {
-            return this.setOptions(mouseOutOptions);
-          });
-          _results.push(hoodLayer.setMap(this.attr.gMap));
+          if (!isCurrentHood) {
+            google.maps.event.addListener(hoodLayer, "mouseout", function() {
+              return this.setOptions(mouseOutOptions);
+            });
+          }
+          hoodLayer.setMap(this.attr.gMap);
+          _results.push(this.attr.polygons.push(hoodLayer));
         }
         return _results;
-      };
-      this.parseRow = function(row) {
-        var hoodData;
-        hoodData = this.parseHoodData(row);
-        hoodData.paths = this.buildPaths(row);
-        return hoodData;
       };
       this.buildPaths = function(row) {
         var coordinates, geometry;
@@ -151,49 +164,12 @@
           return _.map(coordinates, this.makePathsCoordinates, this);
         }
       };
-      this.parseHoodData = function(row) {
+      this.buildHoodData = function(row) {
         if (typeof row[0] === 'object') {
           return _.object(['hood', 'state', 'city'], row.slice(1));
         } else {
           return {};
         }
-      };
-      this.setupToggle = function() {
-        this.positionToggleControl();
-        return this.setupToggleAction();
-      };
-      this.setupToggleAction = function() {
-        if (this.attr.toggleLink) {
-          return this.on(this.attr.toggleLink, 'click', this.toggleLayer);
-        }
-      };
-      this.positionToggleControl = function() {
-        var control;
-        if (this.attr.toggleControl) {
-          control = $('<div/>');
-          control.append($(this.attr.toggleControl));
-          return this.attr.gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(control[0]);
-        }
-      };
-      this.toggleLayer = function() {
-        if (this.attr.hoodLayer.getMap()) {
-          return this.attr.hoodLayer.setMap(null);
-        } else {
-          this.attr.hoodLayer.setMap(this.attr.gMap);
-          return this.setupMouseOver();
-        }
-      };
-      this.buildMouseOverWindow = function() {
-        return this.attr.hoodLayer.enableMapTips({
-          select: "HOOD_NAME",
-          from: this.attr.tableId,
-          geometryColumn: "geometry",
-          suppressMapTips: this.attr.suppressMapTips,
-          delay: this.attr.mouseTipDelay,
-          tolerance: 8,
-          key: this.attr.apiKey,
-          style: this.attr.tipStyle
-        });
       };
       this.addListeners = function() {
         var _this = this;

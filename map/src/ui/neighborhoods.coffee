@@ -31,6 +31,7 @@ define [
       mouseTipDelay: 200
       suppressMapTips: false
       minimalZommLevel: 12
+      polygons: []
 
       polyOptions:
         clicked:
@@ -87,17 +88,13 @@ define [
 
       @attr.gMap = data.gMap
       @attr.data = data
-      @getPolygonData(data)
-      @setupMouseOver()
+      @getKmlData(data)
 
     @setupMouseOver = () ->
       if !@isMobile() && @attr.enableMouseover
         @buildMouseOverWindow()
 
-    @setupLayer = (data) ->
-      @getPolygonData(data)
-
-    @getPolygonData = (data) ->
+    @getKmlData = (data) ->
       url = ["https://www.googleapis.com/fusiontables/v1/query?sql="]
       url.push encodeURIComponent(@hoodQuery(data))
       url.push "&key=#{@attr.apiKey}"
@@ -108,35 +105,45 @@ define [
         success: (data) =>
           @buildPolygons(data)
 
+    @clearPolygons = ->
+      return unless @attr.polygons.length
+
+      for x in @attr.polygons
+        x.setMap(null) if x
+
+      @attr.polygons = []
+      return
 
     @buildPolygons = (data) ->
       rows = data.rows
+      @clearPolygons()
       for i of rows
         continue unless rows[i][0]
+        row = rows[i]
 
-        row = @parseRow(rows[i])
+        polygonData = @buildPaths(row)
+        hoodData = @buildHoodData(row)
 
         mouseOverOptions = @attr.polyOptions.mouseover
         mouseOutOptions = @attr.polyOptions.mouseout
 
+        isCurrentHood = (@attr.data.hood == hoodData.hood)
+        initialOptions = if isCurrentHood then mouseOverOptions else mouseOutOptions
         hoodLayer = new google.maps.Polygon(
-          _.extend({paths:row.paths}, mouseOutOptions)
+          _.extend({paths:polygonData}, initialOptions)
         )
 
         google.maps.event.addListener hoodLayer, "mouseover", ->
           @setOptions(mouseOverOptions)
+          # @setupMouseOver(row)
 
-
-        google.maps.event.addListener hoodLayer, "mouseout", ->
-          @setOptions(mouseOutOptions)
+        unless isCurrentHood
+          google.maps.event.addListener hoodLayer, "mouseout", ->
+            @setOptions(mouseOutOptions)
 
         hoodLayer.setMap @attr.gMap
 
-    @parseRow = (row) ->
-      hoodData = @parseHoodData(row)
-      hoodData.paths = @buildPaths(row)
-
-      hoodData
+        @attr.polygons.push hoodLayer
 
     @buildPaths = (row) ->
       coordinates = []
@@ -154,43 +161,11 @@ define [
       else
         _.map(coordinates, @makePathsCoordinates, this)
 
-    @parseHoodData = (row) ->
+    @buildHoodData = (row) ->
       if typeof row[0] == 'object'
         _.object(['hood', 'state', 'city'], row.slice(1))
       else
         {}
-
-    @setupToggle = ->
-      @positionToggleControl()
-      @setupToggleAction()
-
-    @setupToggleAction = ->
-      if @attr.toggleLink
-        @on @attr.toggleLink, 'click', @toggleLayer
-
-    @positionToggleControl = ->
-      if @attr.toggleControl
-        control = $('<div/>')
-        control.append($(@attr.toggleControl))
-        @attr.gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(control[0])
-
-    @toggleLayer = ->
-      if @attr.hoodLayer.getMap()
-        @attr.hoodLayer.setMap(null)
-      else
-        @attr.hoodLayer.setMap(@attr.gMap)
-        @setupMouseOver()
-
-    @buildMouseOverWindow = ->
-      @attr.hoodLayer.enableMapTips
-        select: "HOOD_NAME" # list of columns to query, typially need only one column.
-        from: @attr.tableId # fusion table name
-        geometryColumn: "geometry" # geometry column name
-        suppressMapTips: @attr.suppressMapTips # optional, whether to show map tips. default false
-        delay: @attr.mouseTipDelay # milliseconds mouse pause before send a server query. default 300.
-        tolerance: 8 # tolerance in pixel around mouse. default is 6.
-        key: @attr.apiKey
-        style: @attr.tipStyle
 
     @addListeners = ->
       if @attr.infoTemplate
