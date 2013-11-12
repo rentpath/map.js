@@ -1,12 +1,6 @@
 describe "Login", ->
   login = null
-  testWindow = null
   sampleEmail = "foo@example.com"
-  newUser = "new"
-
-  resetTracker = ->
-    tracker.path = backupTracker.path
-    tracker.path_refinements = backupTracker.path_refinements
 
   beforeEach ->
     ready = false
@@ -14,12 +8,21 @@ describe "Login", ->
     require ['../../login', 'jasmine-jquery'], (Login) ->
       Login.init()
       login = Login.instance
-      testWindow = $('<div></div>')
       ready = true
       loadFixtures("login.html")
 
     waitsFor ->
       return ready
+
+  describe "#_encodeURL", ->
+
+    it "encodes the hash", ->
+      url = "http://127.0.0.1/foo#bar"
+      expect(login._encodeURL(url)).toBe("http://127.0.0.1/foo%23bar")
+
+    it "does not add a trailing #", ->
+      url = "http://127.0.0.1/foo"
+      expect(login._encodeURL(url)).toBe("http://127.0.0.1/foo")
 
   describe "#_setEmail", ->
 

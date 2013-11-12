@@ -8,9 +8,9 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
       @_overrideDependencies()
 
       @my =
-        zmail: $.cookie 'zmail'
-        zid: $.cookie 'zid'
-        session: $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
+        zmail:      $.cookie 'zmail'
+        zid:        $.cookie 'zid'
+        session:    $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
         currentUrl: window.location.href
         popupTypes: ["login", "register", "account", "reset", "confirm", "success"]
 
@@ -26,6 +26,11 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
           @_bindForms type
 
         $("a.logout").click (e) => @_logOut e
+
+    _encodeURL: (href) ->
+      [path, hash] = href.split('#')
+      hash = if hash then encodeURIComponent("##{hash}") else ""
+      path + hash
 
     toggleRegistrationDiv: ($div) ->
       unless @my.session
@@ -111,28 +116,28 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
           @_generateErrors $.parseJSON(errors.responseText), $form.parent().find(".errors"), 'loginError'
 
     _submitChangeEmail: ($form)->
-        new_email =
-          email: $('input[name="new_email"]').val()
-          email_confirmation: $('input[name="new_email_confirm"]').val()
-        $.ajax
-          type: "GET" # POST does not work in IE
-          data: new_email
-          datatype: 'json'
-          url:  "#{zutron_host}/zids/#{@my.zid}/email_change.json"
-          beforeSend: (xhr) ->
-            xhr.overrideMimeType "text/json"
-            xhr.setRequestHeader "Accept", "application/json"
-          success: (data) =>
-            if data? and data.error # IE8 XDR Fallback
-              error = {'email': data.error}
-              @_generateErrors error, $form.parent().find ".errors", 'changeEmailSuccessError'
-            else
-              @_setEmail(new_email.email)
-              events.trigger('event/changeEmailSuccess', data)
-              $('#zutron_account_form').prm_dialog_close()
-              @_triggerModal $("#zutron_success_form")
-          error: (errors) =>
-            @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors", 'changeEmailError'
+      new_email =
+        email: $('input[name="new_email"]').val()
+        email_confirmation: $('input[name="new_email_confirm"]').val()
+      $.ajax
+        type: "GET" # POST does not work in IE
+        data: new_email
+        datatype: 'json'
+        url:  "#{zutron_host}/zids/#{@my.zid}/email_change.json"
+        beforeSend: (xhr) ->
+          xhr.overrideMimeType "text/json"
+          xhr.setRequestHeader "Accept", "application/json"
+        success: (data) =>
+          if data? and data.error # IE8 XDR Fallback
+            error = {'email': data.error}
+            @_generateErrors error, $form.parent().find ".errors", 'changeEmailSuccessError'
+          else
+            @_setEmail(new_email.email)
+            events.trigger('event/changeEmailSuccess', data)
+            $('#zutron_account_form').prm_dialog_close()
+            @_triggerModal $("#zutron_success_form")
+        error: (errors) =>
+          @_generateErrors $.parseJSON(errors.responseText), $form.parent().find ".errors", 'changeEmailError'
 
     _submitPasswordReset: ($form) ->
       $.ajax
@@ -308,17 +313,17 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
 
     _setHiddenValues: ($form) ->
       $form.find("input#state").val @my.zid
-      $form.find("input#origin").val encodeURIComponent(@my.currentUrl)
+      $form.find("input#origin").val @_encodeURL(window.location.href)
 
     _determineClient: ->
-        if @my.currentUrl.indexOf('client') > 0
-          clients = ["iOS", "android"]
-          $.each clients, (client) =>
-            myClient = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
-            myClient = myClient.split("=")[1].toLowerCase()
-            @_createAppButton myClient
-        else
-          $('#reset_return_link').attr('href', "http://#{window.location.host}").show()
+      if @my.currentUrl.indexOf('client') > 0
+        clients = ["iOS", "android"]
+        $.each clients, (client) =>
+          myClient = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
+          myClient = myClient.split("=")[1].toLowerCase()
+          @_createAppButton myClient
+      else
+        $('#reset_return_link').attr('href', "http://#{window.location.host}").show()
 
     _createAppButton: (client) ->
       launchUrl = "com.primedia.Apartments://settings" if client
