@@ -142,17 +142,17 @@ define [
       coordinates = []
       if geometry = row[0].geometry
         if geometry.type == 'Polygon'
-          coordinates = @makePaths(geometry.coordinates[0])
+          coordinates = @makePathsCoordinates(geometry.coordinates[0])
       coordinates
 
-    @isPoint = (arr) ->
+    @isValidPoint = (arr) ->
       arr.length == 2 and _.all(arr, _.isNumber)
 
-    @makePaths = (coordinates) ->
-      if this.isPoint(coordinates)
+    @makePathsCoordinates = (coordinates) ->
+      if this.isValidPoint(coordinates)
         new google.maps.LatLng(coordinates[1], coordinates[0])
       else
-        _.map(coordinates, @makePaths, this)
+        _.map(coordinates, @makePathsCoordinates, this)
 
     @parseHoodData = (row) ->
       if typeof row[0] == 'object'

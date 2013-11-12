@@ -136,19 +136,19 @@
         coordinates = [];
         if (geometry = row[0].geometry) {
           if (geometry.type === 'Polygon') {
-            coordinates = this.makePaths(geometry.coordinates[0]);
+            coordinates = this.makePathsCoordinates(geometry.coordinates[0]);
           }
         }
         return coordinates;
       };
-      this.isPoint = function(arr) {
+      this.isValidPoint = function(arr) {
         return arr.length === 2 && _.all(arr, _.isNumber);
       };
-      this.makePaths = function(coordinates) {
-        if (this.isPoint(coordinates)) {
+      this.makePathsCoordinates = function(coordinates) {
+        if (this.isValidPoint(coordinates)) {
           return new google.maps.LatLng(coordinates[1], coordinates[0]);
         } else {
-          return _.map(coordinates, this.makePaths, this);
+          return _.map(coordinates, this.makePathsCoordinates, this);
         }
       };
       this.parseHoodData = function(row) {
