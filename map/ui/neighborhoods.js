@@ -67,7 +67,8 @@
       this.infoWindow = new google.maps.InfoWindow();
       this.hoodQuery = function(data) {
         var where;
-        return where = "WHERE LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
+        where = "WHERE LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
+        return "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM " + this.attr.tableId + " " + where;
       };
       this.addHoodsLayer = function(ev, data) {
         if (!data || !data.gMap || data.gMap.getZoom() < this.attr.minimalZommLevel) {
@@ -75,7 +76,7 @@
         }
         this.attr.gMap = data.gMap;
         this.attr.data = data;
-        this.setupLayer(data);
+        this.getPolygonData(data);
         return this.setupMouseOver();
       };
       this.setupMouseOver = function() {
@@ -84,81 +85,79 @@
         }
       };
       this.setupLayer = function(data) {
-        var query;
-        query = this.hoodQuery(data);
-        if (this.attr.hoodLayer != null) {
-          this.attr.hoodLayer.setMap(null);
-          return this.attr.hoodLayer.setQuery(query);
-        } else {
-          return this.getData(data);
-        }
+        return this.getPolygonData(data);
       };
-      this.getData = function(data) {
-        var query, url,
+      this.getPolygonData = function(data) {
+        var url,
           _this = this;
         url = ["https://www.googleapis.com/fusiontables/v1/query?sql="];
-        query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM " + this.attr.tableId + " " + (this.hoodQuery(data));
-        url.push(encodeURIComponent(query));
+        url.push(encodeURIComponent(this.hoodQuery(data)));
         url.push("&key=" + this.attr.apiKey);
         return $.ajax({
           url: url.join(""),
           dataType: "jsonp",
           success: function(data) {
-            return _this.drawMap(data);
+            return _this.buildPolygons(data);
           }
         });
       };
-      this.drawMap = function(data) {
-        var geometries, hoodLayer, i, j, newCoordinates, rows, _results;
-        console.log('drawMap');
-        rows = data["rows"];
+      this.buildPolygons = function(data) {
+        var hoodLayer, i, mouseOutOptions, mouseOverOptions, row, rows, _results;
+        rows = data.rows;
         _results = [];
         for (i in rows) {
           if (!rows[i][0]) {
             continue;
           }
-          newCoordinates = [];
-          geometries = rows[i][0].geometry;
-          if (geometries) {
-            for (j in geometries) {
-              newCoordinates.push(this.constructNewCoordinates(geometries));
-            }
-          } else {
-            newCoordinates = this.constructNewCoordinates(rows[i][1].geometry);
-          }
-          hoodLayer = new google.maps.Polygon({
-            paths: newCoordinates,
-            fillColor: "#BC8F8F",
-            fillOpacity: 0.0,
-            strokeColor: "#4D4D4D",
-            strokeOpacity: 0.8,
-            strokeWeight: 1
-          });
+          row = this.parseRow(rows[i]);
+          mouseOverOptions = this.attr.polyOptions.mouseover;
+          mouseOutOptions = this.attr.polyOptions.mouseout;
+          hoodLayer = new google.maps.Polygon(_.extend({
+            paths: row.paths
+          }, mouseOutOptions));
           google.maps.event.addListener(hoodLayer, "mouseover", function() {
-            return this.setOptions({
-              fillOpacity: 1,
-              strokeWeight: 1
-            });
+            return this.setOptions(mouseOverOptions);
           });
           google.maps.event.addListener(hoodLayer, "mouseout", function() {
-            return this.setOptions({
-              fillOpacity: 0.0
-            });
+            return this.setOptions(mouseOutOptions);
           });
           _results.push(hoodLayer.setMap(this.attr.gMap));
         }
         return _results;
       };
-      this.constructNewCoordinates = function(polygon) {
-        var coordinates, i, newCoordinates;
-        newCoordinates = [];
-        coordinates = polygon["coordinates"][0];
-        for (i in coordinates) {
-          newCoordinates.push(new google.maps.LatLng(coordinates[i][1], coordinates[i][0]));
-        }
-        return newCoordinates;
+      this.parseRow = function(row) {
+        var hoodData;
+        hoodData = this.parseHoodData(row);
+        hoodData.paths = this.buildPaths(row);
+        return hoodData;
       };
-      this.parseRow = function(row) {};
+      this.buildPaths = function(row) {
+        var coordinates, geometry;
+        coordinates = [];
+        if (geometry = row[0].geometry) {
+          if (geometry.type === 'Polygon') {
+            coordinates = this.makePaths(geometry.coordinates[0]);
+          }
+        }
+        return coordinates;
+      };
+      this.isPoint = function(arr) {
+        return arr.length === 2 && _.all(arr, _.isNumber);
+      };
+      this.makePaths = function(coordinates) {
+        if (this.isPoint(coordinates)) {
+          return new google.maps.LatLng(coordinates[1], coordinates[0]);
+        } else {
+          return _.map(coordinates, this.makePaths, this);
+        }
+      };
+      this.parseHoodData = function(row) {
+        if (typeof row[0] === 'object') {
+          return _.object(['hood', 'state', 'city'], row.slice(1));
+        } else {
+          return {};
+        }
+      };
       this.setupToggle = function() {
         this.positionToggleControl();
         return this.setupToggleAction();

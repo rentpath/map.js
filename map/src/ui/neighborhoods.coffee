@@ -31,6 +31,7 @@ define [
       mouseTipDelay: 200
       suppressMapTips: false
       minimalZommLevel: 12
+
       polyOptions:
         clicked:
           strokeColor: "#000"
@@ -77,21 +78,16 @@ define [
     @infoWindow = new google.maps.InfoWindow()
 
     @hoodQuery = (data) ->
-      # where = "LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
-      # query =
-      #   select: "geometry",
-      #   from: @attr.tableId,
-      #   where: where
-
       where = "WHERE LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
+      "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM #{@attr.tableId} #{where}"
+
 
     @addHoodsLayer = (ev, data) ->
       return if !data or !data.gMap or data.gMap.getZoom() < @attr.minimalZommLevel
 
       @attr.gMap = data.gMap
       @attr.data = data
-      @setupLayer(data)
-      # @attr.hoodLayer.setMap(@attr.gMap)
+      @getPolygonData(data)
       @setupMouseOver()
 
     @setupMouseOver = () ->
@@ -99,79 +95,70 @@ define [
         @buildMouseOverWindow()
 
     @setupLayer = (data) ->
-      query = @hoodQuery(data)
+      @getPolygonData(data)
 
-      if @attr.hoodLayer?
-        @attr.hoodLayer.setMap(null)
-        @attr.hoodLayer.setQuery(query)
-      else
-        @getData(data)
-        # @attr.hoodLayer = new google.maps.FusionTablesLayer(
-        #   map: @attr.gMap
-        #   query: query
-        #   suppressInfoWindows: true
-        #   styles: [
-        #     polygonOptions: @attr.polygonOptions
-        #   ,
-        #     where: "HOOD_NAME = '#{@toSpaces(data.hood)}'"
-        #     polygonOptions: @attr.polygonOptionsCurrent
-        #   ]
-        # )
-        # @addListeners()
-        # @setupToggle()
-
-    @getData = (data) ->
+    @getPolygonData = (data) ->
       url = ["https://www.googleapis.com/fusiontables/v1/query?sql="]
-      query = "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM #{@attr.tableId} #{@hoodQuery(data)}"
-      url.push encodeURIComponent(query)
+      url.push encodeURIComponent(@hoodQuery(data))
       url.push "&key=#{@attr.apiKey}"
 
       $.ajax
         url: url.join("")
         dataType: "jsonp"
         success: (data) =>
-          @drawMap(data)
+          @buildPolygons(data)
 
 
-    @drawMap = (data) ->
-      console.log 'drawMap'
-      rows = data["rows"]
+    @buildPolygons = (data) ->
+      rows = data.rows
       for i of rows
         continue unless rows[i][0]
-        newCoordinates = []
-        geometries = rows[i][0].geometry
-        if geometries
-          for j of geometries
-            newCoordinates.push @constructNewCoordinates(geometries)
-        else
-          newCoordinates = @constructNewCoordinates(rows[i][1].geometry)
+
+        row = @parseRow(rows[i])
+
+        mouseOverOptions = @attr.polyOptions.mouseover
+        mouseOutOptions = @attr.polyOptions.mouseout
+
         hoodLayer = new google.maps.Polygon(
-          paths: newCoordinates
-          fillColor: "#BC8F8F"
-          fillOpacity: 0.0
-          strokeColor: "#4D4D4D"
-          strokeOpacity: 0.8
-          strokeWeight: 1
+          _.extend({paths:row.paths}, mouseOutOptions)
         )
 
         google.maps.event.addListener hoodLayer, "mouseover", ->
-          @setOptions fillOpacity: 1, strokeWeight: 1
+          @setOptions(mouseOverOptions)
+
 
         google.maps.event.addListener hoodLayer, "mouseout", ->
-          @setOptions fillOpacity: 0.0
+          @setOptions(mouseOutOptions)
 
         hoodLayer.setMap @attr.gMap
 
-
-    @constructNewCoordinates = (polygon) ->
-      newCoordinates = []
-      coordinates = polygon["coordinates"][0]
-      for i of coordinates
-        newCoordinates.push new google.maps.LatLng(coordinates[i][1], coordinates[i][0])
-      newCoordinates
-
     @parseRow = (row) ->
+      hoodData = @parseHoodData(row)
+      hoodData.paths = @buildPaths(row)
 
+      hoodData
+
+    @buildPaths = (row) ->
+      coordinates = []
+      if geometry = row[0].geometry
+        if geometry.type == 'Polygon'
+          coordinates = @makePaths(geometry.coordinates[0])
+      coordinates
+
+    @isPoint = (arr) ->
+      arr.length == 2 and _.all(arr, _.isNumber)
+
+    @makePaths = (coordinates) ->
+      if this.isPoint(coordinates)
+        new google.maps.LatLng(coordinates[1], coordinates[0])
+      else
+        _.map(coordinates, @makePaths, this)
+
+    @parseHoodData = (row) ->
+      if typeof row[0] == 'object'
+        _.object(['hood', 'state', 'city'], row.slice(1))
+      else
+        {}
 
     @setupToggle = ->
       @positionToggleControl()
