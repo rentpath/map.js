@@ -1,12 +1,6 @@
 describe "Login", ->
   login = null
-  testWindow = null
   sampleEmail = "foo@example.com"
-  newUser = "new"
-
-  resetTracker = ->
-    tracker.path = backupTracker.path
-    tracker.path_refinements = backupTracker.path_refinements
 
   beforeEach ->
     ready = false
@@ -14,7 +8,6 @@ describe "Login", ->
     require ['../../login', 'jasmine-jquery'], (Login) ->
       Login.init()
       login = Login.instance
-      testWindow = $('<div></div>')
       ready = true
       loadFixtures("login.html")
 
