@@ -461,7 +461,7 @@
 
       Login.prototype._setHiddenValues = function($form) {
         $form.find("input#state").val(this.my.zid);
-        return $form.find("input#origin").val(encodeURIComponent(this.my.currentUrl));
+        return $form.find("input#origin").val(this._encodeURL(window.location.href));
       };
 
       Login.prototype._determineClient = function() {

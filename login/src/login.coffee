@@ -8,9 +8,9 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
       @_overrideDependencies()
 
       @my =
-        zmail: $.cookie 'zmail'
-        zid: $.cookie 'zid'
-        session: $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
+        zmail:      $.cookie 'zmail'
+        zid:        $.cookie 'zid'
+        session:    $.cookie("sgn") is "temp" or $.cookie("sgn") is "perm"
         currentUrl: window.location.href
         popupTypes: ["login", "register", "account", "reset", "confirm", "success"]
 
@@ -308,17 +308,17 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
 
     _setHiddenValues: ($form) ->
       $form.find("input#state").val @my.zid
-      $form.find("input#origin").val encodeURIComponent(@my.currentUrl)
+      $form.find("input#origin").val @_encodeURL(window.location.href)
 
     _determineClient: ->
-        if @my.currentUrl.indexOf('client') > 0
-          clients = ["iOS", "android"]
-          $.each clients, (client) =>
-            myClient = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
-            myClient = myClient.split("=")[1].toLowerCase()
-            @_createAppButton myClient
-        else
-          $('#reset_return_link').attr('href', "http://#{window.location.host}").show()
+      if @my.currentUrl.indexOf('client') > 0
+        clients = ["iOS", "android"]
+        $.each clients, (client) =>
+          myClient = @my.currentUrl.substring(@my.currentUrl.indexOf('client'), location.href.length)
+          myClient = myClient.split("=")[1].toLowerCase()
+          @_createAppButton myClient
+      else
+        $('#reset_return_link').attr('href', "http://#{window.location.host}").show()
 
     _createAppButton: (client) ->
       launchUrl = "com.primedia.Apartments://settings" if client
