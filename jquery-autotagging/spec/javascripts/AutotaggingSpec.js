@@ -4,7 +4,7 @@ describe("Autotagging Suite", function() {
   beforeEach(function() {
     var ready = false;
 
-    require(['../../jquery.autotagging'], function(WH) {
+    require(['../../jquery.autotagging', '../vendor/jasmine-jquery'], function(WH) {
       wh = new WH();
       wh.platform = {OS: 'OS', browser: 'dummy', version: ''};
       testWindow = $('<div></div>');
@@ -95,16 +95,6 @@ describe("Autotagging Suite", function() {
       });
     });
 
-    it('#getItemId yields the id of the element', function() {
-      testElement = $("<div id='foo'></div>");
-      expect(wh.getItemId(testElement)).toEqual('foo');
-    });
-
-    it('#getItemId yields the first class of the element when no id present', function() {
-      testElement = $("<div class='first second third'></div>");
-      expect(wh.getItemId(testElement)).toEqual('first');
-    });
-
     it('#firstClass yields the first class name of the element', function() {
       testElement = $("<div class='first second third'></div>");
       expect(wh.firstClass(testElement)).toEqual('first');
@@ -114,6 +104,32 @@ describe("Autotagging Suite", function() {
       testDoc = $("<div><meta name='WH.test' content='dummy'/><meta name='WH.quiz' content='placeholder'</div>");
       result = { cg : '', test : 'dummy', quiz : 'placeholder' };
       expect(wh.getDataFromMetaTags(testDoc)).toEqual(result);
+    });
+
+    describe("#getSubgroupId", function() {
+      it('yields the id of the first parent element', function() {
+        loadFixtures("autotagging.html")
+        link = $("a:contains('Browse New Homes')");
+        expect(wh.getSubgroupId(link)).toEqual('nav_menu');
+      });
+
+      it('yields null when no id present', function() {
+        loadFixtures("autotagging.html")
+        link = $("html");
+        expect(wh.getSubgroupId(link)).toEqual(null);
+      });
+    });
+
+    describe("#getItemId", function() {
+      it('yields the id of the element', function() {
+        testElement = $("<div id='foo'></div>");
+        expect(wh.getItemId(testElement)).toEqual('foo');
+      });
+
+      it('yields the first class of the element when no id present', function() {
+        testElement = $("<div class='first second third'></div>");
+        expect(wh.getItemId(testElement)).toEqual('first');
+      });
     });
 
     describe("#elemClicked", function() {
