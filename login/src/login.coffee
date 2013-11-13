@@ -261,7 +261,7 @@ define ['jquery', 'primedia_events', 'jquery-cookie-rjs'], ($, events) ->
       if @MOBILE and $(formID).is(':visible')
         @wireupSocialLinks $(formID)
         @_clearInputs formID
-      $("a.#{type}").click =>
+      $("a.#{type}, a.js_#{type}").click =>
         $('.prm_dialog').prm_dialog_close()
         @_triggerModal $(formID)
 
