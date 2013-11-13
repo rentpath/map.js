@@ -393,7 +393,7 @@
           this.wireupSocialLinks($(formID));
           this._clearInputs(formID);
         }
-        return $("a." + type).click(function() {
+        return $("a." + type + ", a.js_" + type).click(function() {
           $('.prm_dialog').prm_dialog_close();
           return _this._triggerModal($(formID));
         });
