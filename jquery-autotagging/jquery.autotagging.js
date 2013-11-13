@@ -88,9 +88,6 @@
             break;
           }
         }
-        if (console) {
-          console.log('getSubgroupId returning ' + id);
-        }
         return id;
       };
 
@@ -237,12 +234,6 @@
         id = elem.attr('id');
         if (!id) {
           id = this.firstClass(elem);
-          if (console) {
-            console.log('getItemId: no id found for ' + elem[0].outerHTML.substr(0, 60));
-          }
-        }
-        if (console) {
-          console.log('getItemId returning ' + id);
         }
         return id;
       };
