@@ -50,8 +50,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         id = $(el).attr('id')
         if id
           break
-      if console
-        console.log ('getSubgroupId returning ' + id)
       return id
 
     determineWindowDimensions: (obj) ->
@@ -181,10 +179,6 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       id = elem.attr('id')
       if !id
         id = @firstClass(elem)
-        if console
-          console.log ('getItemId: no id found for ' + elem[0].outerHTML.substr(0,60))
-      if console
-        console.log ('getItemId returning ' + id)
       id
 
     firstClass: (elem) ->
