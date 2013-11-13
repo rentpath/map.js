@@ -140,8 +140,13 @@
         }, initialOptions));
         google.maps.event.addListener(hoodLayer, "mouseover", function(e) {
           this.setOptions(mouseOverOptions);
-          return $(document).trigger('hoodMouseOver', {
+          $(document).trigger('hoodMouseOver', {
             data: hoodData
+          });
+          return google.maps.event.addListener(hoodLayer, "mousemove", function(e) {
+            return $(document).trigger("showToolTip", {
+              position: e.latLng
+            });
           });
         });
         if (!isCurrentHood) {
@@ -179,6 +184,9 @@
         } else {
           return {};
         }
+      };
+      this.buildToolTip = function(ev, data) {
+        return console.log("Tooltip Position", data.position);
       };
       this.buildInfoWindow = function(event, polygonData) {
         var _this = this;
@@ -263,6 +271,7 @@
       return this.after('initialize', function() {
         this.on(document, 'uiNeighborhoodDataRequest', this.addHoodsLayer);
         this.on(document, 'hoodMouseOver', this.setupMouseOver);
+        this.on(document, 'showToolTip', this.buildToolTip);
         this.on(document, 'closeInfoWindow', this.hideInfoWindow);
       });
     };

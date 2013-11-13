@@ -138,9 +138,13 @@ define [
         _.extend({paths:polygonData}, initialOptions)
       )
 
-      google.maps.event.addListener hoodLayer, "mouseover", (e) ->
+
+      google.maps.event.addListener hoodLayer, "mouseover", (e)->
         @setOptions(mouseOverOptions)
         $(document).trigger 'hoodMouseOver', { data: hoodData }
+
+        google.maps.event.addListener hoodLayer, "mousemove", (e)->
+          $(document).trigger "showToolTip", { position: e.latLng }
 
       unless isCurrentHood
         google.maps.event.addListener hoodLayer, "mouseout", ->
@@ -173,6 +177,9 @@ define [
         _.object(['hood', 'state', 'city', 'lat', 'lng'], row.slice(1))
       else
         {}
+
+    @buildToolTip = (ev, data) ->
+      console.log "Tooltip Position", data.position 
 
     @buildInfoWindow = (event, polygonData) ->
       return unless polygonData
@@ -243,6 +250,7 @@ define [
     @after 'initialize', ->
       @on document, 'uiNeighborhoodDataRequest', @addHoodsLayer
       @on document, 'hoodMouseOver', @setupMouseOver
+      @on document, 'showToolTip', @buildToolTip
       @on document, 'closeInfoWindow', @hideInfoWindow
       return
 
