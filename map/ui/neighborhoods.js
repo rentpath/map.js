@@ -79,10 +79,22 @@
         this.attr.data = data;
         return this.getKmlData(data);
       };
-      this.setupMouseOver = function() {
+      this.setupMouseOver = function(event, data) {
+        console.log("Hood Mouse Over", data.hood);
+        this.buildMouseOverInfo(data.hood);
         if (!this.isMobile() && this.attr.enableMouseover) {
-          return this.buildMouseOverWindow();
+          return console.log("data", hoodData);
         }
+      };
+      this.buildMouseOverInfo = function(data) {
+        var area, city, formattedData, state;
+        area = data.hood;
+        state = data.state;
+        city = data.city;
+        formattedData = document.createElement('div');
+        formattedData.innerHTML = area + "<br>" + city + ", " + state;
+        this.infoWindow.setContent(formattedData);
+        return this.infoWindow.open(this.attr.gMap);
       };
       this.getKmlData = function(data) {
         var url,
@@ -131,8 +143,11 @@
           hoodLayer = new google.maps.Polygon(_.extend({
             paths: polygonData
           }, initialOptions));
-          google.maps.event.addListener(hoodLayer, "mouseover", function() {
-            return this.setOptions(mouseOverOptions);
+          google.maps.event.addListener(hoodLayer, "mouseover", function(e) {
+            this.setOptions(mouseOverOptions);
+            return $(document).trigger('hoodMouseOver', {
+              hood: hoodData
+            });
           });
           if (!isCurrentHood) {
             google.maps.event.addListener(hoodLayer, "mouseout", function() {
@@ -263,7 +278,7 @@
       };
       return this.after('initialize', function() {
         this.on(document, 'uiNeighborhoodDataRequest', this.addHoodsLayer);
-        this.on(document, 'neighborhoodClicked', this.buildInfoWindow);
+        this.on(document, 'hoodMouseOver', this.setupMouseOver);
       });
     };
     return defineComponent(neighborhoodsOverlay, mobileDetection);

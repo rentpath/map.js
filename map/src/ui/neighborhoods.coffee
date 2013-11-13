@@ -90,9 +90,22 @@ define [
       @attr.data = data
       @getKmlData(data)
 
-    @setupMouseOver = () ->
+    @setupMouseOver = (event, data) ->
+      console.log "Hood Mouse Over", data.hood
+      @buildMouseOverInfo(data.hood)
       if !@isMobile() && @attr.enableMouseover
-        @buildMouseOverWindow()
+        console.log "data", hoodData
+        # @buildMouseOverWindow()
+
+    @buildMouseOverInfo = (data) ->
+      area = data.hood
+      state = data.state
+      city = data.city
+      formattedData = document.createElement('div')
+      formattedData.innerHTML = area + "<br>" + city + ", " + state
+      @infoWindow.setContent(formattedData)
+      # @infoWindow.setPosition(data.location)
+      @infoWindow.open(@attr.gMap)
 
     @getKmlData = (data) ->
       url = ["https://www.googleapis.com/fusiontables/v1/query?sql="]
@@ -133,9 +146,9 @@ define [
           _.extend({paths:polygonData}, initialOptions)
         )
 
-        google.maps.event.addListener hoodLayer, "mouseover", ->
+        google.maps.event.addListener hoodLayer, "mouseover", (e)->
           @setOptions(mouseOverOptions)
-          # @setupMouseOver(row)
+          $(document).trigger 'hoodMouseOver', { hood: hoodData }
 
         unless isCurrentHood
           google.maps.event.addListener hoodLayer, "mouseout", ->
@@ -170,7 +183,7 @@ define [
     @addListeners = ->
       if @attr.infoTemplate
         google.maps.event.addListener @attr.hoodLayer, 'click', (e) =>
-           $(document).trigger 'neighborhoodClicked', { row: e.row, location: e.latLng }
+          $(document).trigger 'neighborhoodClicked', { row: e.row, location: e.latLng }
 
     @buildInfoWindow = (event, data) ->
       @trigger document, 'uiNHoodInfoWindowDataRequest'
@@ -235,7 +248,8 @@ define [
 
     @after 'initialize', ->
       @on document, 'uiNeighborhoodDataRequest', @addHoodsLayer
-      @on document, 'neighborhoodClicked', @buildInfoWindow
+      @on document, 'hoodMouseOver', @setupMouseOver
+      # @on document, 'neighborhoodClicked', @buildInfoWindow
       return
 
   return defineComponent(neighborhoodsOverlay, mobileDetection)
