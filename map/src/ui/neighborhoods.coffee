@@ -32,6 +32,7 @@ define [
       suppressMapTips: false
       minimalZommLevel: 12
       polygons: []
+      wait: 300
 
       polyOptions:
         clicked:
@@ -80,7 +81,8 @@ define [
 
     @hoodQuery = (data) ->
       where = "WHERE LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
-      "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM #{@attr.tableId} #{where}"
+
+      "SELECT geometry, HOOD_NAME, STATENAME, MARKET, LATITUDE, LONGITUDE FROM #{@attr.tableId} #{where}"
 
 
     @addHoodsLayer = (ev, data) ->
@@ -91,21 +93,8 @@ define [
       @getKmlData(data)
 
     @setupMouseOver = (event, data) ->
-      console.log "Hood Mouse Over", data.hood
-      @buildMouseOverInfo(data.hood)
       if !@isMobile() && @attr.enableMouseover
-        console.log "data", hoodData
-        # @buildMouseOverWindow()
-
-    @buildMouseOverInfo = (data) ->
-      area = data.hood
-      state = data.state
-      city = data.city
-      formattedData = document.createElement('div')
-      formattedData.innerHTML = area + "<br>" + city + ", " + state
-      @infoWindow.setContent(formattedData)
-      # @infoWindow.setPosition(data.location)
-      @infoWindow.open(@attr.gMap)
+        @buildInfoWindow(event, data)
 
     @getKmlData = (data) ->
       url = ["https://www.googleapis.com/fusiontables/v1/query?sql="]
@@ -130,33 +119,38 @@ define [
     @buildPolygons = (data) ->
       rows = data.rows
       @clearPolygons()
-      for i of rows
-        continue unless rows[i][0]
-        row = rows[i]
+      for row in rows
+        continue unless rows[0]
 
         polygonData = @buildPaths(row)
         hoodData = @buildHoodData(row)
 
-        mouseOverOptions = @attr.polyOptions.mouseover
-        mouseOutOptions = @attr.polyOptions.mouseout
+        @wireupPolygon(polygonData, hoodData)
 
-        isCurrentHood = (@attr.data.hood == hoodData.hood)
-        initialOptions = if isCurrentHood then mouseOverOptions else mouseOutOptions
-        hoodLayer = new google.maps.Polygon(
-          _.extend({paths:polygonData}, initialOptions)
-        )
+    @wireupPolygon = (polygonData, hoodData) ->
+      mouseOverOptions = @attr.polyOptions.mouseover
+      mouseOutOptions = @attr.polyOptions.mouseout
 
-        google.maps.event.addListener hoodLayer, "mouseover", (e)->
-          @setOptions(mouseOverOptions)
-          $(document).trigger 'hoodMouseOver', { hood: hoodData }
+      isCurrentHood = (@attr.data.hood == hoodData.hood)
+      initialOptions = if isCurrentHood then mouseOverOptions else mouseOutOptions
 
-        unless isCurrentHood
-          google.maps.event.addListener hoodLayer, "mouseout", ->
-            @setOptions(mouseOutOptions)
+      hoodLayer = new google.maps.Polygon(
+        _.extend({paths:polygonData}, initialOptions)
+      )
 
-        hoodLayer.setMap @attr.gMap
+      google.maps.event.addListener hoodLayer, "mouseover", (e) ->
+        @setOptions(mouseOverOptions)
+        $(document).trigger 'hoodMouseOver', { data: hoodData }
 
-        @attr.polygons.push hoodLayer
+      unless isCurrentHood
+        google.maps.event.addListener hoodLayer, "mouseout", ->
+          @setOptions(mouseOutOptions)
+          $(document).trigger 'closeInfoWindow'
+
+      hoodLayer.setMap @attr.gMap
+      @attr.polygons.push hoodLayer
+
+      return
 
     @buildPaths = (row) ->
       coordinates = []
@@ -176,40 +170,37 @@ define [
 
     @buildHoodData = (row) ->
       if typeof row[0] == 'object'
-        _.object(['hood', 'state', 'city'], row.slice(1))
+        _.object(['hood', 'state', 'city', 'lat', 'lng'], row.slice(1))
       else
         {}
 
-    @addListeners = ->
-      if @attr.infoTemplate
-        google.maps.event.addListener @attr.hoodLayer, 'click', (e) =>
-          $(document).trigger 'neighborhoodClicked', { row: e.row, location: e.latLng }
+    @buildInfoWindow = (event, polygonData) ->
+      return unless polygonData
 
-    @buildInfoWindow = (event, data) ->
-      @trigger document, 'uiNHoodInfoWindowDataRequest'
-      @buildInfoData(event, data)
-      event.infoWindowHtml = _.template(@attr.infoTemplate, @attr.infoWindowData)
-      @infoWindow.setContent(event.infoWindowHtml)
-      @infoWindow.setPosition(data.location)
-      @infoWindow.open(@attr.gMap)
+      setTimeout =>
+        @trigger document, 'uiNHoodInfoWindowDataRequest'
 
-    @buildInfoData = (event, data) ->
-      row = data.row
-      unless _.isEmpty(row)
-        @attr.infoWindowData.state = row.STATENAME.value
-        @attr.infoWindowData.hood = row.HOOD_NAME.value
+        infoData = @buildOnboardData(polygonData.data)
+        location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng)
 
-        @buildOnboardData(row)
+        @infoWindow.setContent(_.template(@attr.infoTemplate, infoData))
+        @infoWindow.setPosition(location)
+        @infoWindow.open(@attr.gMap)
+      , @attr.wait
 
-    @buildOnboardData = (row) ->
+    @buildOnboardData = (data) ->
       return unless @attr.enableOnboardCalls
 
-      data = JSON.parse(@getOnboardData(row).responseText)
-      unless _.isEmpty(data)
-        demographic = data.demographic
+      onboardData = JSON.parse(@getOnboardData(data).responseText)
+      data = _.extend(@attr.infoWindowData, data)
+
+      unless _.isEmpty(onboardData)
+        demographic = onboardData.demographic
         for key, value of @attr.infoWindowData
           if demographic[key]
-            @attr.infoWindowData[key] = @formatValue(key, demographic[key])
+            data[key] = @formatValue(key, demographic[key])
+
+      data
 
     @formatValue = (key, value) ->
       switch key
@@ -220,13 +211,13 @@ define [
         else
           value
 
-    @getOnboardData = (row) ->
-      return {} if _.isEmpty(row)
+    @getOnboardData = (data) ->
+      return {} if _.isEmpty(data)
 
       query = []
-      query.push "state=#{@toDashes(row.STATENAME.value)}"
-      query.push "city=#{@toDashes(row.MARKET.value)}"
-      query.push "neighborhood=#{@toDashes(row.HOOD_NAME.value)}"
+      query.push "state=#{@toDashes(data.state)}"
+      query.push "city=#{@toDashes(data.city)}"
+      query.push "neighborhood=#{@toDashes(data.hood)}"
 
       xhr = $.ajax
         url: "/meta/community?rectype=NH&#{query.join('&')}"
@@ -235,6 +226,9 @@ define [
         data
       .fail (data) ->
         {}
+
+    @hideInfoWindow = ->
+      @infoWindow.close() if @infoWindow
 
     @toDashes = (value) ->
       return '' unless value?
@@ -249,7 +243,7 @@ define [
     @after 'initialize', ->
       @on document, 'uiNeighborhoodDataRequest', @addHoodsLayer
       @on document, 'hoodMouseOver', @setupMouseOver
-      # @on document, 'neighborhoodClicked', @buildInfoWindow
+      @on document, 'closeInfoWindow', @hideInfoWindow
       return
 
   return defineComponent(neighborhoodsOverlay, mobileDetection)

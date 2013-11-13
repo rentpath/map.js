@@ -20,6 +20,7 @@
         suppressMapTips: false,
         minimalZommLevel: 12,
         polygons: [],
+        wait: 300,
         polyOptions: {
           clicked: {
             strokeColor: "#000",
@@ -69,7 +70,7 @@
       this.hoodQuery = function(data) {
         var where;
         where = "WHERE LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
-        return "SELECT geometry, HOOD_NAME, STATENAME, MARKET FROM " + this.attr.tableId + " " + where;
+        return "SELECT geometry, HOOD_NAME, STATENAME, MARKET, LATITUDE, LONGITUDE FROM " + this.attr.tableId + " " + where;
       };
       this.addHoodsLayer = function(ev, data) {
         if (!data || !data.gMap || data.gMap.getZoom() < this.attr.minimalZommLevel) {
@@ -80,21 +81,9 @@
         return this.getKmlData(data);
       };
       this.setupMouseOver = function(event, data) {
-        console.log("Hood Mouse Over", data.hood);
-        this.buildMouseOverInfo(data.hood);
         if (!this.isMobile() && this.attr.enableMouseover) {
-          return console.log("data", hoodData);
+          return this.buildInfoWindow(event, data);
         }
-      };
-      this.buildMouseOverInfo = function(data) {
-        var area, city, formattedData, state;
-        area = data.hood;
-        state = data.state;
-        city = data.city;
-        formattedData = document.createElement('div');
-        formattedData.innerHTML = area + "<br>" + city + ", " + state;
-        this.infoWindow.setContent(formattedData);
-        return this.infoWindow.open(this.attr.gMap);
       };
       this.getKmlData = function(data) {
         var url,
@@ -125,39 +114,44 @@
         this.attr.polygons = [];
       };
       this.buildPolygons = function(data) {
-        var hoodData, hoodLayer, i, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions, polygonData, row, rows, _results;
+        var hoodData, polygonData, row, rows, _i, _len, _results;
         rows = data.rows;
         this.clearPolygons();
         _results = [];
-        for (i in rows) {
-          if (!rows[i][0]) {
+        for (_i = 0, _len = rows.length; _i < _len; _i++) {
+          row = rows[_i];
+          if (!rows[0]) {
             continue;
           }
-          row = rows[i];
           polygonData = this.buildPaths(row);
           hoodData = this.buildHoodData(row);
-          mouseOverOptions = this.attr.polyOptions.mouseover;
-          mouseOutOptions = this.attr.polyOptions.mouseout;
-          isCurrentHood = this.attr.data.hood === hoodData.hood;
-          initialOptions = isCurrentHood ? mouseOverOptions : mouseOutOptions;
-          hoodLayer = new google.maps.Polygon(_.extend({
-            paths: polygonData
-          }, initialOptions));
-          google.maps.event.addListener(hoodLayer, "mouseover", function(e) {
-            this.setOptions(mouseOverOptions);
-            return $(document).trigger('hoodMouseOver', {
-              hood: hoodData
-            });
-          });
-          if (!isCurrentHood) {
-            google.maps.event.addListener(hoodLayer, "mouseout", function() {
-              return this.setOptions(mouseOutOptions);
-            });
-          }
-          hoodLayer.setMap(this.attr.gMap);
-          _results.push(this.attr.polygons.push(hoodLayer));
+          _results.push(this.wireupPolygon(polygonData, hoodData));
         }
         return _results;
+      };
+      this.wireupPolygon = function(polygonData, hoodData) {
+        var hoodLayer, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions;
+        mouseOverOptions = this.attr.polyOptions.mouseover;
+        mouseOutOptions = this.attr.polyOptions.mouseout;
+        isCurrentHood = this.attr.data.hood === hoodData.hood;
+        initialOptions = isCurrentHood ? mouseOverOptions : mouseOutOptions;
+        hoodLayer = new google.maps.Polygon(_.extend({
+          paths: polygonData
+        }, initialOptions));
+        google.maps.event.addListener(hoodLayer, "mouseover", function(e) {
+          this.setOptions(mouseOverOptions);
+          return $(document).trigger('hoodMouseOver', {
+            data: hoodData
+          });
+        });
+        if (!isCurrentHood) {
+          google.maps.event.addListener(hoodLayer, "mouseout", function() {
+            this.setOptions(mouseOutOptions);
+            return $(document).trigger('closeInfoWindow');
+          });
+        }
+        hoodLayer.setMap(this.attr.gMap);
+        this.attr.polygons.push(hoodLayer);
       };
       this.buildPaths = function(row) {
         var coordinates, geometry;
@@ -181,59 +175,44 @@
       };
       this.buildHoodData = function(row) {
         if (typeof row[0] === 'object') {
-          return _.object(['hood', 'state', 'city'], row.slice(1));
+          return _.object(['hood', 'state', 'city', 'lat', 'lng'], row.slice(1));
         } else {
           return {};
         }
       };
-      this.addListeners = function() {
+      this.buildInfoWindow = function(event, polygonData) {
         var _this = this;
-        if (this.attr.infoTemplate) {
-          return google.maps.event.addListener(this.attr.hoodLayer, 'click', function(e) {
-            return $(document).trigger('neighborhoodClicked', {
-              row: e.row,
-              location: e.latLng
-            });
-          });
+        if (!polygonData) {
+          return;
         }
+        return setTimeout(function() {
+          var infoData, location;
+          _this.trigger(document, 'uiNHoodInfoWindowDataRequest');
+          infoData = _this.buildOnboardData(polygonData.data);
+          location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng);
+          _this.infoWindow.setContent(_.template(_this.attr.infoTemplate, infoData));
+          _this.infoWindow.setPosition(location);
+          return _this.infoWindow.open(_this.attr.gMap);
+        }, this.attr.wait);
       };
-      this.buildInfoWindow = function(event, data) {
-        this.trigger(document, 'uiNHoodInfoWindowDataRequest');
-        this.buildInfoData(event, data);
-        event.infoWindowHtml = _.template(this.attr.infoTemplate, this.attr.infoWindowData);
-        this.infoWindow.setContent(event.infoWindowHtml);
-        this.infoWindow.setPosition(data.location);
-        return this.infoWindow.open(this.attr.gMap);
-      };
-      this.buildInfoData = function(event, data) {
-        var row;
-        row = data.row;
-        if (!_.isEmpty(row)) {
-          this.attr.infoWindowData.state = row.STATENAME.value;
-          this.attr.infoWindowData.hood = row.HOOD_NAME.value;
-          return this.buildOnboardData(row);
-        }
-      };
-      this.buildOnboardData = function(row) {
-        var data, demographic, key, value, _ref, _results;
+      this.buildOnboardData = function(data) {
+        var demographic, key, onboardData, value, _ref;
         if (!this.attr.enableOnboardCalls) {
           return;
         }
-        data = JSON.parse(this.getOnboardData(row).responseText);
-        if (!_.isEmpty(data)) {
-          demographic = data.demographic;
+        onboardData = JSON.parse(this.getOnboardData(data).responseText);
+        data = _.extend(this.attr.infoWindowData, data);
+        if (!_.isEmpty(onboardData)) {
+          demographic = onboardData.demographic;
           _ref = this.attr.infoWindowData;
-          _results = [];
           for (key in _ref) {
             value = _ref[key];
             if (demographic[key]) {
-              _results.push(this.attr.infoWindowData[key] = this.formatValue(key, demographic[key]));
-            } else {
-              _results.push(void 0);
+              data[key] = this.formatValue(key, demographic[key]);
             }
           }
-          return _results;
         }
+        return data;
       };
       this.formatValue = function(key, value) {
         switch (key) {
@@ -246,15 +225,15 @@
             return value;
         }
       };
-      this.getOnboardData = function(row) {
+      this.getOnboardData = function(data) {
         var query, xhr;
-        if (_.isEmpty(row)) {
+        if (_.isEmpty(data)) {
           return {};
         }
         query = [];
-        query.push("state=" + (this.toDashes(row.STATENAME.value)));
-        query.push("city=" + (this.toDashes(row.MARKET.value)));
-        query.push("neighborhood=" + (this.toDashes(row.HOOD_NAME.value)));
+        query.push("state=" + (this.toDashes(data.state)));
+        query.push("city=" + (this.toDashes(data.city)));
+        query.push("neighborhood=" + (this.toDashes(data.hood)));
         return xhr = $.ajax({
           url: "/meta/community?rectype=NH&" + (query.join('&')),
           async: false
@@ -263,6 +242,11 @@
         }).fail(function(data) {
           return {};
         });
+      };
+      this.hideInfoWindow = function() {
+        if (this.infoWindow) {
+          return this.infoWindow.close();
+        }
       };
       this.toDashes = function(value) {
         if (value == null) {
@@ -279,6 +263,7 @@
       return this.after('initialize', function() {
         this.on(document, 'uiNeighborhoodDataRequest', this.addHoodsLayer);
         this.on(document, 'hoodMouseOver', this.setupMouseOver);
+        this.on(document, 'closeInfoWindow', this.hideInfoWindow);
       });
     };
     return defineComponent(neighborhoodsOverlay, mobileDetection);
