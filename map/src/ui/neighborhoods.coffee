@@ -14,6 +14,38 @@ define [
   mobileDetection
 ) ->
 
+  class ToolTip extends google.maps.OverlayView
+    constructor: (@map, @template) ->
+      @setMap(@map)
+
+    container: $("<div/>",
+      class: "hood-info-window"
+    )
+    position: null
+    count: null
+
+    destroy: ->
+      @setMap(null)
+
+    onAdd: ->
+      @$el.appendTo @getPanes().overlayLayer
+
+    onRemove: ->
+      @$el.remove()
+
+    draw: ->
+      overlayProjection = @getProjection()
+      px = overlayProjection.fromLatLngToDivPixel(@position)
+      @$el.css
+        left: px.x
+        top: px.y
+
+    setContent: (data) ->
+      console.log data
+      @container.html(_.template(@template, data))
+
+
+
   neighborhoodsOverlay = ->
 
     @defaultAttrs
@@ -32,7 +64,7 @@ define [
       suppressMapTips: false
       minimalZommLevel: 12
       polygons: []
-      wait: 300
+      wait: 500
 
       polyOptions:
         clicked:
@@ -79,6 +111,7 @@ define [
 
     @infoWindow = new google.maps.InfoWindow()
 
+
     @hoodQuery = (data) ->
       where = "WHERE LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
 
@@ -86,10 +119,12 @@ define [
 
 
     @addHoodsLayer = (ev, data) ->
+
       return if !data or !data.gMap or data.gMap.getZoom() < @attr.minimalZommLevel
 
       @attr.gMap = data.gMap
       @attr.data = data
+      @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate) unless @toolTip
       @getKmlData(data)
 
     @setupMouseOver = (event, data) ->
@@ -143,9 +178,6 @@ define [
         @setOptions(mouseOverOptions)
         $(document).trigger 'hoodMouseOver', { data: hoodData }
 
-        google.maps.event.addListener hoodLayer, "mousemove", (e)->
-          $(document).trigger "showToolTip", { position: e.latLng }
-
       unless isCurrentHood
         google.maps.event.addListener hoodLayer, "mouseout", ->
           @setOptions(mouseOutOptions)
@@ -179,7 +211,7 @@ define [
         {}
 
     @buildToolTip = (ev, data) ->
-      console.log "Tooltip Position", data.position 
+      console.log "Tooltip Position", data.position
 
     @buildInfoWindow = (event, polygonData) ->
       return unless polygonData
@@ -193,6 +225,7 @@ define [
         @infoWindow.setContent(_.template(@attr.infoTemplate, infoData))
         @infoWindow.setPosition(location)
         @infoWindow.open(@attr.gMap)
+        @toolTip.setContent(infoData)
       , @attr.wait
 
     @buildOnboardData = (data) ->
