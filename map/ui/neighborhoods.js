@@ -9,9 +9,10 @@
     ToolTip = (function(_super) {
       __extends(ToolTip, _super);
 
-      function ToolTip(map, template) {
+      function ToolTip(map, template, data) {
         this.map = map;
         this.template = template;
+        this.data = data;
         this.setMap(this.map);
       }
 
@@ -28,18 +29,21 @@
       };
 
       ToolTip.prototype.onAdd = function() {
-        return this.$el.appendTo(this.getPanes().overlayLayer);
+        return this.container.appendTo(this.getPanes().overlayLayer);
       };
 
       ToolTip.prototype.onRemove = function() {
-        return this.$el.remove();
+        return this.container.remove();
       };
 
       ToolTip.prototype.draw = function() {
         var overlayProjection, px;
+        this.position = new google.maps.LatLng(this.data.latitude, this.data.longitude);
         overlayProjection = this.getProjection();
         px = overlayProjection.fromLatLngToDivPixel(this.position);
-        return this.$el.css({
+        return this.container.css({
+          position: "absolute",
+          "z-index": 999,
           left: px.x,
           top: px.y
         });
@@ -129,7 +133,7 @@
         this.attr.gMap = data.gMap;
         this.attr.data = data;
         if (!this.toolTip) {
-          this.toolTip = new ToolTip(this.attr.gMap, this.attr.infoTemplate);
+          this.toolTip = new ToolTip(this.attr.gMap, this.attr.infoTemplate, this.attr.data);
         }
         return this.getKmlData(data);
       };

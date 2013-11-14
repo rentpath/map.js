@@ -15,7 +15,7 @@ define [
 ) ->
 
   class ToolTip extends google.maps.OverlayView
-    constructor: (@map, @template) ->
+    constructor: (@map, @template, @data) ->
       @setMap(@map)
 
     container: $("<div/>",
@@ -28,15 +28,18 @@ define [
       @setMap(null)
 
     onAdd: ->
-      @$el.appendTo @getPanes().overlayLayer
+      @container.appendTo @getPanes().overlayLayer
 
     onRemove: ->
-      @$el.remove()
+      @container.remove()
 
     draw: ->
+      @position = new google.maps.LatLng @data.latitude, @data.longitude
       overlayProjection = @getProjection()
       px = overlayProjection.fromLatLngToDivPixel(@position)
-      @$el.css
+      @container.css
+        position: "absolute"
+        "z-index": 999
         left: px.x
         top: px.y
 
@@ -119,12 +122,11 @@ define [
 
 
     @addHoodsLayer = (ev, data) ->
-
       return if !data or !data.gMap or data.gMap.getZoom() < @attr.minimalZommLevel
 
       @attr.gMap = data.gMap
       @attr.data = data
-      @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate) unless @toolTip
+      @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate, @attr.data) unless @toolTip
       @getKmlData(data)
 
     @setupMouseOver = (event, data) ->
