@@ -9,49 +9,69 @@
     ToolTip = (function(_super) {
       __extends(ToolTip, _super);
 
-      function ToolTip(map, template, data) {
+      function ToolTip(map, template) {
         this.map = map;
         this.template = template;
-        this.data = data;
-        this.setMap(this.map);
       }
 
       ToolTip.prototype.container = $("<div/>", {
-        "class": "hood-info-window"
+        "class": "hood_info_window"
       });
 
       ToolTip.prototype.position = null;
 
       ToolTip.prototype.count = null;
 
+      ToolTip.prototype.listener = void 0;
+
+      ToolTip.prototype.offset = {
+        x: 20,
+        y: 20
+      };
+
       ToolTip.prototype.destroy = function() {
         return this.setMap(null);
       };
 
       ToolTip.prototype.onAdd = function() {
-        return this.container.appendTo(this.getPanes().overlayLayer);
+        return this.container.appendTo(this.getPanes().floatPane);
       };
 
       ToolTip.prototype.onRemove = function() {
         return this.container.remove();
       };
 
-      ToolTip.prototype.draw = function() {
-        var overlayProjection, px;
-        this.position = new google.maps.LatLng(this.data.latitude, this.data.longitude);
-        overlayProjection = this.getProjection();
-        px = overlayProjection.fromLatLngToDivPixel(this.position);
+      ToolTip.prototype.draw = function() {};
+
+      ToolTip.prototype.setContent = function(data) {
+        this.container.html(_.template(this.template, data));
+        return this.setMap(this.map);
+      };
+
+      ToolTip.prototype.hide = function() {
+        this.container.hide().empty();
+        return google.maps.event.removeListener(this.listener);
+      };
+
+      ToolTip.prototype.show = function() {
+        return this.container.show();
+      };
+
+      ToolTip.prototype.onMouseMove = function(latLng) {
+        var px;
+        px = this.getProjection().fromLatLngToContainerPixel(latLng);
         return this.container.css({
-          position: "absolute",
-          "z-index": 999,
-          left: px.x,
-          top: px.y
+          left: px.x + this.offset.x,
+          top: px.y + this.offset.y
         });
       };
 
-      ToolTip.prototype.setContent = function(data) {
-        console.log(data);
-        return this.container.html(_.template(this.template, data));
+      ToolTip.prototype.updatePosition = function(position, overlay) {
+        var _this = this;
+        this.listener = google.maps.event.addListener(overlay, "mousemove", function(event) {
+          return _this.onMouseMove(event.latLng, overlay);
+        });
+        return this.show();
       };
 
       return ToolTip;
@@ -63,26 +83,12 @@
         enableMouseover: false,
         tableId: void 0,
         apiKey: void 0,
-        hoodLayer: void 0,
         gMap: void 0,
-        toggleLink: void 0,
-        toggleControl: void 0,
         data: void 0,
         infoTemplate: void 0,
-        tipStyle: '',
-        mouseTipDelay: 200,
-        suppressMapTips: false,
-        minimalZommLevel: 12,
         polygons: [],
-        wait: 500,
-        polyOptions: {
-          clicked: {
-            strokeColor: "#000",
-            strokeOpacity: .5,
-            strokeWeight: 1,
-            fillColor: "#000",
-            fillOpacity: .2
-          },
+        wait: 200,
+        polygonOptions: {
           mouseover: {
             strokeColor: "#000",
             strokeOpacity: .5,
@@ -94,19 +100,6 @@
             strokeWeight: 0,
             fillOpacity: 0
           }
-        },
-        polygonOptions: {
-          fillColor: "BC8F8F",
-          fillOpacity: 0.1,
-          strokeColor: "4D4D4D",
-          strokeOpacity: 0.8,
-          strokeWeight: 1
-        },
-        polygonOptionsCurrent: {
-          fillOpacity: 0.5,
-          strokeColor: '4D4D4D',
-          strokeOpacity: 0.7,
-          strokeWeight: 2
         },
         infoWindowData: {
           state: void 0,
@@ -120,20 +113,19 @@
           average_income: void 0
         }
       });
-      this.infoWindow = new google.maps.InfoWindow();
       this.hoodQuery = function(data) {
-        var where;
-        where = "WHERE LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2 + " AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2;
-        return "SELECT geometry, HOOD_NAME, STATENAME, MARKET, LATITUDE, LONGITUDE FROM " + this.attr.tableId + " " + where;
+        var query;
+        query = ["SELECT geometry, HOOD_NAME, STATENAME, MARKET, LATITUDE, LONGITUDE"];
+        query.push("FROM " + this.attr.tableId);
+        query.push("WHERE LATITUDE >= " + data.lat1 + " AND LATITUDE <= " + data.lat2);
+        query.push("AND LONGITUDE >= " + data.lng1 + " AND LONGITUDE <= " + data.lng2);
+        return query.join(' ');
       };
       this.addHoodsLayer = function(ev, data) {
-        if (!data || !data.gMap || data.gMap.getZoom() < this.attr.minimalZommLevel) {
-          return;
-        }
         this.attr.gMap = data.gMap;
         this.attr.data = data;
         if (!this.toolTip) {
-          this.toolTip = new ToolTip(this.attr.gMap, this.attr.infoTemplate, this.attr.data);
+          this.toolTip = new ToolTip(this.attr.gMap, this.attr.infoTemplate);
         }
         return this.getKmlData(data);
       };
@@ -143,9 +135,10 @@
         }
       };
       this.getKmlData = function(data) {
-        var url,
+        var query, url,
           _this = this;
         url = ["https://www.googleapis.com/fusiontables/v1/query?sql="];
+        query = this.hoodQuery(data);
         url.push(encodeURIComponent(this.hoodQuery(data)));
         url.push("&key=" + this.attr.apiKey);
         return $.ajax({
@@ -187,26 +180,28 @@
         return _results;
       };
       this.wireupPolygon = function(polygonData, hoodData) {
-        var hoodLayer, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions;
-        mouseOverOptions = this.attr.polyOptions.mouseover;
-        mouseOutOptions = this.attr.polyOptions.mouseout;
+        var hoodLayer, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions, toolTip;
+        mouseOverOptions = this.attr.polygonOptions.mouseover;
+        mouseOutOptions = this.attr.polygonOptions.mouseout;
         isCurrentHood = this.attr.data.hood === hoodData.hood;
         initialOptions = isCurrentHood ? mouseOverOptions : mouseOutOptions;
         hoodLayer = new google.maps.Polygon(_.extend({
           paths: polygonData
         }, initialOptions));
-        google.maps.event.addListener(hoodLayer, "mouseover", function(e) {
+        google.maps.event.addListener(hoodLayer, "mouseover", function(event) {
           this.setOptions(mouseOverOptions);
           return $(document).trigger('hoodMouseOver', {
-            data: hoodData
+            data: hoodData,
+            hoodLayer: hoodLayer
           });
         });
-        if (!isCurrentHood) {
-          google.maps.event.addListener(hoodLayer, "mouseout", function() {
-            this.setOptions(mouseOutOptions);
-            return $(document).trigger('closeInfoWindow');
-          });
-        }
+        toolTip = this.toolTip;
+        google.maps.event.addListener(hoodLayer, "mouseout", function() {
+          toolTip.hide(hoodLayer);
+          if (!isCurrentHood) {
+            return this.setOptions(mouseOutOptions);
+          }
+        });
         hoodLayer.setMap(this.attr.gMap);
         this.attr.polygons.push(hoodLayer);
       };
@@ -237,24 +232,16 @@
           return {};
         }
       };
-      this.buildToolTip = function(ev, data) {
-        return console.log("Tooltip Position", data.position);
-      };
       this.buildInfoWindow = function(event, polygonData) {
-        var _this = this;
+        var infoData, location;
         if (!polygonData) {
           return;
         }
-        return setTimeout(function() {
-          var infoData, location;
-          _this.trigger(document, 'uiNHoodInfoWindowDataRequest');
-          infoData = _this.buildOnboardData(polygonData.data);
-          location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng);
-          _this.infoWindow.setContent(_.template(_this.attr.infoTemplate, infoData));
-          _this.infoWindow.setPosition(location);
-          _this.infoWindow.open(_this.attr.gMap);
-          return _this.toolTip.setContent(infoData);
-        }, this.attr.wait);
+        this.trigger(document, 'uiNHoodInfoWindowDataRequest');
+        infoData = this.buildOnboardData(polygonData.data);
+        location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng);
+        this.toolTip.setContent(infoData);
+        return this.toolTip.updatePosition(infoData, polygonData.hoodLayer);
       };
       this.buildOnboardData = function(data) {
         var demographic, key, onboardData, value, _ref;
@@ -304,11 +291,6 @@
           return {};
         });
       };
-      this.hideInfoWindow = function() {
-        if (this.infoWindow) {
-          return this.infoWindow.close();
-        }
-      };
       this.toDashes = function(value) {
         if (value == null) {
           return '';
@@ -324,8 +306,6 @@
       return this.after('initialize', function() {
         this.on(document, 'uiNeighborhoodDataRequest', this.addHoodsLayer);
         this.on(document, 'hoodMouseOver', this.setupMouseOver);
-        this.on(document, 'showToolTip', this.buildToolTip);
-        this.on(document, 'closeInfoWindow', this.hideInfoWindow);
       });
     };
     return defineComponent(neighborhoodsOverlay, mobileDetection);

@@ -15,38 +15,54 @@ define [
 ) ->
 
   class ToolTip extends google.maps.OverlayView
-    constructor: (@map, @template, @data) ->
-      @setMap(@map)
+    constructor: (@map, @template) ->
+
 
     container: $("<div/>",
-      class: "hood-info-window"
+      class: "hood_info_window"
     )
+
     position: null
     count: null
+    listener: undefined
+    offset:
+      x: 20
+      y: 20
 
     destroy: ->
       @setMap(null)
 
     onAdd: ->
-      @container.appendTo @getPanes().overlayLayer
+      @container.appendTo @getPanes().floatPane
 
     onRemove: ->
       @container.remove()
 
     draw: ->
-      @position = new google.maps.LatLng @data.latitude, @data.longitude
-      overlayProjection = @getProjection()
-      px = overlayProjection.fromLatLngToDivPixel(@position)
-      @container.css
-        position: "absolute"
-        "z-index": 999
-        left: px.x
-        top: px.y
+      # probably still need to do something here.
 
     setContent: (data) ->
-      console.log data
       @container.html(_.template(@template, data))
+      @setMap(@map)
 
+
+    hide: ->
+      @container.hide().empty()
+      google.maps.event.removeListener(@listener)
+
+    show: ->
+      @container.show()
+
+    onMouseMove: (latLng) ->
+      px = @getProjection().fromLatLngToContainerPixel(latLng)
+      @container.css
+        left: px.x + @offset.x
+        top: px.y + @offset.y
+
+    updatePosition: (position, overlay) ->
+      @listener = google.maps.event.addListener overlay, "mousemove", (event) =>
+        @onMouseMove(event.latLng, overlay)
+      @show()
 
 
   neighborhoodsOverlay = ->
@@ -56,27 +72,12 @@ define [
       enableMouseover: false
       tableId: undefined
       apiKey: undefined
-      hoodLayer: undefined
       gMap: undefined
-      toggleLink: undefined
-      toggleControl: undefined
       data: undefined
       infoTemplate: undefined
-      tipStyle: ''
-      mouseTipDelay: 200
-      suppressMapTips: false
-      minimalZommLevel: 12
       polygons: []
-      wait: 500
-
-      polyOptions:
-        clicked:
-          strokeColor: "#000"
-          strokeOpacity: .5
-          strokeWeight: 1
-          fillColor: "#000"
-          fillOpacity: .2
-
+      wait: 200
+      polygonOptions:
         mouseover:
           strokeColor: "#000"
           strokeOpacity: .5
@@ -87,20 +88,6 @@ define [
         mouseout:
           strokeWeight: 0
           fillOpacity: 0
-
-      polygonOptions:
-        fillColor: "BC8F8F"
-        fillOpacity: 0.1
-        strokeColor: "4D4D4D"
-        strokeOpacity: 0.8
-        strokeWeight: 1
-
-      polygonOptionsCurrent:
-        fillOpacity: 0.5
-        strokeColor: '4D4D4D'
-        strokeOpacity: 0.7,
-        strokeWeight: 2
-
       infoWindowData:
         state: undefined
         hood: undefined
@@ -112,21 +99,17 @@ define [
         median_income: undefined
         average_income: undefined
 
-    @infoWindow = new google.maps.InfoWindow()
-
-
     @hoodQuery = (data) ->
-      where = "WHERE LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2} AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
-
-      "SELECT geometry, HOOD_NAME, STATENAME, MARKET, LATITUDE, LONGITUDE FROM #{@attr.tableId} #{where}"
-
+      query = ["SELECT geometry, HOOD_NAME, STATENAME, MARKET, LATITUDE, LONGITUDE"]
+      query.push "FROM #{@attr.tableId}"
+      query.push "WHERE LATITUDE >= #{data.lat1} AND LATITUDE <= #{data.lat2}"
+      query.push "AND LONGITUDE >= #{data.lng1} AND LONGITUDE <= #{data.lng2}"
+      query.join(' ')
 
     @addHoodsLayer = (ev, data) ->
-      return if !data or !data.gMap or data.gMap.getZoom() < @attr.minimalZommLevel
-
       @attr.gMap = data.gMap
       @attr.data = data
-      @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate, @attr.data) unless @toolTip
+      @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate) unless @toolTip
       @getKmlData(data)
 
     @setupMouseOver = (event, data) ->
@@ -135,6 +118,7 @@ define [
 
     @getKmlData = (data) ->
       url = ["https://www.googleapis.com/fusiontables/v1/query?sql="]
+      query = @hoodQuery(data)
       url.push encodeURIComponent(@hoodQuery(data))
       url.push "&key=#{@attr.apiKey}"
 
@@ -165,8 +149,8 @@ define [
         @wireupPolygon(polygonData, hoodData)
 
     @wireupPolygon = (polygonData, hoodData) ->
-      mouseOverOptions = @attr.polyOptions.mouseover
-      mouseOutOptions = @attr.polyOptions.mouseout
+      mouseOverOptions = @attr.polygonOptions.mouseover
+      mouseOutOptions = @attr.polygonOptions.mouseout
 
       isCurrentHood = (@attr.data.hood == hoodData.hood)
       initialOptions = if isCurrentHood then mouseOverOptions else mouseOutOptions
@@ -176,14 +160,15 @@ define [
       )
 
 
-      google.maps.event.addListener hoodLayer, "mouseover", (e)->
+      google.maps.event.addListener hoodLayer, "mouseover", (event) ->
         @setOptions(mouseOverOptions)
-        $(document).trigger 'hoodMouseOver', { data: hoodData }
+        $(document).trigger 'hoodMouseOver', { data: hoodData, hoodLayer: hoodLayer }
 
-      unless isCurrentHood
-        google.maps.event.addListener hoodLayer, "mouseout", ->
+      toolTip = @toolTip
+      google.maps.event.addListener hoodLayer, "mouseout", ->
+        toolTip.hide(hoodLayer)
+        unless isCurrentHood
           @setOptions(mouseOutOptions)
-          $(document).trigger 'closeInfoWindow'
 
       hoodLayer.setMap @attr.gMap
       @attr.polygons.push hoodLayer
@@ -212,23 +197,15 @@ define [
       else
         {}
 
-    @buildToolTip = (ev, data) ->
-      console.log "Tooltip Position", data.position
-
     @buildInfoWindow = (event, polygonData) ->
       return unless polygonData
+      @trigger document, 'uiNHoodInfoWindowDataRequest'
 
-      setTimeout =>
-        @trigger document, 'uiNHoodInfoWindowDataRequest'
+      infoData = @buildOnboardData(polygonData.data)
+      location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng)
 
-        infoData = @buildOnboardData(polygonData.data)
-        location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng)
-
-        @infoWindow.setContent(_.template(@attr.infoTemplate, infoData))
-        @infoWindow.setPosition(location)
-        @infoWindow.open(@attr.gMap)
-        @toolTip.setContent(infoData)
-      , @attr.wait
+      @toolTip.setContent(infoData)
+      @toolTip.updatePosition(infoData, polygonData.hoodLayer)
 
     @buildOnboardData = (data) ->
       return unless @attr.enableOnboardCalls
@@ -269,9 +246,6 @@ define [
       .fail (data) ->
         {}
 
-    @hideInfoWindow = ->
-      @infoWindow.close() if @infoWindow
-
     @toDashes = (value) ->
       return '' unless value?
 
@@ -285,8 +259,6 @@ define [
     @after 'initialize', ->
       @on document, 'uiNeighborhoodDataRequest', @addHoodsLayer
       @on document, 'hoodMouseOver', @setupMouseOver
-      @on document, 'showToolTip', @buildToolTip
-      @on document, 'closeInfoWindow', @hideInfoWindow
       return
 
   return defineComponent(neighborhoodsOverlay, mobileDetection)
