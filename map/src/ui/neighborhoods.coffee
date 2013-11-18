@@ -6,65 +6,15 @@ define [
   'lib/fusiontip/fusiontip',
   'lib/accounting/accounting'
   'map/utils/mobile_detection',
-  './withTooltip'
+  './tool_tip'
 ], (
   _,
   defineComponent,
   fusionTip,
   accounting,
   mobileDetection,
-  withTooltip
+  ToolTip
 ) ->
-
-  # class ToolTip extends google.maps.OverlayView
-  #   constructor: (@map, @template) ->
-
-
-  #   container: $("<div/>",
-  #     class: "hood_info_window"
-  #   )
-
-  #   position: null
-  #   count: null
-  #   listener: undefined
-  #   offset:
-  #     x: 20
-  #     y: 20
-
-  #   destroy: ->
-  #     @setMap(null)
-
-  #   onAdd: ->
-  #     @container.appendTo @getPanes().floatPane
-
-  #   onRemove: ->
-  #     @container.remove()
-
-  #   
-  #     # probably still need to do something here.
-
-  #   setContent: (data) ->
-  #     @container.html(_.template(@template, data))
-  #     @setMap(@map)
-
-
-  #   hide: ->
-  #     @container.hide().empty()
-  #     google.maps.event.removeListener(@listener)
-
-  #   show: ->
-  #     @container.show()
-
-  #   onMouseMove: (latLng) ->
-  #     px = @getProjection().fromLatLngToContainerPixel(latLng)
-  #     @container.css
-  #       left: px.x + @offset.x
-  #       top: px.y + @offset.y
-
-  #   updatePosition: (position, overlay) ->
-  #     @listener = google.maps.event.addListener overlay, "mousemove", (event) =>
-  #       @onMouseMove(event.latLng, overlay)
-  #     @show()
 
 
   neighborhoodsOverlay = ->
@@ -185,7 +135,6 @@ define [
       return
 
     @showInfoWindow = (event, data) ->
-      @trigger document, 'uiNHoodInfoWindowDataRequest'
       infoData = @buildOnboardData(data)
       html = _.template(@attr.infoTemplate, infoData)
       @toolTip.setContent(html)
@@ -274,5 +223,5 @@ define [
       @on document, 'hoodOnClick', @showInfoWindow
       return
 
-  return defineComponent(neighborhoodsOverlay, mobileDetection, withTooltip)
+  return defineComponent(neighborhoodsOverlay, mobileDetection)
 
