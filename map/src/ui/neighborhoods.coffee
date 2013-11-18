@@ -70,6 +70,8 @@ define [
   neighborhoodsOverlay = ->
 
     @defaultAttrs
+      fusionApiUrl: "https://www.googleapis.com/fusiontables/v1/query?sql="
+      baseInfoHtml: "<strong>Neigborhood: </strong>{{hood}}"
       enableOnboardCalls: false
       enableMouseover: false
       tableId: undefined
@@ -101,6 +103,7 @@ define [
         median_income: undefined
         average_income: undefined
 
+
     @hoodQuery = (data) ->
       query = ["SELECT geometry, HOOD_NAME, STATENAME, MARKET, LATITUDE, LONGITUDE"]
       query.push "FROM #{@attr.tableId}"
@@ -111,8 +114,7 @@ define [
     @addHoodsLayer = (ev, data) ->
       @attr.gMap = data.gMap
       @attr.data = data
-      $(document).trigger 'neighborhoodsAvailable'
-      # @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate) unless @toolTip
+      @toolTip = new ToolTip(@attr.gMap) unless @toolTip
       @getKmlData(data)
 
     @setupMouseOver = (event, data) ->
@@ -120,8 +122,8 @@ define [
         @buildInfoWindow(event, data)
 
     @getKmlData = (data) ->
-      url = ["https://www.googleapis.com/fusiontables/v1/query?sql="]
       query = @hoodQuery(data)
+      url = [@attr.fusionApiUrl]
       url.push encodeURIComponent(@hoodQuery(data))
       url.push "&key=#{@attr.apiKey}"
 
@@ -162,13 +164,18 @@ define [
         _.extend({paths:polygonData}, initialOptions)
       )
 
-
+      toolTip = @toolTip
       google.maps.event.addListener hoodLayer, "mouseover", (event) ->
         @setOptions(mouseOverOptions)
         $(document).trigger 'hoodMouseOver', { data: hoodData, hoodLayer: hoodLayer }
 
+      google.maps.event.addListener hoodLayer, "click", (event) ->
+        data = _.extend(hoodLayer, hoodData, event)
+        $(document).trigger 'hoodOnClick', data
+
+
       google.maps.event.addListener hoodLayer, "mouseout", ->
-        @hide(hoodLayer)
+        toolTip.hide(hoodLayer)
         unless isCurrentHood
           @setOptions(mouseOutOptions)
 
@@ -176,6 +183,12 @@ define [
       @attr.polygons.push hoodLayer
 
       return
+
+    @showInfoWindow = (event, data) ->
+      @trigger document, 'uiNHoodInfoWindowDataRequest'
+      infoData = @buildOnboardData(data)
+      html = _.template(@attr.infoTemplate, infoData)
+      @toolTip.setContent(html)
 
     @buildPaths = (row) ->
       coordinates = []
@@ -200,20 +213,17 @@ define [
         {}
 
     @buildInfoWindow = (event, polygonData) ->
-      return unless polygonData
-      @trigger document, 'uiNHoodInfoWindowDataRequest'
+      return polygonData.data unless polygonData.data
 
-      infoData = @buildOnboardData(polygonData.data)
-      location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng)
+      html = _.template(@attr.baseInfoHtml, polygonData.data)
+      @toolTip.setContent(html)
+      @toolTip.updatePosition(polygonData.hoodLayer)
 
-      @setContent(infoData)
-      @updatePosition(infoData, polygonData.hoodLayer)
+    @buildOnboardData = (polygonData) ->
+      return polygonData unless @attr.enableOnboardCalls
 
-    @buildOnboardData = (data) ->
-      return unless @attr.enableOnboardCalls
-
-      onboardData = JSON.parse(@getOnboardData(data).responseText)
-      data = _.extend(@attr.infoWindowData, data)
+      onboardData = JSON.parse(@getOnboardData(polygonData).responseText)
+      data = _.extend(@attr.infoWindowData, polygonData)
 
       unless _.isEmpty(onboardData)
         demographic = onboardData.demographic
@@ -261,6 +271,7 @@ define [
     @after 'initialize', ->
       @on document, 'uiNeighborhoodDataRequest', @addHoodsLayer
       @on document, 'hoodMouseOver', @setupMouseOver
+      @on document, 'hoodOnClick', @showInfoWindow
       return
 
   return defineComponent(neighborhoodsOverlay, mobileDetection, withTooltip)
