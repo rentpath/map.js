@@ -1,68 +1,70 @@
 'use strict'
 
 define [
-  'underscore'
+  'underscore',
   'flight/lib/component',
   'lib/fusiontip/fusiontip',
   'lib/accounting/accounting'
-  'map/utils/mobile_detection'
+  'map/utils/mobile_detection',
+  './withTooltip'
 ], (
   _,
   defineComponent,
   fusionTip,
   accounting,
-  mobileDetection
+  mobileDetection,
+  withTooltip
 ) ->
 
-  class ToolTip extends google.maps.OverlayView
-    constructor: (@map, @template) ->
+  # class ToolTip extends google.maps.OverlayView
+  #   constructor: (@map, @template) ->
 
 
-    container: $("<div/>",
-      class: "hood_info_window"
-    )
+  #   container: $("<div/>",
+  #     class: "hood_info_window"
+  #   )
 
-    position: null
-    count: null
-    listener: undefined
-    offset:
-      x: 20
-      y: 20
+  #   position: null
+  #   count: null
+  #   listener: undefined
+  #   offset:
+  #     x: 20
+  #     y: 20
 
-    destroy: ->
-      @setMap(null)
+  #   destroy: ->
+  #     @setMap(null)
 
-    onAdd: ->
-      @container.appendTo @getPanes().floatPane
+  #   onAdd: ->
+  #     @container.appendTo @getPanes().floatPane
 
-    onRemove: ->
-      @container.remove()
+  #   onRemove: ->
+  #     @container.remove()
 
-    draw: ->
-      # probably still need to do something here.
+  #   
+  #     # probably still need to do something here.
 
-    setContent: (data) ->
-      @container.html(_.template(@template, data))
-      @setMap(@map)
+  #   setContent: (data) ->
+  #     @container.html(_.template(@template, data))
+  #     @setMap(@map)
 
 
-    hide: ->
-      @container.hide().empty()
-      google.maps.event.removeListener(@listener)
+  #   hide: ->
+  #     @container.hide().empty()
+  #     google.maps.event.removeListener(@listener)
 
-    show: ->
-      @container.show()
+  #   show: ->
+  #     @container.show()
 
-    onMouseMove: (latLng) ->
-      px = @getProjection().fromLatLngToContainerPixel(latLng)
-      @container.css
-        left: px.x + @offset.x
-        top: px.y + @offset.y
+  #   onMouseMove: (latLng) ->
+  #     px = @getProjection().fromLatLngToContainerPixel(latLng)
+  #     @container.css
+  #       left: px.x + @offset.x
+  #       top: px.y + @offset.y
 
-    updatePosition: (position, overlay) ->
-      @listener = google.maps.event.addListener overlay, "mousemove", (event) =>
-        @onMouseMove(event.latLng, overlay)
-      @show()
+  #   updatePosition: (position, overlay) ->
+  #     @listener = google.maps.event.addListener overlay, "mousemove", (event) =>
+  #       @onMouseMove(event.latLng, overlay)
+  #     @show()
 
 
   neighborhoodsOverlay = ->
@@ -109,7 +111,8 @@ define [
     @addHoodsLayer = (ev, data) ->
       @attr.gMap = data.gMap
       @attr.data = data
-      @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate) unless @toolTip
+      $(document).trigger 'neighborhoodsAvailable'
+      # @toolTip = new ToolTip(@attr.gMap, @attr.infoTemplate) unless @toolTip
       @getKmlData(data)
 
     @setupMouseOver = (event, data) ->
@@ -164,9 +167,8 @@ define [
         @setOptions(mouseOverOptions)
         $(document).trigger 'hoodMouseOver', { data: hoodData, hoodLayer: hoodLayer }
 
-      toolTip = @toolTip
       google.maps.event.addListener hoodLayer, "mouseout", ->
-        toolTip.hide(hoodLayer)
+        @hide(hoodLayer)
         unless isCurrentHood
           @setOptions(mouseOutOptions)
 
@@ -204,8 +206,8 @@ define [
       infoData = @buildOnboardData(polygonData.data)
       location = new google.maps.LatLng(polygonData.data.lat, polygonData.data.lng)
 
-      @toolTip.setContent(infoData)
-      @toolTip.updatePosition(infoData, polygonData.hoodLayer)
+      @setContent(infoData)
+      @updatePosition(infoData, polygonData.hoodLayer)
 
     @buildOnboardData = (data) ->
       return unless @attr.enableOnboardCalls
@@ -261,5 +263,5 @@ define [
       @on document, 'hoodMouseOver', @setupMouseOver
       return
 
-  return defineComponent(neighborhoodsOverlay, mobileDetection)
+  return defineComponent(neighborhoodsOverlay, mobileDetection, withTooltip)
 
