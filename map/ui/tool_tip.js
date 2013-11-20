@@ -81,10 +81,13 @@
       };
 
       ToolTip.prototype.getTop = function(position) {
-        var pos;
+        var pos, top;
         pos = this.mapHeight() - position.y - this.container.outerHeight() - this.offset.y;
+        top = position.y - this.container.outerHeight() - (this.offset.y * 3);
         if (pos < 0) {
           return this.mapHeight() - this.container.outerHeight() - (this.offset.y * 2);
+        } else if (top < 0) {
+          return position.y + (this.offset.y * 2);
         } else {
           return position.y - this.container.outerHeight() - this.offset.y;
         }

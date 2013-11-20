@@ -53,8 +53,11 @@ define [], () ->
 
     getTop: (position) ->
       pos = @mapHeight() - position.y - @container.outerHeight() - @offset.y
+      top = position.y - @container.outerHeight() - (@offset.y * 3)
       if pos < 0
         @mapHeight() - @container.outerHeight() - (@offset.y * 2)
+      else if top < 0
+        position.y + (@offset.y * 2)
       else
         position.y - @container.outerHeight() - @offset.y
 
