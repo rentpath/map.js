@@ -10,6 +10,7 @@
 
       function ToolTip(map) {
         this.map = map;
+        this.mapDiv = $("#" + (this.map.getDiv().id));
       }
 
       ToolTip.prototype.container = $("<div/>", {
@@ -55,9 +56,37 @@
         var px;
         px = this.getProjection().fromLatLngToContainerPixel(latLng);
         return this.container.css({
-          left: px.x + this.offset.x,
-          top: px.y + this.offset.y
+          left: this.getLeft(px),
+          top: this.getTop(px)
         });
+      };
+
+      ToolTip.prototype.getLeft = function(position) {
+        var pos;
+        pos = this.mapWidth() - position.x - this.container.outerWidth() - this.offset.x;
+        if (pos < 0) {
+          return this.mapWidth() - this.container.outerWidth() - this.offset.x;
+        } else {
+          return position.x;
+        }
+      };
+
+      ToolTip.prototype.getTop = function(position) {
+        var pos;
+        pos = this.mapHeight() - position.y - this.container.outerHeight() - this.offset.y;
+        if (pos < 0) {
+          return this.mapHeight() - this.container.outerHeight() - this.offset.y;
+        } else {
+          return position.y;
+        }
+      };
+
+      ToolTip.prototype.mapWidth = function() {
+        return this.mapDiv.outerWidth();
+      };
+
+      ToolTip.prototype.mapHeight = function() {
+        return this.mapDiv.outerHeight();
       };
 
       ToolTip.prototype.updatePosition = function(overlay) {

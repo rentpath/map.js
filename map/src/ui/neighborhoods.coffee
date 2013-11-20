@@ -21,7 +21,7 @@ define [
 
     @defaultAttrs
       fusionApiUrl: "https://www.googleapis.com/fusiontables/v1/query?sql="
-      baseInfoHtml: "<strong>Neigborhood: </strong>{{hood}}"
+      baseInfoHtml: "<strong>Neighborhood: </strong>{{hood}}"
       enableOnboardCalls: false
       enableMouseover: false
       tableId: undefined
