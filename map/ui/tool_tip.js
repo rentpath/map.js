@@ -24,6 +24,8 @@
         y: 20
       };
 
+      ToolTip.prototype.draw = function() {};
+
       ToolTip.prototype.destroy = function() {
         return this.setMap(null);
       };
@@ -36,20 +38,18 @@
         return this.container.remove();
       };
 
-      ToolTip.prototype.draw = function() {};
-
       ToolTip.prototype.setContent = function(html) {
         this.container.html(html);
         return this.setMap(this.map);
       };
 
-      ToolTip.prototype.hide = function() {
-        this.container.hide().empty();
-        return google.maps.event.clearListeners(this.overlay, "mousemove");
-      };
-
-      ToolTip.prototype.show = function() {
-        return this.container.show();
+      ToolTip.prototype.updatePosition = function(overlay) {
+        var _this = this;
+        this.overlay = overlay;
+        google.maps.event.addListener(this.overlay, "mousemove", function(event) {
+          return _this.onMouseMove(event.latLng, overlay);
+        });
+        return this.show();
       };
 
       ToolTip.prototype.onMouseMove = function(latLng) {
@@ -61,13 +61,22 @@
         });
       };
 
+      ToolTip.prototype.hide = function() {
+        this.container.hide().empty();
+        return google.maps.event.clearListeners(this.overlay, "mousemove");
+      };
+
+      ToolTip.prototype.show = function() {
+        return this.container.show();
+      };
+
       ToolTip.prototype.getLeft = function(position) {
         var pos;
         pos = this.mapWidth() - position.x - this.container.outerWidth() - this.offset.x;
         if (pos < 0) {
           return this.mapWidth() - this.container.outerWidth() - this.offset.x;
         } else {
-          return position.x;
+          return position.x + this.offset.x;
         }
       };
 
@@ -75,9 +84,9 @@
         var pos;
         pos = this.mapHeight() - position.y - this.container.outerHeight() - this.offset.y;
         if (pos < 0) {
-          return this.mapHeight() - this.container.outerHeight() - this.offset.y;
+          return this.mapHeight() - this.container.outerHeight() - (this.offset.y * 2);
         } else {
-          return position.y;
+          return position.y - this.container.outerHeight() - this.offset.y;
         }
       };
 
@@ -87,15 +96,6 @@
 
       ToolTip.prototype.mapHeight = function() {
         return this.mapDiv.outerHeight();
-      };
-
-      ToolTip.prototype.updatePosition = function(overlay) {
-        var _this = this;
-        this.overlay = overlay;
-        google.maps.event.addListener(this.overlay, "mousemove", function(event) {
-          return _this.onMouseMove(event.latLng, overlay);
-        });
-        return this.show();
       };
 
       return ToolTip;

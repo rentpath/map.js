@@ -12,6 +12,7 @@ define [], () ->
       x: 20
       y: 20
 
+    draw: ->
     destroy: ->
       @setMap(null)
 
@@ -21,11 +22,20 @@ define [], () ->
     onRemove: ->
       @container.remove()
 
-    draw: ->
-
     setContent: (html) ->
       @container.html(html)
       @setMap(@map)
+
+    updatePosition: (@overlay) ->
+      google.maps.event.addListener @overlay, "mousemove", (event) =>
+        @onMouseMove(event.latLng, overlay)
+      @show()
+
+    onMouseMove: (latLng) ->
+      px = @getProjection().fromLatLngToContainerPixel(latLng)
+      @container.css
+        left: @getLeft(px)
+        top: @getTop(px)
 
     hide: ->
       @container.hide().empty()
@@ -34,25 +44,19 @@ define [], () ->
     show: ->
       @container.show()
 
-    onMouseMove: (latLng) ->
-      px = @getProjection().fromLatLngToContainerPixel(latLng)
-      @container.css
-        left: @getLeft(px)
-        top: @getTop(px)
-
     getLeft: (position) ->
       pos = @mapWidth() - position.x - @container.outerWidth() - @offset.x
       if pos < 0
         @mapWidth() - @container.outerWidth() - @offset.x
       else
-        position.x
+        position.x + @offset.x
 
     getTop: (position) ->
       pos = @mapHeight() - position.y - @container.outerHeight() - @offset.y
       if pos < 0
-        @mapHeight() - @container.outerHeight() - @offset.y
+        @mapHeight() - @container.outerHeight() - (@offset.y * 2)
       else
-        position.y
+        position.y - @container.outerHeight() - @offset.y
 
     mapWidth: ->
       @mapDiv.outerWidth()
@@ -60,9 +64,6 @@ define [], () ->
     mapHeight: ->
       @mapDiv.outerHeight()
 
-    updatePosition: (@overlay) ->
-      google.maps.event.addListener @overlay, "mousemove", (event) =>
-        @onMouseMove(event.latLng, overlay)
-      @show()
+
 
 
