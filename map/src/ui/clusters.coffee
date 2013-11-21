@@ -16,15 +16,16 @@ define [
       mapPinCluster: Utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
       markerClusterer: undefined
 
-    @clearMarkers = () ->
-      @unbindMarkers
+    @clearMarkers = ->
+      @unbindMarkers()
       @attr.markers.clearMarkers()
+      @teardown()
 
-    @unbindMarkers = () ->
+    @unbindMarkers = ->
       $.each @attr.markerClusterer, (index, marker) ->
         google.maps.event.clearListeners marker, "click"
 
-    @mapClusterOptions = () ->
+    @mapClusterOptions = ->
       style =
         height: 40
         url: @attr.mapPinCluster
@@ -41,7 +42,7 @@ define [
       @attr.mapPinCluster = data.pinsClusterImage
       @off document, 'clusterImageChange'
 
-    @after 'initialize', () ->
+    @after 'initialize', ->
       @on document, 'mapRenderedFirst', @initClusterer
       @on document, 'clusterImageChange', @setClusterImage
 

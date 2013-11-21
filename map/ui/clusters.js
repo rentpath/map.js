@@ -9,8 +9,9 @@
         markerClusterer: void 0
       });
       this.clearMarkers = function() {
-        this.unbindMarkers;
-        return this.attr.markers.clearMarkers();
+        this.unbindMarkers();
+        this.attr.markers.clearMarkers();
+        return this.teardown();
       };
       this.unbindMarkers = function() {
         return $.each(this.attr.markerClusterer, function(index, marker) {
