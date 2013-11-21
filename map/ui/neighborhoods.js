@@ -93,6 +93,9 @@
       };
       this.buildPolygons = function(data) {
         var hoodData, polygonData, row, rows, _i, _len, _results;
+        if (!(data && data.rows)) {
+          return;
+        }
         rows = data.rows;
         this.clearPolygons();
         _results = [];

@@ -93,6 +93,8 @@ define [
       return
 
     @buildPolygons = (data) ->
+      return unless data and data.rows
+
       rows = data.rows
       @clearPolygons()
       for row in rows
