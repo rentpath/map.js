@@ -39,10 +39,10 @@
       this.wireUpEvents = function() {
         var _this = this;
         if (this.currentOpenWindow && !this.eventsWired) {
-          google.maps.event.addListener(this.currentOpenWindow, 'closeclick', function() {
+          google.maps.event.addListenerOnce(this.currentOpenWindow, 'closeclick', function() {
             return $(document).trigger('uiInfoWindowClosed');
           });
-          google.maps.event.addListener(this.currentOpenWindow, 'domready', function() {
+          google.maps.event.addListenerOnce(this.currentOpenWindow, 'domready', function() {
             return $(document).trigger('uiInfoWindowRendered', {
               marker: _this.attr.gMarker,
               infoWindow: _this.currentOpenWindow
