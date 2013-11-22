@@ -36,12 +36,11 @@ define [
       @currentOpenWindow.open @attr.gMap, @attr.gMarker
 
     @wireUpEvents = ->
-      if @currentOpenWindow && !@eventsWired
+      if @currentOpenWindow
         google.maps.event.addListenerOnce @currentOpenWindow, 'closeclick', ->
           $(document).trigger 'uiInfoWindowClosed'
         google.maps.event.addListenerOnce @currentOpenWindow, 'domready', =>
           $(document).trigger 'uiInfoWindowRendered', marker: @attr.gMarker, infoWindow: @currentOpenWindow
-        @eventsWired = true
 
     @after 'initialize', ->
       @on document, 'markerClicked', @showInfoWindowOnMarkerClick
