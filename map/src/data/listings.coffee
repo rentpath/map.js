@@ -31,22 +31,10 @@ define [ 'flight/lib/component', 'utils', "../utils/distance_conversion",  ], ( 
       @xhr = $.ajax
         url: "#{@attr.mapPinsRoute}?#{@decodedQueryData(data)}"
         success: (data) =>
-          @trigger 'markersDataAvailable', @addTitle data
+          @trigger 'markersDataAvailable', data
           @trigger 'markersDataAvailableOnce', @resetEvents()
         complete: ->
           utils.hideSpinner()
-
-    @addTitle = (data) ->
-      that = @
-      $.each data.listings, (n, d) ->
-        d.markerTitle = that.setListingTitleBasedOnHost(d)
-      data
-
-    @setListingTitleBasedOnHost = (listing) ->
-      if window.location.hostname is @attr.hostname
-        listing.name
-      else
-        listing.name.replace(/[^a-zA-Z0-9]+/g, "_") if listing.name?
 
     @drawerVisible = ->
       $('#hybrid_list').is(':visible')

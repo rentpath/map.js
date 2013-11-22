@@ -160,20 +160,18 @@ define [
       data
 
     @mapChangedDataBase = ->
-      {
-        gMap: @attr.gMap
-        latitude: @latitude()
-        longitude: @longitude()
-        radius: @radius()
-        lat1: @southWestLatitude()
-        lng1: @southWestLongitude()
-        lat2: @northEastLatitude()
-        lng2: @northEastLongitude()
-        zip: @geoData().zip
-        city: @geoData().city
-        state: @geoData().state
-        hood: @geoData().hood
-      }
+      gMap: @attr.gMap
+      latitude: @latitude()
+      longitude: @longitude()
+      radius: @radius()
+      lat1: @southWestLatitude()
+      lng1: @southWestLongitude()
+      lat2: @northEastLatitude()
+      lng2: @northEastLongitude()
+      zip: @geoData().zip
+      city: @geoData().city
+      state: @geoData().state
+      hood: @geoData().hood
 
     @zoomCircle = ->
       radius = distanceConversion.convertMilesToMeters(@geoDataRadiusMiles())
@@ -192,10 +190,8 @@ define [
       @attr.geoData || {}
 
     @getInitialGeo = ->
-      {
-        lat: @data.lat || @data.latitude || @attr.latitude
-        lng: @data.lng || @data.longitude || @attr.longitude
-      }
+      lat: @data.lat || @data.latitude || @attr.latitude
+      lng: @data.lng || @data.longitude || @attr.longitude
 
 
   return defineComponent(defaultMap)

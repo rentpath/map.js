@@ -41,30 +41,13 @@
         return this.xhr = $.ajax({
           url: "" + this.attr.mapPinsRoute + "?" + (this.decodedQueryData(data)),
           success: function(data) {
-            _this.trigger('markersDataAvailable', _this.addTitle(data));
+            _this.trigger('markersDataAvailable', data);
             return _this.trigger('markersDataAvailableOnce', _this.resetEvents());
           },
           complete: function() {
             return utils.hideSpinner();
           }
         });
-      };
-      this.addTitle = function(data) {
-        var that;
-        that = this;
-        $.each(data.listings, function(n, d) {
-          return d.markerTitle = that.setListingTitleBasedOnHost(d);
-        });
-        return data;
-      };
-      this.setListingTitleBasedOnHost = function(listing) {
-        if (window.location.hostname === this.attr.hostname) {
-          return listing.name;
-        } else {
-          if (listing.name != null) {
-            return listing.name.replace(/[^a-zA-Z0-9]+/g, "_");
-          }
-        }
       };
       this.drawerVisible = function() {
         return $('#hybrid_list').is(':visible');

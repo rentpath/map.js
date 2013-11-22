@@ -26,7 +26,7 @@ define [
       @attr.markers.clearMarkers()
 
     @unbindMarkers = ->
-      $.each @attr.markerClusterer, (index, marker) ->
+      for marker in @attr.markerClusterer
         google.maps.event.clearListeners marker, "click"
 
     @mapClusterOptions = ->

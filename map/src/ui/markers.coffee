@@ -40,13 +40,14 @@ define [
       @attr.markers = []
       @attr.markersIndex = {}
       all_markers = []
-      $.each data.listings, (n, d) =>
-        m = @createMarker(d)
+
+      for listing in data.listings
+        m = @createMarker(listing)
         all_markers.push(m)
         @sendCustomMarkerTrigger(m)
-        @attr.markers.push {googleMarker: m, markerData: d}
-        @attr.markersIndex[d.id] = @attr.markers.length - 1
-        return
+        @attr.markers.push {googleMarker: m, markerData: listing}
+        @attr.markersIndex[listing.id] = @attr.markers.length - 1
+
       @attr.markerClusterer.addMarkers(all_markers)
       @updateListingsCount()
       @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
@@ -82,16 +83,8 @@ define [
         markerObject.setAnimation(data.animation)
 
     @updateListingsCount = ->
-      lCount = @visibleMarkersCount()
+      lCount = @attr.markers.length
       $("#mapview_listing_count").html "Apartments Found: " + lCount
-      lCount
-
-    @visibleMarkersCount = ->
-      mapBounds = @attr.gMap.getBounds()
-      l = 0
-      $.each @attr.markers, (n, marker) ->
-        l++ if mapBounds.contains(marker.googleMarker.getPosition())
-      l
 
     # These functions should be moved to Listing component
     @iconBasedOnType = (datum) ->

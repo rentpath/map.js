@@ -14,9 +14,14 @@
         return this.attr.markers.clearMarkers();
       };
       this.unbindMarkers = function() {
-        return $.each(this.attr.markerClusterer, function(index, marker) {
-          return google.maps.event.clearListeners(marker, "click");
-        });
+        var marker, _i, _len, _ref, _results;
+        _ref = this.attr.markerClusterer;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          marker = _ref[_i];
+          _results.push(google.maps.event.clearListeners(marker, "click"));
+        }
+        return _results;
       };
       this.mapClusterOptions = function() {
         var batchSize, style;

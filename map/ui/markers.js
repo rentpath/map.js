@@ -35,23 +35,23 @@
         return this.addMarkers(data);
       };
       this.addMarkers = function(data) {
-        var all_markers,
-          _this = this;
+        var all_markers, listing, m, _i, _len, _ref;
         this.attr.markerClusterer.clearMarkers();
         this.attr.markers = [];
         this.attr.markersIndex = {};
         all_markers = [];
-        $.each(data.listings, function(n, d) {
-          var m;
-          m = _this.createMarker(d);
+        _ref = data.listings;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          listing = _ref[_i];
+          m = this.createMarker(listing);
           all_markers.push(m);
-          _this.sendCustomMarkerTrigger(m);
-          _this.attr.markers.push({
+          this.sendCustomMarkerTrigger(m);
+          this.attr.markers.push({
             googleMarker: m,
-            markerData: d
+            markerData: listing
           });
-          _this.attr.markersIndex[d.id] = _this.attr.markers.length - 1;
-        });
+          this.attr.markersIndex[listing.id] = this.attr.markers.length - 1;
+        }
         this.attr.markerClusterer.addMarkers(all_markers);
         this.updateListingsCount();
         if (this.attr.markerOptions.fitBounds) {
@@ -102,20 +102,8 @@
       };
       this.updateListingsCount = function() {
         var lCount;
-        lCount = this.visibleMarkersCount();
-        $("#mapview_listing_count").html("Apartments Found: " + lCount);
-        return lCount;
-      };
-      this.visibleMarkersCount = function() {
-        var l, mapBounds;
-        mapBounds = this.attr.gMap.getBounds();
-        l = 0;
-        $.each(this.attr.markers, function(n, marker) {
-          if (mapBounds.contains(marker.googleMarker.getPosition())) {
-            return l++;
-          }
-        });
-        return l;
+        lCount = this.attr.markers.length;
+        return $("#mapview_listing_count").html("Apartments Found: " + lCount);
       };
       this.iconBasedOnType = function(datum) {
         if (datum.free) {
