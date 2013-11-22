@@ -13,23 +13,37 @@ describe "ImageHelper", ->
     waitsFor ->
       return ready
 
-  describe "#pickImageServer", ->
-
-    it "rotates servers", ->
-      expect(imageHelper.pickImageServer()).toBe 1
-      expect(imageHelper.pickImageServer()).toBe ""
-
   describe "#assetURL", ->
 
-    it "pulls content from the meta tag", ->
+    it "pulls from the meta tag", ->
       expect(imageHelper.assetURL()).toBe "http://local.apartmentguide.com"
 
   describe "#notFoundURL", ->
 
-    beforeEach ->
+    it "prepends the asset host", ->
+      imageHelper.setNotFoundPath("/foo")
+      expect(imageHelper.notFoundURL()).toBe "http://local.apartmentguide.com/foo"
 
-    it "builts it with the host", ->
-      expect(imageHelper.notFoundURL()).toBe "http://local.apartmentguide.com/images/prop_no_photo_results.png"
+  describe "#_contentFromMeta", ->
+
+    it "pulls out content into an array", ->
+      tag = $('<meta content="foo,bar">')
+      expect(imageHelper._contentFromMeta(tag)).toEqual ["foo","bar"]
+
+    it "pulls out single elements into an array", ->
+      tag = $('<meta content="foo">')
+      expect(imageHelper._contentFromMeta(tag)).toEqual ["foo"]
+
+    it "is a single array with a missing attribute", ->
+      tag = $('<div>')
+      expect(imageHelper._contentFromMeta(tag)).toEqual [""]
+
+  describe "#pickServer", ->
+
+    it "rotates servers", ->
+      expect(imageHelper.pickServer()).toBe "http://image.apartmentguide.com"
+      expect(imageHelper.pickServer()).toBe "http://image1.apartmentguide.com"
+      expect(imageHelper.pickServer()).toBe "http://image.apartmentguide.com"
 
   describe "#isInvalidURL", ->
 
@@ -65,3 +79,4 @@ describe "ImageHelper", ->
 
     it "returns a not found when image is invalid", ->
       expect(imageHelper.url("")).toBe imageHelper.notFoundURL()
+

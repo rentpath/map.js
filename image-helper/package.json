@@ -8,8 +8,7 @@
     "packageDir": "vendor/jam",
     "baseUrl": ".",
     "dependencies": {
-      "jquery": null,
-      "underscore": null
+      "jquery": null
     },
     "main": "image-helper.js",
     "include": ["image-helper.js"]

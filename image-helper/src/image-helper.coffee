@@ -1,21 +1,24 @@
-define ['jquery', 'underscore'], ($, _) ->
+define ['jquery'], ($) ->
 
-  imageServerCount = 2
-  nextImageServer = 0
+  serversMetaKey = "image_server_urls"
+  servers = null
+  currentServerIndex = -1
 
-  isInvalidURL = (photoList) ->
-    return (typeof(photoList) == 'undefined' || photoList.length == 0)
+  notFoundPath = ""
+  assetHostMetaKey = "asset_host"
 
-  url = (photoList, w, h) ->
-    if isInvalidURL(photoList)
-      return notFoundURL()
+  isInvalidURL = (images) ->
+    return (typeof(images) == 'undefined' || images.length == 0)
 
-    path = if ($.isArray(photoList)) then _.first(photoList).path else photoList
+  url = (images, w, h) ->
+    return notFoundURL() if isInvalidURL(images)
+
+    path = if ($.isArray(images)) then images[0].path else images
 
     if path[0] != '/'
       path = '/' + path
 
-    url = "http://image" + pickImageServer() + ".apartmentguide.com"
+    url = pickServer()
 
     pathParts = path.split('?')
     path = pathParts[0]
@@ -24,30 +27,36 @@ define ['jquery', 'underscore'], ($, _) ->
     if path.substr(-1) != '/'
       path += '/'
 
-    if w || h
-      path += w if w
-      path += "-"
-      path += h if h
+    path += w   if w
+    path += "-" if w || h
+    path += h   if h
 
     url += path + queryString
-
     url
 
-  pickImageServer = ->
-    nextImageServer += 1
-    if nextImageServer >= imageServerCount
-      nextImageServer = 0
+  _contentFromMeta = (metaTag) ->
+    content = metaTag.attr('content')
+    (content || "").split(',')
 
-    if (nextImageServer) then nextImageServer else ''
+  pickServer = ->
+    servers ?= _contentFromMeta($("meta[name=\"#{serversMetaKey}\"]"))
+    currentServerIndex += 1
+    servers[currentServerIndex % servers.length]
 
   assetURL = ->
-    $('meta[name="asset_host"]').attr('content')
+    $("meta[name=\"#{assetHostMetaKey}\"]").attr('content')
 
   notFoundURL = ->
-    assetURL() + "/images/prop_no_photo_results.png"
+    "#{assetURL()}#{notFoundPath}"
 
-  assetURL:        assetURL
-  isInvalidURL:    isInvalidURL
-  url:             url
-  pickImageServer: pickImageServer
-  notFoundURL:     notFoundURL
+  setNotFoundPath = (path) ->
+    notFoundPath = path
+
+  isInvalidURL:     isInvalidURL
+  url:              url
+  pickServer:       pickServer
+  assetURL:         assetURL
+  notFoundURL:      notFoundURL
+  setNotFoundPath:  setNotFoundPath
+  servers:          servers
+  _contentFromMeta: _contentFromMeta

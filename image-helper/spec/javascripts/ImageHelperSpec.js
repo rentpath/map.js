@@ -15,21 +15,39 @@
         return ready;
       });
     });
-    describe("#pickImageServer", function() {
-      return it("rotates servers", function() {
-        expect(imageHelper.pickImageServer()).toBe(1);
-        return expect(imageHelper.pickImageServer()).toBe("");
-      });
-    });
     describe("#assetURL", function() {
-      return it("pulls content from the meta tag", function() {
+      return it("pulls from the meta tag", function() {
         return expect(imageHelper.assetURL()).toBe("http://local.apartmentguide.com");
       });
     });
     describe("#notFoundURL", function() {
-      beforeEach(function() {});
-      return it("builts it with the host", function() {
-        return expect(imageHelper.notFoundURL()).toBe("http://local.apartmentguide.com/images/prop_no_photo_results.png");
+      return it("prepends the asset host", function() {
+        imageHelper.setNotFoundPath("/foo");
+        return expect(imageHelper.notFoundURL()).toBe("http://local.apartmentguide.com/foo");
+      });
+    });
+    describe("#_contentFromMeta", function() {
+      it("pulls out content into an array", function() {
+        var tag;
+        tag = $('<meta content="foo,bar">');
+        return expect(imageHelper._contentFromMeta(tag)).toEqual(["foo", "bar"]);
+      });
+      it("pulls out single elements into an array", function() {
+        var tag;
+        tag = $('<meta content="foo">');
+        return expect(imageHelper._contentFromMeta(tag)).toEqual(["foo"]);
+      });
+      return it("is a single array with a missing attribute", function() {
+        var tag;
+        tag = $('<div>');
+        return expect(imageHelper._contentFromMeta(tag)).toEqual([""]);
+      });
+    });
+    describe("#pickServer", function() {
+      return it("rotates servers", function() {
+        expect(imageHelper.pickServer()).toBe("http://image.apartmentguide.com");
+        expect(imageHelper.pickServer()).toBe("http://image1.apartmentguide.com");
+        return expect(imageHelper.pickServer()).toBe("http://image.apartmentguide.com");
       });
     });
     describe("#isInvalidURL", function() {
