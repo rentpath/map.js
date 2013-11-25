@@ -7,7 +7,8 @@
       compose.mixin(this, [mobileDetection]);
       this.defaultAttrs({
         mapPinCluster: Utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png",
-        markerClusterer: void 0
+        markerClusterer: void 0,
+        clusterSize: 10
       });
       this.clearMarkers = function() {
         this.unbindMarkers();
@@ -34,7 +35,7 @@
         };
         return {
           styles: [style, style, style, style, style],
-          minimumClusterSize: 5,
+          minimumClusterSize: this.attr.clusterSize,
           batchSize: batchSize
         };
       };

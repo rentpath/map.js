@@ -61,7 +61,6 @@
 
       ToolTip.prototype.updatePosition = function(overlay) {
         var _this = this;
-        console.log('updatePosition');
         return this.listeners.push(google.maps.event.addListener(overlay, "mousemove", function(event) {
           return _this.onMouseMove(event.latLng);
         }));

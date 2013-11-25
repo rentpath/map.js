@@ -39,7 +39,6 @@ define ->
       @show()
 
     updatePosition: (overlay) ->
-      console.log 'updatePosition'
       @listeners.push google.maps.event.addListener overlay, "mousemove", (event) =>
         @onMouseMove(event.latLng)
 
