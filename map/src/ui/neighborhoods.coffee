@@ -67,10 +67,6 @@ define [
       @toolTip = new ToolTip(@attr.gMap) unless @toolTip
       @getKmlData(data)
 
-    @setupMouseOver = (event, data) ->
-      if !@isMobile() && @attr.enableMouseover
-        @buildInfoWindow(event, data)
-
     @getKmlData = (data) ->
       query = @hoodQuery(data)
       url = [@attr.fusionApiUrl]
@@ -82,15 +78,6 @@ define [
         dataType: "jsonp"
         success: (data) =>
           @buildPolygons(data)
-
-    @clearPolygons = ->
-      return unless @attr.polygons.length
-
-      for x in @attr.polygons
-        x.setMap(null) if x
-
-      @attr.polygons = []
-      return
 
     @buildPolygons = (data) ->
       return unless data and data.rows
@@ -116,30 +103,43 @@ define [
         _.extend({paths:polygonData}, initialOptions)
       )
 
-      toolTip = @toolTip
-      google.maps.event.addListener hoodLayer, "mouseover", (event) ->
-        @setOptions(mouseOverOptions)
-        $(document).trigger 'hoodMouseOver', { data: hoodData, hoodLayer: hoodLayer }
-
-      google.maps.event.addListener hoodLayer, "click", (event) ->
-        data = _.extend(hoodLayer, hoodData, event)
-        $(document).trigger 'hoodOnClick', data
-
-
-      google.maps.event.addListener hoodLayer, "mouseout", ->
-        toolTip.hide(hoodLayer)
-        unless isCurrentHood
-          @setOptions(mouseOutOptions)
-
       hoodLayer.setMap @attr.gMap
+
+      google.maps.event.addListener hoodLayer, "mouseover", (event) =>
+        hoodLayer.setOptions(mouseOverOptions)
+        @setupMouseOver(event, { data: hoodData, hoodLayer: hoodLayer })
+
+      google.maps.event.addListener hoodLayer, "click", (event) =>
+        data = _.extend(hoodLayer, hoodData, event)
+        @showInfoWindow(event, hoodData)
+
+
+      google.maps.event.addListener hoodLayer, "mouseout", =>
+        @toolTip.hide()
+        unless isCurrentHood
+          hoodLayer.setOptions(mouseOutOptions)
+
       @attr.polygons.push hoodLayer
 
       return
 
-    @showInfoWindow = (event, data) ->
-      infoData = @buildOnboardData(data)
+    @setupMouseOver = (event, data) ->
+      if !@isMobile() && @attr.enableMouseover
+        @buildInfoWindow(event, data)
+
+    @showInfoWindow = (event, polygonData) ->
+      infoData = @buildOnboardData(polygonData)
       html = _.template(@attr.infoTemplate, infoData)
       @toolTip.setContent(html)
+
+    @buildInfoWindow = (event, polygonData) ->
+      return polygonData.data unless polygonData.data
+
+      html = _.template(@attr.baseInfoHtml, polygonData.data)
+      polygonData.hoodLayer.setMap(@attr.gMap)
+
+      @toolTip.setContent(html)
+      @toolTip.updatePosition(polygonData.hoodLayer)
 
     @buildPaths = (row) ->
       coordinates = []
@@ -163,13 +163,6 @@ define [
       else
         {}
 
-    @buildInfoWindow = (event, polygonData) ->
-      return polygonData.data unless polygonData.data
-
-      html = _.template(@attr.baseInfoHtml, polygonData.data)
-      @toolTip.setContent(html)
-      @toolTip.updatePosition(polygonData.hoodLayer)
-
     @buildOnboardData = (polygonData) ->
       return polygonData unless @attr.enableOnboardCalls
 
@@ -183,6 +176,15 @@ define [
             data[key] = @formatValue(key, demographic[key])
 
       data
+
+    @clearPolygons = ->
+      return unless @attr.polygons.length
+
+      for x in @attr.polygons
+        x.setMap(null)
+
+      @attr.polygons = []
+      return
 
     @formatValue = (key, value) ->
       switch key

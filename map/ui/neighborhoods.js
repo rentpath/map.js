@@ -57,11 +57,6 @@
         }
         return this.getKmlData(data);
       };
-      this.setupMouseOver = function(event, data) {
-        if (!this.isMobile() && this.attr.enableMouseover) {
-          return this.buildInfoWindow(event, data);
-        }
-      };
       this.getKmlData = function(data) {
         var query, url,
           _this = this;
@@ -76,20 +71,6 @@
             return _this.buildPolygons(data);
           }
         });
-      };
-      this.clearPolygons = function() {
-        var x, _i, _len, _ref;
-        if (!this.attr.polygons.length) {
-          return;
-        }
-        _ref = this.attr.polygons;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          x = _ref[_i];
-          if (x) {
-            x.setMap(null);
-          }
-        }
-        this.attr.polygons = [];
       };
       this.buildPolygons = function(data) {
         var hoodData, polygonData, row, rows, _i, _len, _results;
@@ -111,7 +92,8 @@
         return _results;
       };
       this.wireupPolygon = function(polygonData, hoodData) {
-        var hoodLayer, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions, toolTip;
+        var hoodLayer, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions,
+          _this = this;
         mouseOverOptions = this.attr.polygonOptions.mouseover;
         mouseOutOptions = this.attr.polygonOptions.mouseout;
         isCurrentHood = this.attr.data.hood === hoodData.hood;
@@ -119,10 +101,10 @@
         hoodLayer = new google.maps.Polygon(_.extend({
           paths: polygonData
         }, initialOptions));
-        toolTip = this.toolTip;
+        hoodLayer.setMap(this.attr.gMap);
         google.maps.event.addListener(hoodLayer, "mouseover", function(event) {
-          this.setOptions(mouseOverOptions);
-          return $(document).trigger('hoodMouseOver', {
+          hoodLayer.setOptions(mouseOverOptions);
+          return _this.setupMouseOver(event, {
             data: hoodData,
             hoodLayer: hoodLayer
           });
@@ -130,22 +112,36 @@
         google.maps.event.addListener(hoodLayer, "click", function(event) {
           var data;
           data = _.extend(hoodLayer, hoodData, event);
-          return $(document).trigger('hoodOnClick', data);
+          return _this.showInfoWindow(event, hoodData);
         });
         google.maps.event.addListener(hoodLayer, "mouseout", function() {
-          toolTip.hide(hoodLayer);
+          _this.toolTip.hide();
           if (!isCurrentHood) {
-            return this.setOptions(mouseOutOptions);
+            return hoodLayer.setOptions(mouseOutOptions);
           }
         });
-        hoodLayer.setMap(this.attr.gMap);
         this.attr.polygons.push(hoodLayer);
       };
-      this.showInfoWindow = function(event, data) {
+      this.setupMouseOver = function(event, data) {
+        if (!this.isMobile() && this.attr.enableMouseover) {
+          return this.buildInfoWindow(event, data);
+        }
+      };
+      this.showInfoWindow = function(event, polygonData) {
         var html, infoData;
-        infoData = this.buildOnboardData(data);
+        infoData = this.buildOnboardData(polygonData);
         html = _.template(this.attr.infoTemplate, infoData);
         return this.toolTip.setContent(html);
+      };
+      this.buildInfoWindow = function(event, polygonData) {
+        var html;
+        if (!polygonData.data) {
+          return polygonData.data;
+        }
+        html = _.template(this.attr.baseInfoHtml, polygonData.data);
+        polygonData.hoodLayer.setMap(this.attr.gMap);
+        this.toolTip.setContent(html);
+        return this.toolTip.updatePosition(polygonData.hoodLayer);
       };
       this.buildPaths = function(row) {
         var coordinates, geometry;
@@ -174,15 +170,6 @@
           return {};
         }
       };
-      this.buildInfoWindow = function(event, polygonData) {
-        var html;
-        if (!polygonData.data) {
-          return polygonData.data;
-        }
-        html = _.template(this.attr.baseInfoHtml, polygonData.data);
-        this.toolTip.setContent(html);
-        return this.toolTip.updatePosition(polygonData.hoodLayer);
-      };
       this.buildOnboardData = function(polygonData) {
         var data, demographic, key, onboardData, value, _ref;
         if (!this.attr.enableOnboardCalls) {
@@ -201,6 +188,18 @@
           }
         }
         return data;
+      };
+      this.clearPolygons = function() {
+        var x, _i, _len, _ref;
+        if (!this.attr.polygons.length) {
+          return;
+        }
+        _ref = this.attr.polygons;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          x = _ref[_i];
+          x.setMap(null);
+        }
+        this.attr.polygons = [];
       };
       this.formatValue = function(key, value) {
         switch (key) {

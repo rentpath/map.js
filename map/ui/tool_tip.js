@@ -3,31 +3,46 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define([], function() {
+  define(function() {
     var ToolTip;
     return ToolTip = (function(_super) {
       __extends(ToolTip, _super);
 
       function ToolTip(map) {
         this.map = map;
-        this.mapDiv = $("#" + (this.map.getDiv().id));
+        this.mapDiv = $(this.map.getDiv());
       }
 
       ToolTip.prototype.container = $("<div/>", {
         "class": "hood_info_window"
       });
 
-      ToolTip.prototype.listener = [];
+      ToolTip.prototype.listeners = [];
 
       ToolTip.prototype.offset = {
         x: 20,
         y: 20
       };
 
-      ToolTip.prototype.draw = function() {};
+      ToolTip.prototype.draw = function() {
+        var projection, px;
+        projection = this.getProjection();
+        if (!projection) {
+          return;
+        }
+        px = projection.fromLatLngToDivPixel(this.position);
+        if (!px) {
+          return;
+        }
+        return this.container.css({
+          left: this.getLeft(px),
+          top: this.getTop(px)
+        });
+      };
 
       ToolTip.prototype.destroy = function() {
-        return this.setMap(null);
+        this.setMap(null);
+        return this.clearListeners();
       };
 
       ToolTip.prototype.onAdd = function() {
@@ -35,39 +50,46 @@
       };
 
       ToolTip.prototype.onRemove = function() {
-        return this.container.remove();
+        return this.container.hide();
       };
 
       ToolTip.prototype.setContent = function(html) {
+        this.setMap(this.map);
         this.container.html(html);
-        return this.setMap(this.map);
+        return this.show();
       };
 
       ToolTip.prototype.updatePosition = function(overlay) {
         var _this = this;
-        this.overlay = overlay;
-        google.maps.event.addListener(this.overlay, "mousemove", function(event) {
-          return _this.onMouseMove(event.latLng, overlay);
-        });
-        return this.show();
+        console.log('updatePosition');
+        return this.listeners.push(google.maps.event.addListener(overlay, "mousemove", function(event) {
+          return _this.onMouseMove(event.latLng);
+        }));
       };
 
       ToolTip.prototype.onMouseMove = function(latLng) {
-        var px;
-        px = this.getProjection().fromLatLngToContainerPixel(latLng);
-        return this.container.css({
-          left: this.getLeft(px),
-          top: this.getTop(px)
-        });
+        this.position = latLng;
+        return this.draw();
       };
 
       ToolTip.prototype.hide = function() {
         this.container.hide().empty();
-        return google.maps.event.clearListeners(this.overlay, "mousemove");
+        return this.clearListeners();
       };
 
       ToolTip.prototype.show = function() {
         return this.container.show();
+      };
+
+      ToolTip.prototype.clearListeners = function() {
+        var listener, _i, _len, _ref, _results;
+        _ref = this.listeners;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          listener = _ref[_i];
+          _results.push(google.maps.event.removeListener(listener));
+        }
+        return _results;
       };
 
       ToolTip.prototype.getLeft = function(position) {
@@ -81,15 +103,17 @@
       };
 
       ToolTip.prototype.getTop = function(position) {
-        var pos, top;
-        pos = this.mapHeight() - position.y - this.container.outerHeight() - this.offset.y;
-        top = position.y - this.container.outerHeight() - (this.offset.y * 3);
-        if (pos < 0) {
-          return this.mapHeight() - this.container.outerHeight() - (this.offset.y * 2);
-        } else if (top < 0) {
-          return position.y + (this.offset.y * 2);
+        var height, isBottom, isTop, newTop, top;
+        top = this.mapHeight() - position.y;
+        height = this.container.outerHeight() + this.offset.y;
+        isTop = (top + height) > this.mapHeight();
+        isBottom = (top - height) < 0;
+        if (isTop) {
+          return newTop = top + height;
+        } else if (isBottom) {
+          return this.mapHeight() - top - height;
         } else {
-          return position.y - this.container.outerHeight() - this.offset.y;
+          return this.mapHeight() - top - height;
         }
       };
 

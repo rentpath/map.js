@@ -1,48 +1,62 @@
-define [], () ->
+define ->
 
   class ToolTip extends google.maps.OverlayView
     constructor: (@map) ->
-      @mapDiv = $("##{@map.getDiv().id}")
+      @mapDiv = $(@map.getDiv())
 
     container: $("<div/>",
       class: "hood_info_window"
     )
-    listener: []
+    listeners: []
     offset:
       x: 20
       y: 20
 
     draw: ->
+      projection = @getProjection()
+      return  unless projection
+
+      px = projection.fromLatLngToDivPixel(@position)
+      return unless px
+
+      @container.css
+        left: @getLeft(px)
+        top:  @getTop(px)
+
     destroy: ->
       @setMap(null)
+      @clearListeners()
 
     onAdd: ->
       @container.appendTo @getPanes().floatPane
 
     onRemove: ->
-      @container.remove()
+      @container.hide()
 
     setContent: (html) ->
-      @container.html(html)
       @setMap(@map)
-
-    updatePosition: (@overlay) ->
-      google.maps.event.addListener @overlay, "mousemove", (event) =>
-        @onMouseMove(event.latLng, overlay)
+      @container.html(html)
       @show()
 
+    updatePosition: (overlay) ->
+      console.log 'updatePosition'
+      @listeners.push google.maps.event.addListener overlay, "mousemove", (event) =>
+        @onMouseMove(event.latLng)
+
     onMouseMove: (latLng) ->
-      px = @getProjection().fromLatLngToContainerPixel(latLng)
-      @container.css
-        left: @getLeft(px)
-        top: @getTop(px)
+      @position = latLng
+      @draw()
 
     hide: ->
       @container.hide().empty()
-      google.maps.event.clearListeners @overlay, "mousemove"
+      @clearListeners()
 
     show: ->
       @container.show()
+
+    clearListeners: ->
+      for listener in @listeners
+        google.maps.event.removeListener(listener)
 
     getLeft: (position) ->
       pos = @mapWidth() - position.x - @container.outerWidth() - @offset.x
@@ -52,14 +66,18 @@ define [], () ->
         position.x + @offset.x
 
     getTop: (position) ->
-      pos = @mapHeight() - position.y - @container.outerHeight() - @offset.y
-      top = position.y - @container.outerHeight() - (@offset.y * 3)
-      if pos < 0
-        @mapHeight() - @container.outerHeight() - (@offset.y * 2)
-      else if top < 0
-        position.y + (@offset.y * 2)
+
+      top = @mapHeight() - position.y
+      height = @container.outerHeight() + (@offset.y )
+
+      isTop = (top + height) > @mapHeight()
+      isBottom = (top - height) < 0
+      if isTop
+        newTop = top + height
+      else if isBottom
+        @mapHeight() - top - height
       else
-        position.y - @container.outerHeight() - @offset.y
+        @mapHeight() - top - height
 
     mapWidth: ->
       @mapDiv.outerWidth()
