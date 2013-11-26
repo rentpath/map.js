@@ -1,14 +1,14 @@
 {
   "name": "jquery-autotagging",
-  "version": "1.0.0",
-  "description": "Primedia autotagging plugin",
+  "version": "2.0.0",
+  "description": "Rentpath Autotagging Plugin",
   "homepage": "https://github.com/primedia/preserves",
 
   "jam": {
     "packageDir": "vendor/jam",
     "baseUrl":".",
     "dependencies": {
-      "jquery": "1.8.3-rjs",
+      "jquery": "1.9.1",
       "jquery-cookie-rjs": null
     },
     "main": "jquery.autotagging.js",
@@ -17,17 +17,14 @@
       "lib/browserdetect.js"
     ]
   },
-
   "author": {
     "name": "Primedia"
   },
-
   "repositories": [
     {
         "type": "git",
         "url": "https://github.com/primedia/preserves.git"
     }
   ],
-
   "github": "https://github.com/primedia/preserves.git"
 }
