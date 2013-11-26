@@ -11,9 +11,9 @@
       "jquery": "1.9.1",
       "jquery-cookie-rjs": null
     },
-    "main": "jquery.autotagging.js",
+    "main": "lib/jquery.autotagging.js",
     "include": [
-      "jquery.autotagging.js",
+      "lib/jquery.autotagging.js",
       "lib/browserdetect.js"
     ]
   },
