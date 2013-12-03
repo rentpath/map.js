@@ -11,7 +11,8 @@
 #   - dist/**/*.js
 #
 src_files:
-    - vendor/require.js
+    - vendor/jam/require.js
+    - spec/javascripts/config/bootstrap.js
 
 # stylesheets
 #
@@ -25,7 +26,7 @@ src_files:
 #   - stylesheets/*.css
 #
 stylesheets:
-  - vendor/**/*.css
+  - vendor/jam/**/*.css
 
 # helpers
 #

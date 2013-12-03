@@ -24,7 +24,7 @@ describe("Autotagging Suite", function() {
   describe("Instance Methods", function() {
     it('finds platform', function () {
       platform = bd.platform();
-      expect(platform.browser).toEqual('Safari');
+      expect(platform.browser).toEqual('Chrome');
     });
   });
 });
