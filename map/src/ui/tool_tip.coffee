@@ -58,9 +58,14 @@ define ->
         google.maps.event.removeListener(listener)
 
     getLeft: (position) ->
-      pos = @mapWidth() - position.x - @container.outerWidth() - @offset.x
+      centerPosition = @getProjection().fromLatLngToDivPixel(@map.getCenter());      
+      realCenterPosition = new google.maps.Point(@map.getDiv().offsetWidth / 2, @map.getDiv().offsetHeight / 2)
+      centerOffsetX = realCenterPosition.x - centerPosition.x
+
+      pos = @mapWidth() - position.x - @container.outerWidth() - @offset.x - centerOffsetX
+  
       if pos < 0
-        @mapWidth() - @container.outerWidth() - @offset.x
+        @mapWidth() - @container.outerWidth() - @offset.x - centerOffsetX
       else
         position.x + @offset.x
 

@@ -92,10 +92,13 @@
       };
 
       ToolTip.prototype.getLeft = function(position) {
-        var pos;
-        pos = this.mapWidth() - position.x - this.container.outerWidth() - this.offset.x;
+        var centerOffsetX, centerPosition, pos, realCenterPosition;
+        centerPosition = this.getProjection().fromLatLngToDivPixel(this.map.getCenter());
+        realCenterPosition = new google.maps.Point(this.map.getDiv().offsetWidth / 2, this.map.getDiv().offsetHeight / 2);
+        centerOffsetX = realCenterPosition.x - centerPosition.x;
+        pos = this.mapWidth() - position.x - this.container.outerWidth() - this.offset.x - centerOffsetX;
         if (pos < 0) {
-          return this.mapWidth() - this.container.outerWidth() - this.offset.x;
+          return this.mapWidth() - this.container.outerWidth() - this.offset.x - centerOffsetX;
         } else {
           return position.x + this.offset.x;
         }
