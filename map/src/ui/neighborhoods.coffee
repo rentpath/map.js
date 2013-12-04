@@ -222,6 +222,8 @@ define [
       value.replace('-', ' ')
 
     @after 'initialize', ->
+      return if @isMobile()
+
       @on document, 'uiNeighborhoodDataRequest', @addHoodsLayer
       @on document, 'hoodMouseOver', @setupMouseOver
       @on document, 'hoodOnClick', @showInfoWindow

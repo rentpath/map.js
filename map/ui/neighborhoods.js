@@ -243,6 +243,9 @@
         return value.replace('-', ' ');
       };
       return this.after('initialize', function() {
+        if (this.isMobile()) {
+          return;
+        }
         this.on(document, 'uiNeighborhoodDataRequest', this.addHoodsLayer);
         this.on(document, 'hoodMouseOver', this.setupMouseOver);
         this.on(document, 'hoodOnClick', this.showInfoWindow);
