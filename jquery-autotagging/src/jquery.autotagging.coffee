@@ -35,7 +35,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
       @determineWindowDimensions(window)
       @determinePlatform(window)
 
-      @metaData = @getDataFromMetaTags(document)
+      @metaData = opts.configObject
       @firePageViewTag()
       @bindBodyClicked(document)
 
@@ -223,7 +223,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         return currentTime
       else
         return $.cookie(@WH_SESSION_ID)
-    
+
     setCookies: ->
       userID    = $.cookie(@WH_USER_ID)
       timestamp = (new Date()).getTime()
@@ -233,7 +233,7 @@ define ['jquery', './lib/browserdetect', 'jquery-cookie-rjs',], ($, browserdetec
         $.cookie(@WH_USER_ID, userID, { expires: @TEN_YEARS_IN_DAYS, path: '/' })
 
       sessionID = @getSessionID(timestamp)
-      
+
       $.cookie(@WH_SESSION_ID, sessionID, { path: '/' })
       $.cookie(@WH_LAST_ACCESS_TIME, timestamp, { path: '/' })
 

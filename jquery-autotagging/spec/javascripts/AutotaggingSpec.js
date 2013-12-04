@@ -145,6 +145,20 @@ describe("Autotagging Suite", function() {
         newContent.find('a.x').click();
         expect(wh.fire).not.toHaveBeenCalled();
       });
+
+      describe ("with config object", function() {
+        var configObject, opts;
+
+        beforeEach(function() {
+          configObject = {cg: 'test', lpp: "1"};
+          opts = {configObject: configObject};
+        });
+
+        it('should use the config object', function() {
+          wh.init(opts);
+          expect(wh.metaData).toEqual(configObject);
+        });
+      });
     });
 
     it('#setOneTimeData records attributes', function() {
