@@ -92,10 +92,8 @@
       };
 
       ToolTip.prototype.getLeft = function(position) {
-        var centerOffsetX, centerPosition, pos, realCenterPosition;
-        centerPosition = this.getProjection().fromLatLngToDivPixel(this.map.getCenter());
-        realCenterPosition = new google.maps.Point(this.map.getDiv().offsetWidth / 2, this.map.getDiv().offsetHeight / 2);
-        centerOffsetX = realCenterPosition.x - centerPosition.x;
+        var centerOffsetX, pos;
+        centerOffsetX = this.mapRealCenter().x - this.mapCenter().x;
         pos = this.mapWidth() - position.x - this.container.outerWidth() - this.offset.x - centerOffsetX;
         if (pos < 0) {
           return this.mapWidth() - this.container.outerWidth() - this.offset.x - centerOffsetX;
@@ -125,6 +123,14 @@
 
       ToolTip.prototype.mapHeight = function() {
         return this.mapDiv.outerHeight();
+      };
+
+      ToolTip.prototype.mapCenter = function() {
+        return this.getProjection().fromLatLngToDivPixel(this.map.getCenter());
+      };
+
+      ToolTip.prototype.mapRealCenter = function() {
+        return new google.maps.Point(this.mapWidth() / 2, this.mapHeight() / 2);
       };
 
       return ToolTip;

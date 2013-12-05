@@ -58,19 +58,15 @@ define ->
         google.maps.event.removeListener(listener)
 
     getLeft: (position) ->
-      centerPosition = @getProjection().fromLatLngToDivPixel(@map.getCenter());      
-      realCenterPosition = new google.maps.Point(@map.getDiv().offsetWidth / 2, @map.getDiv().offsetHeight / 2)
-      centerOffsetX = realCenterPosition.x - centerPosition.x
-
+      centerOffsetX = @mapRealCenter().x - @mapCenter().x
       pos = @mapWidth() - position.x - @container.outerWidth() - @offset.x - centerOffsetX
-  
+
       if pos < 0
         @mapWidth() - @container.outerWidth() - @offset.x - centerOffsetX
       else
         position.x + @offset.x
 
     getTop: (position) ->
-
       top = @mapHeight() - position.y
       height = @container.outerHeight() + (@offset.y )
 
@@ -88,6 +84,12 @@ define ->
 
     mapHeight: ->
       @mapDiv.outerHeight()
+
+    mapCenter: ->
+      @getProjection().fromLatLngToDivPixel(@map.getCenter())
+
+    mapRealCenter: ->
+      new google.maps.Point(@mapWidth() / 2, @mapHeight() / 2)
 
 
 
