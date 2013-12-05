@@ -17,6 +17,8 @@
         "class": "hood_info_window"
       });
 
+      ToolTip.prototype.addressBar = $('#address_search');
+
       ToolTip.prototype.listeners = [];
 
       ToolTip.prototype.offset = {
@@ -103,15 +105,15 @@
       };
 
       ToolTip.prototype.getTop = function(position) {
-        var height, isBottom, isTop, newTop, top;
+        var addressBarHeight, bottom, centerOffsetY, height, isBottom, top;
         top = this.mapHeight() - position.y;
         height = this.container.outerHeight() + this.offset.y;
-        isTop = (top + height) > this.mapHeight();
-        isBottom = (top - height) < 0;
-        if (isTop) {
-          return newTop = top + height;
-        } else if (isBottom) {
-          return this.mapHeight() - top - height;
+        centerOffsetY = Math.abs(this.mapRealCenter().y - this.mapCenter().y);
+        addressBarHeight = (this.addressBar.outerHeight() || 0) + this.offset.y;
+        bottom = this.mapHeight() - top - height - addressBarHeight - centerOffsetY;
+        isBottom = bottom < 0;
+        if (isBottom) {
+          return centerOffsetY + addressBarHeight;
         } else {
           return this.mapHeight() - top - height;
         }

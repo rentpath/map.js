@@ -7,6 +7,7 @@ define ->
     container: $("<div/>",
       class: "hood_info_window"
     )
+    addressBar: $('#address_search')
     listeners: []
     offset:
       x: 20
@@ -68,14 +69,14 @@ define ->
 
     getTop: (position) ->
       top = @mapHeight() - position.y
-      height = @container.outerHeight() + (@offset.y )
+      height = @container.outerHeight() + @offset.y
+      centerOffsetY = Math.abs(@mapRealCenter().y - @mapCenter().y)
+      addressBarHeight = (@addressBar.outerHeight() or 0) + @offset.y
 
-      isTop = (top + height) > @mapHeight()
-      isBottom = (top - height) < 0
-      if isTop
-        newTop = top + height
-      else if isBottom
-        @mapHeight() - top - height
+      bottom = (@mapHeight() - top - height - addressBarHeight - centerOffsetY)
+      isBottom = bottom < 0
+      if isBottom
+        centerOffsetY + addressBarHeight
       else
         @mapHeight() - top - height
 
