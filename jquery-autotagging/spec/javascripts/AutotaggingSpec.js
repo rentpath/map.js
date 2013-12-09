@@ -151,12 +151,20 @@ describe("Autotagging Suite", function() {
 
         beforeEach(function() {
           configObject = {cg: 'test', lpp: "1"};
-          opts = {configObject: configObject};
+          opts = {metaData: configObject};
         });
 
         it('should use the config object', function() {
           wh.init(opts);
           expect(wh.metaData).toEqual(configObject);
+        });
+      });
+
+      describe ("without config object", function() {
+        it('should fallback to meta tags when config object is missing', function() {
+          spyOn(wh, 'getDataFromMetaTags')
+          wh.init();
+          expect(wh.getDataFromMetaTags).toHaveBeenCalled();
         });
       });
     });
