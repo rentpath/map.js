@@ -12,6 +12,7 @@
 #
 src_files:
     - vendor/jam/require.js
+    - spec/javascripts/config/bootstrap.js
 
 # stylesheets
 #
