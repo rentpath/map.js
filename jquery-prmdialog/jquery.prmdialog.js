@@ -37,12 +37,12 @@ define(['jquery', 'underscore'], function ($, _) { /***** PRIMEDIA DIALOG v2.2 *
             }
             prm_dialog_centerObj(f, i);
             var h = c ? "resize" : "DOMSubtreeModified";
-            f.bind(h + ".prm_dialog_" + e, _.debounce(function (event) {
-                var displayElement = $(event.srcElement).css('display');
+            f.bind(h + ".prm_dialog_" + e, function (event) {
+                var displayElement = $(event.target).css('display');
                 if(/block/.test(displayElement)) {
                     prm_dialog_centerObj(f, i);
                 }
-            }, 50));
+            });
             $(window).bind("resize.prm_dialog_" + e, function () {
                 prm_dialog_centerObj($("#" + e), i);
                 prm_dialog_stretchObj(g);
