@@ -1,11 +1,12 @@
 {
   "name": "jquery-prmdialog",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "jquery-prmdialog plugin",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
     "dependencies": {
-      "jquery": null
+      "jquery": null,
+      "underscore": null
     },
     "main": "jquery.prmdialog.js",
     "include": [
