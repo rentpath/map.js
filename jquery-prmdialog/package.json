@@ -5,7 +5,8 @@
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
     "dependencies": {
-      "jquery": null
+      "jquery": null,
+      "underscore": null
     },
     "main": "jquery.prmdialog.js",
     "include": [
