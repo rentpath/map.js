@@ -6,7 +6,8 @@
     beforeEach(function() {
       var ready;
       ready = false;
-      require(['../../zutron-common', 'jasmine-jquery'], function(_zutron) {
+      jasmine.getGlobal().zutron_host = "http://test.com";
+      require(['../../zutron-common', 'jasmine-jquery'], function(_zutron, $) {
         zutron = _zutron;
         return ready = true;
       });
@@ -14,9 +15,26 @@
         return ready;
       });
     });
-    return describe("zutron", function() {
-      return it("is defined", function() {
+    return describe("functionality", function() {
+      it("is defined", function() {
         return expect(zutron).toBeDefined();
+      });
+      return it("should get data for zid", function() {
+        spyOn($, "ajax").andCallFake(function(req) {
+          var d;
+          d = $.Deferred();
+          d.resolve({
+            zid: {
+              key: "asdf",
+              listings: []
+            }
+          });
+          return d.promise();
+        });
+        zutron.getSavedListings();
+        return $.fn.on("zutron/savedListings", function(data) {
+          return expect(data).toBeDefined();
+        });
       });
     });
   });
