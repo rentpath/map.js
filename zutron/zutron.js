@@ -7,7 +7,6 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
   };
 
   var init = function() {
-    console.log("calling sync zutron");
     var $favorites = $('a.icon_favorites');
     bindErrorMessageToFavorites($favorites)
   };
