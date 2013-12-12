@@ -1,4 +1,4 @@
-define(['jquery'], function ($) { /***** PRIMEDIA DIALOG v2.2 *****/
+define(['jquery', 'underscore'], function ($, _) { /***** PRIMEDIA DIALOG v2.2 *****/
     var prm_dialog_dialogClass = 'prm_dialog';
     var prm_dialog_modalClass = 'prm_dialog_modal';
     var prm_dialog_modalID = '_modal';
@@ -36,9 +36,12 @@ define(['jquery'], function ($) { /***** PRIMEDIA DIALOG v2.2 *****/
                 f.css("position", "absolute");
             }
             prm_dialog_centerObj(f, i);
-            var h = "resize";
-            f.bind(h + ".prm_dialog_" + e, function () {
-                prm_dialog_centerObj(f, i);
+            var h = c ? "resize" : "DOMSubtreeModified";
+            f.bind(h + ".prm_dialog_" + e, function (event) {
+                var displayElement = $(event.target).css('display');
+                if(/block/.test(displayElement)) {
+                    prm_dialog_centerObj(f, i);
+                }
             });
             $(window).bind("resize.prm_dialog_" + e, function () {
                 prm_dialog_centerObj($("#" + e), i);

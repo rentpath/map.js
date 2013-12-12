@@ -171,6 +171,28 @@ describe("Autotagging Suite", function() {
         newContent.find('a.x').click();
         expect(wh.fire).not.toHaveBeenCalled();
       });
+
+      describe ("with config object", function() {
+        var configObject, opts;
+
+        beforeEach(function() {
+          configObject = {cg: 'test', lpp: "1"};
+          opts = {metaData: configObject};
+        });
+
+        it('should use the config object', function() {
+          wh.init(opts);
+          expect(wh.metaData).toEqual(configObject);
+        });
+      });
+
+      describe ("without config object", function() {
+        it('should fallback to meta tags when config object is missing', function() {
+          spyOn(wh, 'getDataFromMetaTags')
+          wh.init();
+          expect(wh.getDataFromMetaTags).toHaveBeenCalled();
+        });
+      });
     });
 
     it('#setOneTimeData records attributes', function() {

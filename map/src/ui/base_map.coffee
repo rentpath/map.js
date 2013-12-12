@@ -172,6 +172,7 @@ define [
       city: @geoData().city
       state: @geoData().state
       hood: @geoData().hood
+      hoodDisplayName: @geoData().hood_display_name
 
     @zoomCircle = ->
       radius = distanceConversion.convertMilesToMeters(@geoDataRadiusMiles())
