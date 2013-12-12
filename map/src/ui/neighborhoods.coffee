@@ -64,6 +64,7 @@ define [
     @addHoodsLayer = (ev, data) ->
       @attr.gMap = data.gMap
       @attr.data = data
+      @attr.currentHood =  @attr.data.hoodDisplayName or @attr.data.hood or ''
       @toolTip = new ToolTip(@attr.gMap) unless @toolTip
       @getKmlData(data)
 
@@ -96,7 +97,7 @@ define [
       mouseOverOptions = @attr.polygonOptions.mouseover
       mouseOutOptions = @attr.polygonOptions.mouseout
 
-      isCurrentHood = (@attr.data.hood == hoodData.hood)
+      isCurrentHood = (@attr.currentHood == hoodData.hood)
       initialOptions = if isCurrentHood then mouseOverOptions else mouseOutOptions
 
       hoodLayer = new google.maps.Polygon(

@@ -52,6 +52,7 @@
       this.addHoodsLayer = function(ev, data) {
         this.attr.gMap = data.gMap;
         this.attr.data = data;
+        this.attr.currentHood = this.attr.data.hoodDisplayName || this.attr.data.hood || '';
         if (!this.toolTip) {
           this.toolTip = new ToolTip(this.attr.gMap);
         }
@@ -96,7 +97,7 @@
           _this = this;
         mouseOverOptions = this.attr.polygonOptions.mouseover;
         mouseOutOptions = this.attr.polygonOptions.mouseout;
-        isCurrentHood = this.attr.data.hood === hoodData.hood;
+        isCurrentHood = this.attr.currentHood === hoodData.hood;
         initialOptions = isCurrentHood ? mouseOverOptions : mouseOutOptions;
         hoodLayer = new google.maps.Polygon(_.extend({
           paths: polygonData

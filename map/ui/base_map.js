@@ -191,7 +191,8 @@
           zip: this.geoData().zip,
           city: this.geoData().city,
           state: this.geoData().state,
-          hood: this.geoData().hood
+          hood: this.geoData().hood,
+          hoodDisplayName: this.geoData().hood_display_name
         };
       };
       this.zoomCircle = function() {
