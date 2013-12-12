@@ -7,7 +7,7 @@
       var ready;
       ready = false;
       jasmine.getGlobal().zutron_host = "http://test.com";
-      require(['../../zutron-common', 'jasmine-jquery'], function(_zutron, $) {
+      require(['../../zutron', 'jasmine-jquery'], function(_zutron, $) {
         zutron = _zutron;
         return ready = true;
       });

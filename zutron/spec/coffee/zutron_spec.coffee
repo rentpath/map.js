@@ -6,7 +6,7 @@ describe "Zutron", ->
     ready = false
     jasmine.getGlobal().zutron_host = "http://test.com"
 
-    require ['../../zutron-common', 'jasmine-jquery'], (_zutron, $) ->
+    require ['../../zutron', 'jasmine-jquery'], (_zutron, $) ->
       zutron = _zutron
       ready = true
 
@@ -22,7 +22,7 @@ describe "Zutron", ->
       spyOn($,"ajax").andCallFake (req) ->
         d = $.Deferred()
         d.resolve
-          zid: 
+          zid:
             key: "asdf"
             listings: []
         return d.promise()
