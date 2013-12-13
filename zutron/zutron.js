@@ -3,12 +3,14 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
   var my = {
     zid: $.cookie('zid'),
     zidData: {},
-    savedListings:{}
+    savedListings:{},
+    zutronConfig: {}
   };
 
   var init = function() {
+    my.zutronConfig = window.ZutronConfiguration;
     var $favorites = $('a.icon_favorites');
-    bindErrorMessageToFavorites($favorites)
+    bindErrorMessageToFavorites($favorites);
   };
 
   var bindErrorMessageToFavorites = function(favorites){
@@ -111,13 +113,12 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
   };
 
   var displayErrorMessage = function(errorText){
-    var errorDiv = $('#zutron_error');
-    errorDiv.prm_dialog_open();
-    errorDiv.on('click', 'a.close',function(){
-      errorDiv.prm_dialog_close();
+    var $errorDiv = $(my.zutronConfig.error_div);
+    $errorDiv.on('click', 'a.close',function(){
+      $errorDiv.prm_dialog_close();
     });
     if (errorText){
-      $('#zutron_error .padding_box p').text(errorText);
+      $errorDiv.text(errorText);
     }
   };
 
@@ -199,15 +200,6 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
     return ensureZid(ajaxCall);
   };
 
-  var _savedSearchSource = function(host) {
-    var mdot_regex = /(^m\.(ci\.|qa\.|apartmentguide\.)|^local\.m\.)/;
-    if (host.match(mdot_regex) !== null) {
-      return 'mdot';
-    } else {
-      return 'ag';
-    }
-  };
-
   var saveSearch = function(search_id, city, state, zip, hood,
                             refinements, search, name, success, error) {
 
@@ -215,7 +207,7 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
       var url = zutron_host + '/zids/' + my.zid + '/searches/';
       var params = {
         search:{
-          source: _savedSearchSource(location.host),
+          source: my.zutronConfig.host,
           id:search_id,
           city:city,
           state:state,
@@ -458,11 +450,15 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
     return ensureZid(ajaxCall);
   };
 
+  var objectMatches = function objectMatches(obj,key,id) {
+    return obj.hasOwnProperty(key) && obj[key].hasOwnProperty('listing_id') && obj[key].listing_id == id
+  };
+
   // FIXME: Why put this method here?  ~Daniel
   var findById = function (source, id, key){
     return _.filter(source, function(obj){
       if (key) {
-        return eval("obj."+key).listing_id == id;
+        return objectMatches(obj,key,id)
       }  else {
         return obj.listing_id == id;
       }
