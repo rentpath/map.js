@@ -24,6 +24,14 @@ describe "Zutron", ->
       zutron.displayErrorMessage('test error message')
       expect($('#test_error_div').text()).toEqual('test error message')
 
+    it "should pickup default value for backward compatibility", ->
+      setFixtures(sandbox({id: 'snapbar_error'}))
+      zutronConfig =
+        host: 'ag'
+      zutron.init(zutronConfig)
+      zutron.displayErrorMessage('test error message')
+      expect($('#snapbar_error').text()).toEqual('test error message')
+
   describe "functionality", ->
     it "is defined", ->
       expect(zutron).toBeDefined()

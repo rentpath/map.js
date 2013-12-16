@@ -7,8 +7,14 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
     zutronConfig: {}
   };
 
+  var backwardCompatibilitySetup = function confObjectBackwardCompatibilitySetup() {
+    my.zutronConfig.error_div = my.zutronConfig.error_div || $('#snapbar_error')
+    my.zutronConfig.host =  my.zutronConfig.host || _savedSearchSource(location.host)
+  };
+
   var init = function(config) {
     my.zutronConfig = config;
+    backwardCompatibilitySetup();
     var $favorites = $('a.icon_favorites');
     bindErrorMessageToFavorites($favorites);
   };
@@ -113,7 +119,7 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
   };
 
   var displayErrorMessage = function(errorText){
-    var $errorDiv = $(my.zutronConfig.error_div) || $('#snapbar_error');
+    var $errorDiv = $(my.zutronConfig.error_div);
     $errorDiv.on('click', 'a.close',function(){
       $errorDiv.prm_dialog_close();
     });
@@ -216,7 +222,7 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
       var url = zutron_host + '/zids/' + my.zid + '/searches/';
       var params = {
         search:{
-          source: my.zutronConfig.host || _savedSearchSource(location.host),
+          source: my.zutronConfig.host,
           id:search_id,
           city:city,
           state:state,
