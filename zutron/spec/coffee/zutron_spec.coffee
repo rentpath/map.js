@@ -32,6 +32,10 @@ describe "Zutron", ->
       zutron.displayErrorMessage('test error message')
       expect($('#snapbar_error').text()).toEqual('test error message')
 
+    it "should handle a missing config object", ->
+      zutron.init()
+      expect(zutron).toBeDefined()
+
   describe "functionality", ->
     it "is defined", ->
       expect(zutron).toBeDefined()

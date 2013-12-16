@@ -31,7 +31,7 @@
         zutron.displayErrorMessage('test error message');
         return expect($('#test_error_div').text()).toEqual('test error message');
       });
-      return it("should pickup default value for backward compatibility", function() {
+      it("should pickup default value for backward compatibility", function() {
         var zutronConfig;
         setFixtures(sandbox({
           id: 'snapbar_error'
@@ -42,6 +42,10 @@
         zutron.init(zutronConfig);
         zutron.displayErrorMessage('test error message');
         return expect($('#snapbar_error').text()).toEqual('test error message');
+      });
+      return it("should handle a missing config object", function() {
+        zutron.init();
+        return expect(zutron).toBeDefined();
       });
     });
     return describe("functionality", function() {

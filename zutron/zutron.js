@@ -7,21 +7,25 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
     zutronConfig: {}
   };
 
-  var backwardCompatibilitySetup = function confObjectBackwardCompatibilitySetup() {
-    my.zutronConfig.error_div = my.zutronConfig.error_div || $('#snapbar_error')
-    my.zutronConfig.host =  my.zutronConfig.host || _savedSearchSource(location.host)
-  };
+  // Set the config object while maintaining backward's compatibility
+  function setConfigObject(config) {
+    if(config) {
+      my.zutronConfig.error_div = config.error_div || $('#snapbar_error')
+      my.zutronConfig.host =  config.host || _savedSearchSource(location.host)
+    } else {
+      my.zutronConfig.error_div = $('#snapbar_error')
+      my.zutronConfig.host =  _savedSearchSource(location.host)
+    }
+  }
 
   var init = function(config) {
-    my.zutronConfig = config;
-    backwardCompatibilitySetup();
-    var $favorites = $('a.icon_favorites');
-    bindErrorMessageToFavorites($favorites);
+    setConfigObject(config);
+    bindErrorMessageToFavorites($('a.icon_favorites'));
   };
 
-  var bindErrorMessageToFavorites = function(favorites){
-    if (!favorites.data('boundToSave')){
-      favorites.unbind('click').on('click', function(){
+  var bindErrorMessageToFavorites = function($favorites){
+    if (!$favorites.data('boundToSave')){
+      $favorites.unbind('click').on('click', function(){
         displayErrorMessage();
       });
     }
