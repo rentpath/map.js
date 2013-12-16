@@ -7,8 +7,8 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
     zutronConfig: {}
   };
 
-  var init = function() {
-    my.zutronConfig = window.ZutronConfiguration;
+  var init = function(config) {
+    my.zutronConfig = config;
     var $favorites = $('a.icon_favorites');
     bindErrorMessageToFavorites($favorites);
   };
@@ -113,7 +113,7 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
   };
 
   var displayErrorMessage = function(errorText){
-    var $errorDiv = $(my.zutronConfig.error_div);
+    var $errorDiv = $(my.zutronConfig.error_div) || $('#snapbar_error');
     $errorDiv.on('click', 'a.close',function(){
       $errorDiv.prm_dialog_close();
     });
@@ -200,6 +200,15 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
     return ensureZid(ajaxCall);
   };
 
+  var _savedSearchSource = function(host) {
+     var mdot_regex = /(^m\.(ci\.|qa\.|apartmentguide\.)|^local\.m\.)/;
+     if (host.match(mdot_regex) !== null) {
+       return 'mdot';
+     } else {
+       return 'ag';
+     }
+   };
+
   var saveSearch = function(search_id, city, state, zip, hood,
                             refinements, search, name, success, error) {
 
@@ -207,7 +216,7 @@ define(['jquery-cookie-rjs', 'primedia_events'], function(cookie, events) {
       var url = zutron_host + '/zids/' + my.zid + '/searches/';
       var params = {
         search:{
-          source: my.zutronConfig.host,
+          source: my.zutronConfig.host || _savedSearchSource(location.host),
           id:search_id,
           city:city,
           state:state,
