@@ -1,20 +1,20 @@
 {
   "name": "zutron",
   "version": "0.0.1",
-  "description": "Zutron - Primedia personalization service",
+  "description": "Authetication Service",
   "homepage": "https://github.com/primedia/preserves",
   "jam": {
+    "packageDir": "vendor/jam",
+    "baseUrl": ".",
     "dependencies": {
-      "jquery": null,
-      "jquery-cookie": null
+      "jquery-cookie-rjs": null,
+      "primedia_events": null
     },
-    "main": "zutron.js",
-    "include": [
-      "zutron.js"
-    ]
+    "main": "zutron",
+    "include": [ "zutron.js" ]
   },
   "author": {
-    "name": "Primedia"
+    "name": "RentPath"
   },
   "repositories": [
     {
