@@ -1,0 +1,19 @@
+{
+  "name": "map",
+  "version": "0.1.13",
+  "main": "map.js",
+  "dependencies": {
+    "jquery": null,
+    "es5-shim": null,
+    "flight": "1.0.2",
+    "marker-clusterer": null,
+    "primedia_events": null,
+    "utils": null,
+    "accounting": null,
+    "fusiontip": null
+  },
+  "ignore": [
+    "package.json",
+    "README.md"
+  ]
+}

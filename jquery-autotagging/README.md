@@ -1,2 +1,0 @@
-Rentpath Autotagging Plugin
-___________________________
