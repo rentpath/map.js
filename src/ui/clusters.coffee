@@ -4,8 +4,8 @@ define [
   'flight/lib/compose',
   'flight/lib/component',
   'lib/marker-clusterer/marker-clusterer',
-  'utils',
-  'map/utils/mobile_detection'
+  '../utils/utilities',
+  '../utils/mobile_detection'
 ], (
   compose,
   defineComponent,

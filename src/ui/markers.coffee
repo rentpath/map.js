@@ -3,7 +3,7 @@
 define [
   'flight/lib/component',
   'map/ui/clusters',
-  'utils',
+  '../utils/utilities',
   'primedia_events'
 ], (
   defineComponent

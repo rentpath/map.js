@@ -1,6 +1,6 @@
 'use strict'
 
-define ['flight/lib/component', 'underscore', 'utils'], (defineComponent, _, utils) ->
+define ['flight/lib/component', 'underscore'], (defineComponent, _) ->
 
   infoWindowData = ->
 
@@ -14,7 +14,6 @@ define ['flight/lib/component', 'underscore', 'utils'], (defineComponent, _, uti
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->
-          #utils.hideSpinner()
 
     @after 'initialize', ->
       @on document, 'uiInfoWindowDataRequest', @getData

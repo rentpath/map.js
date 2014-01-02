@@ -1,6 +1,6 @@
 'use strict'
 
-define [ 'flight/lib/component', 'utils', "../utils/distance_conversion",  ], ( defineComponent, utils, distanceConversion) ->
+define [ 'flight/lib/component', '../utils/utilities', "../utils/distance_conversion",  ], ( defineComponent, utils, distanceConversion) ->
 
   listingsData = ->
 

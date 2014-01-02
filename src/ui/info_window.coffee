@@ -1,11 +1,9 @@
 'use strict'
 
 define [
-  'flight/lib/component',
-  'utils'
+  'flight/lib/component'
 ], (
-  defineComponent,
-  utils
+  defineComponent
 ) ->
 
   infoWindow = ->
