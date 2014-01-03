@@ -12,6 +12,7 @@
   },
   "ignore": [
     "package.json",
-    "README.md"
+    "README.md",
+    "src"
   ]
 }

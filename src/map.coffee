@@ -1,7 +1,7 @@
 define [
   'jquery'
-  ,'es5-shim/lib/es5-shim'
-  ,'es5-shim/lib/es5-sham'
+  ,'es5-shim'
+  ,'es5-sham'
   ,'flight/lib/utils'
   ,'map/ui/base_map'
   ,'map/ui/markers_info_window'
