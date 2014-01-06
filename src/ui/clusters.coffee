@@ -3,7 +3,7 @@
 define [
   'flight/lib/compose',
   'flight/lib/component',
-  'lib/marker-clusterer/marker-clusterer',
+  'marker-clusterer',
   '../utils/utilities',
   '../utils/mobile_detection'
 ], (
