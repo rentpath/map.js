@@ -3,9 +3,9 @@ define [
   ,'es5-shim'
   ,'es5-sham'
   ,'flight/lib/utils'
-  ,'map/ui/base_map'
-  ,'map/ui/markers_info_window'
-  ,'map/ui/search_map_by_address'
+  ,'./ui/base_map'
+  ,'./ui/markers_info_window'
+  ,'./ui/search_map_by_address'
 ], (
   $
   ,es5Shim

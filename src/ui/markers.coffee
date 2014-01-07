@@ -2,13 +2,13 @@
 
 define [
   'flight/lib/component',
-  'map/ui/clusters',
-  '../utils/utilities',
+  '../ui/clusters',
+  '../utils/map_utils',
   'primedia_events'
 ], (
   defineComponent
   ,Clusters
-  ,utils
+  ,map_utils
   ,events
 ) ->
 
@@ -20,9 +20,9 @@ define [
        markersIndex: {}
        gMap: undefined
        markerClusterer: undefined
-       mapPin: utils.assetURL() + "/images/nonsprite/map/map_pin_red4.png"
-       mapPinFree: utils.assetURL() + "/images/nonsprite/map/map_pin_free2.png"
-       mapPinShadow: utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
+       mapPin: map_utils.assetURL() + "/images/nonsprite/map/map_pin_red4.png"
+       mapPinFree: map_utils.assetURL() + "/images/nonsprite/map/map_pin_free2.png"
+       mapPinShadow: map_utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
        markerOptions:
         fitBounds: false
 

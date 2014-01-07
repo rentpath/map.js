@@ -2,16 +2,16 @@
 
 define [
   'flight/lib/component',
-  '../utils/utilities'
+  '../utils/map_utils'
 ], (
   defineComponent,
-  utils
+  map_utils
 ) ->
 
   searchMapByAddress = ->
 
     @defaultAttrs
-      icon: utils.assetURL() + "/images/nonsprite/map/map_pin_custom.png"
+      icon: map_utils.assetURL() + "/images/nonsprite/map/map_pin_custom.png"
       addressContainer: '#address_search_container'
       addressSearchInputSel: '#searchTextField'
       addressSearchErrorSel: '#address_search_error'

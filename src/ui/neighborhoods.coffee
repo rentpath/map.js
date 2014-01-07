@@ -3,9 +3,9 @@
 define [
   'underscore',
   'flight/lib/component',
-  'lib/fusiontip/fusiontip',
-  'lib/accounting/accounting'
-  'map/utils/mobile_detection',
+  'fusiontip',
+  'accounting'
+  '../utils/mobile_detection',
   './tool_tip'
 ], (
   _,

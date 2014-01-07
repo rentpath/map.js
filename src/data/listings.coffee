@@ -1,6 +1,6 @@
 'use strict'
 
-define [ 'flight/lib/component', '../utils/utilities', "../utils/distance_conversion",  ], ( defineComponent, utils, distanceConversion) ->
+define [ 'flight/lib/component', '../utils/map_utils', "../utils/distance_conversion",  ], ( defineComponent, map_utils, distanceConversion) ->
 
   listingsData = ->
 
@@ -18,7 +18,7 @@ define [ 'flight/lib/component', '../utils/utilities', "../utils/distance_conver
         success: (data) =>
           @trigger 'listingDataAvailable', htmlData: data, query: queryData
         complete: ->
-          utils.hideSpinner()
+          map_utils.hideSpinner()
 
     @decodedQueryData = (data) ->
       decodeURIComponent($.param(@queryData(data)))
@@ -34,7 +34,7 @@ define [ 'flight/lib/component', '../utils/utilities', "../utils/distance_conver
           @trigger 'markersDataAvailable', data
           @trigger 'markersDataAvailableOnce', @resetEvents()
         complete: ->
-          utils.hideSpinner()
+          map_utils.hideSpinner()
 
     @drawerVisible = ->
       $('#hybrid_list').is(':visible')

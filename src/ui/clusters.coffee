@@ -4,13 +4,13 @@ define [
   'flight/lib/compose',
   'flight/lib/component',
   'marker-clusterer',
-  '../utils/utilities',
+  '../utils/map_utils',
   '../utils/mobile_detection'
 ], (
   compose,
   defineComponent,
   markerClusterer,
-  Utils,
+  map_utils,
   mobileDetection
 ) ->
 
@@ -18,7 +18,7 @@ define [
     compose.mixin(@, [mobileDetection])
 
     @defaultAttrs
-      mapPinCluster: Utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
+      mapPinCluster: map_utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
       markerClusterer: undefined
       clusterSize: 10
 
