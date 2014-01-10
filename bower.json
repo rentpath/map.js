@@ -6,7 +6,7 @@
     "jquery"            : "latest",
     "flight"            : ">=1.0.4 < 1.1.0",
     "marker-clusterer"  : "git@github.com:primedia/marker-clusterer.js.git#v2.1.1",
-    "primedia_events"   : "git@github.com:primedia/primedia_events.js.git",
+    "primedia-events"   : "git@github.com:primedia/primedia_events.js.git",
     "accounting"        : "git@github.com:primedia/accounting.js.git#v0.3.2",
     "fusiontip"         : "git@github.com:primedia/fusiontip.js.git#v0.0.4"
   },
