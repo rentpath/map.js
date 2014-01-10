@@ -1,44 +1,16 @@
 {
   "name": "map",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "description": "Map Module for RentPath Sites",
   "homepage": "https://github.com/primedia/preserves",
-  "jam": {
-    "dependencies": {
-      "jquery": null,
-      "es5-shim": null,
-      "flight": "1.0.2",
-      "marker-clusterer": null,
-      "primedia_events": null,
-      "utils": null,
-      "accounting":null,
-      "fusiontip":null
-    },
-    "main": "map.js",
-    "include": [
-      "data/info_window.js",
-      "data/listings.js",
-      "map.js",
-      "ui/base_map.js",
-      "ui/clusters.js",
-      "ui/info_window.js",
-      "ui/markers.js",
-      "ui/markers_info_window.js",
-      "ui/neighborhoods.js",
-      "ui/search_map_by_address.js",
-      "ui/tool_tip.js",
-      "utils/distance_conversion.js",
-      "utils/mobile_detection.js"
-    ]
-  },
   "author": {
     "name": "RentPath"
   },
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/primedia/preserves.git"
+      "url": "https://github.com/primedia/map.js.git"
     }
   ],
-  "github": "https://github.com/primedia/preserves.git"
+  "github": "https://github.com/primedia/map.js.git"
 }

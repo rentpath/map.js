@@ -4,7 +4,7 @@ define [
   'flight/lib/component',
   '../ui/clusters',
   '../utils/map_utils',
-  'primedia_events'
+  'primedia-events'
 ], (
   defineComponent
   ,Clusters
