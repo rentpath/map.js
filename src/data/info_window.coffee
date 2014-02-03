@@ -1,6 +1,6 @@
 'use strict'
 
-define ['flight/lib/component', 'underscore'], (defineComponent, _) ->
+define ['jquery', 'underscore', 'flight/lib/component'], ($, _, defineComponent) ->
 
   infoWindowData = ->
 

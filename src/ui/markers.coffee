@@ -1,12 +1,14 @@
 'use strict'
 
 define [
+  'jquery',
   'flight/lib/component',
   '../ui/clusters',
   '../utils/map_utils',
   'primedia_events'
 ], (
-  defineComponent
+  $
+  ,defineComponent
   ,Clusters
   ,map_utils
   ,events

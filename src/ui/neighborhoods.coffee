@@ -1,6 +1,7 @@
 'use strict'
 
 define [
+  'jquery'
   'underscore',
   'flight/lib/component',
   'fusiontip',
@@ -8,6 +9,7 @@ define [
   '../utils/mobile_detection',
   './tool_tip'
 ], (
+  $,
   _,
   defineComponent,
   fusionTip,
@@ -231,4 +233,3 @@ define [
       return
 
   return defineComponent(neighborhoodsOverlay, mobileDetection)
-

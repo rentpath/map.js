@@ -1,9 +1,11 @@
 'use strict'
 
 define [
+  'jquery',
   'flight/lib/component',
   '../utils/distance_conversion'
 ], (
+  $,
   defineComponent,
   distanceConversion
 ) ->

@@ -1,9 +1,11 @@
 'use strict'
 
 define [
+  'jquery',
   'flight/lib/component',
   '../utils/map_utils'
 ], (
+  $,
   defineComponent,
   map_utils
 ) ->
