@@ -1,8 +1,10 @@
 'use strict'
 
 define [
+  'jquery'
   'flight/lib/component'
 ], (
+  $
   defineComponent
 ) ->
 

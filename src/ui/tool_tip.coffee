@@ -1,4 +1,8 @@
-define ->
+define [
+  'jquery'
+], (
+  $
+) ->
 
   class ToolTip extends google.maps.OverlayView
     constructor: (@map) ->
@@ -91,7 +95,3 @@ define ->
 
     mapRealCenter: ->
       new google.maps.Point(@mapWidth() / 2, @mapHeight() / 2)
-
-
-
-

@@ -1,6 +1,6 @@
 'use strict'
 
-define [ 'flight/lib/component', '../utils/map_utils', "../utils/distance_conversion",  ], ( defineComponent, map_utils, distanceConversion) ->
+define [ 'jquery', 'flight/lib/component', '../utils/map_utils', "../utils/distance_conversion",  ], ($, defineComponent, map_utils, distanceConversion) ->
 
   listingsData = ->
 

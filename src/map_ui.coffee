@@ -1,6 +1,6 @@
 'use strict'
 
-define ['map/ui/base_map'], (BaseMap) ->
+define ['jquery', 'map/ui/base_map'], ($, BaseMap) ->
 
   class MapCanvas
     constructor: (@canvas) ->

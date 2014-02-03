@@ -3,7 +3,7 @@
   'use strict';
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['map/ui/base_map'], function(BaseMap) {
+  define(['jquery', 'map/ui/base_map'], function($, BaseMap) {
     var MapCanvas, MapUi;
     MapCanvas = (function() {
       function MapCanvas(canvas) {
