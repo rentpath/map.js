@@ -1,6 +1,6 @@
 {
   "name": "map",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Map Module for RentPath Sites",
   "homepage": "https://github.com/primedia/preserves",
   "author": {
@@ -12,5 +12,6 @@
       "url": "https://github.com/primedia/map.js.git"
     }
   ],
-  "github": "https://github.com/primedia/map.js.git"
+  "github": "https://github.com/primedia/map.js.git",
+  "devDependencies": { "coffee-script": "~1.7.0" }
 }

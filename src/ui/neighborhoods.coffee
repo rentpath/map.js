@@ -18,6 +18,9 @@ define [
   ToolTip
 ) ->
 
+  _.templateSettings =
+    interpolate: /\{\{(.+?)\}\}/g,
+    evaluate: /<%(.+?)%>/g
 
   neighborhoodsOverlay = ->
 
@@ -131,9 +134,10 @@ define [
         @buildInfoWindow(event, data)
 
     @showInfoWindow = (event, polygonData) ->
-      infoData = @buildOnboardData(polygonData)
-      html = _.template(@attr.infoTemplate, infoData)
-      @toolTip.setContent(html)
+      $.when(@buildOnboardData(polygonData)).then (infoData) =>
+        if infoData
+          html = _.template(@attr.infoTemplate, infoData)
+          @toolTip.setContent(html)
 
     @buildInfoWindow = (event, polygonData) ->
       return polygonData.data unless polygonData.data
@@ -169,16 +173,16 @@ define [
     @buildOnboardData = (polygonData) ->
       return polygonData unless @attr.enableOnboardCalls
 
-      onboardData = JSON.parse(@getOnboardData(polygonData).responseText)
-      data = _.extend(@attr.infoWindowData, polygonData)
+      $.when(@getOnboardData(polygonData)).then (onboardData) =>
+        data = _.extend(@attr.infoWindowData, polygonData)
 
-      unless _.isEmpty(onboardData)
-        demographic = onboardData.demographic
-        for key, value of @attr.infoWindowData
-          if demographic[key]
-            data[key] = @formatValue(key, demographic[key])
+        unless _.isEmpty(onboardData)
+          demographic = onboardData.demographic
+          for key, value of @attr.infoWindowData
+            if demographic[key]
+              data[key] = @formatValue(key, demographic[key])
 
-      data
+        data
 
     @clearPolygons = ->
       return unless @attr.polygons.length
@@ -208,12 +212,12 @@ define [
 
       xhr = $.ajax
         url: "/meta/community?rectype=NH&#{query.join('&')}"
-        async: false
       .done (data) ->
         data
       .fail (data) ->
         {}
-
+      .always (data) ->
+        data || {}
     @toDashes = (value) ->
       return '' unless value?
 
