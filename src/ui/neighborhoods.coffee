@@ -4,7 +4,6 @@ define [
   'jquery'
   'underscore',
   'flight/lib/component',
-  'fusiontip',
   'accounting'
   '../utils/mobile_detection',
   './tool_tip'
@@ -12,7 +11,6 @@ define [
   $,
   _,
   defineComponent,
-  fusionTip,
   accounting,
   mobileDetection,
   ToolTip
