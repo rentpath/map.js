@@ -22,6 +22,7 @@ define [
       draggable: true
       geoData: {}
       gMapOptions: {}
+      firstRender: true
 
     @after 'initialize', ->
       @on document, 'mapDataAvailable', @initBaseMap
@@ -85,7 +86,11 @@ define [
       clearInterval(@intervalId)
       if eventsHash['center_changed']
         @trigger document, 'uiMapZoomForListings', @mapChangedData()
-        @trigger document, 'mapRendered', @mapChangedData() unless @attr.infoWindowOpen
+        if !@attr.infoWindowOpen && !@attr.firstRender
+          @trigger document, 'mapRendered', @mapChangedData()
+
+        @attr.firstRender = false
+
         @trigger document, 'uiInitMarkerCluster', @mapChangedData()
         @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
 
