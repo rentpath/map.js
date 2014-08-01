@@ -4,94 +4,98 @@ define [
   $
 ) ->
 
-  class ToolTip extends google.maps.OverlayView
-    constructor: (@map) ->
-      @mapDiv = $(@map.getDiv())
+  # Requires a dependency on google.maps.OverlayView which may not be available
+  # when this module is loaded. By making it an anonymous class, we can
+  # defer creating it.
+  class: ->
+    class extends google.maps.OverlayView
+      constructor: (@map) ->
+        @mapDiv = $(@map.getDiv())
 
-    container: $("<div/>",
-      class: "hood_info_window"
-    )
-    addressBar: $('#address_search')
-    listeners: []
-    offset:
-      x: 20
-      y: 20
+      container: $("<div/>",
+        class: "hood_info_window"
+      )
+      addressBar: $('#address_search')
+      listeners: []
+      offset:
+        x: 20
+        y: 20
 
-    draw: ->
-      projection = @getProjection()
-      return  unless projection
+      draw: ->
+        projection = @getProjection()
+        return  unless projection
 
-      px = projection.fromLatLngToDivPixel(@position)
-      return unless px
+        px = projection.fromLatLngToDivPixel(@position)
+        return unless px
 
-      @container.css
-        left: @getLeft(px)
-        top:  @getTop(px)
+        @container.css
+          left: @getLeft(px)
+          top:  @getTop(px)
 
-    destroy: ->
-      @setMap(null)
-      @clearListeners()
+      destroy: ->
+        @setMap(null)
+        @clearListeners()
 
-    onAdd: ->
-      @container.appendTo @getPanes().floatPane
+      onAdd: ->
+        @container.appendTo @getPanes().floatPane
 
-    onRemove: ->
-      @container.hide()
+      onRemove: ->
+        @container.hide()
 
-    setContent: (html) ->
-      @setMap(@map)
-      @container.html(html)
-      @show()
+      setContent: (html) ->
+        @setMap(@map)
+        @container.html(html)
+        @show()
 
-    updatePosition: (overlay) ->
-      @listeners.push google.maps.event.addListener overlay, "mousemove", (event) =>
-        @onMouseMove(event.latLng)
+      updatePosition: (overlay) ->
+        @listeners.push google.maps.event.addListener overlay, "mousemove", (event) =>
+          @onMouseMove(event.latLng)
 
-    onMouseMove: (latLng) ->
-      @position = latLng
-      @draw()
+      onMouseMove: (latLng) ->
+        @position = latLng
+        @draw()
 
-    hide: ->
-      @container.hide().empty()
-      @clearListeners()
+      hide: ->
+        @container.hide().empty()
+        @clearListeners()
 
-    show: ->
-      @container.show()
+      show: ->
+        @container.show()
 
-    clearListeners: ->
-      for listener in @listeners
-        google.maps.event.removeListener(listener)
+      clearListeners: ->
+        for listener in @listeners
+          google.maps.event.removeListener(listener)
 
-    getLeft: (position) ->
-      centerOffsetX = @mapRealCenter().x - @mapCenter().x
-      pos = @mapWidth() - position.x - @container.outerWidth() - @offset.x - centerOffsetX
+      getLeft: (position) ->
+        centerOffsetX = @mapRealCenter().x - @mapCenter().x
+        pos = @mapWidth() - position.x - @container.outerWidth() - @offset.x - centerOffsetX
 
-      if pos < 0
-        @mapWidth() - @container.outerWidth() - @offset.x - centerOffsetX
-      else
-        position.x + @offset.x
+        if pos < 0
+          @mapWidth() - @container.outerWidth() - @offset.x - centerOffsetX
+        else
+          position.x + @offset.x
 
-    getTop: (position) ->
-      top = @mapHeight() - position.y
-      height = @container.outerHeight() + @offset.y
-      centerOffsetY = Math.abs(@mapRealCenter().y - @mapCenter().y)
-      addressBarHeight = (@addressBar.outerHeight() or 0) + @offset.y
+      getTop: (position) ->
+        top = @mapHeight() - position.y
+        height = @container.outerHeight() + @offset.y
+        centerOffsetY = Math.abs(@mapRealCenter().y - @mapCenter().y)
+        addressBarHeight = (@addressBar.outerHeight() or 0) + @offset.y
 
-      bottom = (@mapHeight() - top - height - addressBarHeight - centerOffsetY)
-      isBottom = bottom < 0
-      if isBottom
-        centerOffsetY + addressBarHeight
-      else
-        @mapHeight() - top - height
+        bottom = (@mapHeight() - top - height - addressBarHeight - centerOffsetY)
+        isBottom = bottom < 0
+        if isBottom
+          centerOffsetY + addressBarHeight
+        else
+          @mapHeight() - top - height
 
-    mapWidth: ->
-      @mapDiv.outerWidth()
+      mapWidth: ->
+        @mapDiv.outerWidth()
 
-    mapHeight: ->
-      @mapDiv.outerHeight()
+      mapHeight: ->
+        @mapDiv.outerHeight()
 
-    mapCenter: ->
-      @getProjection().fromLatLngToDivPixel(@map.getCenter())
+      mapCenter: ->
+        @getProjection().fromLatLngToDivPixel(@map.getCenter())
 
-    mapRealCenter: ->
-      new google.maps.Point(@mapWidth() / 2, @mapHeight() / 2)
+      mapRealCenter: ->
+        new google.maps.Point(@mapWidth() / 2, @mapHeight() / 2)

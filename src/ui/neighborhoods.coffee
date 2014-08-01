@@ -13,7 +13,7 @@ define [
   defineComponent,
   accounting,
   mobileDetection,
-  ToolTip
+  toolTip
 ) ->
 
   _.templateSettings =
@@ -68,6 +68,7 @@ define [
       @attr.gMap = data.gMap
       @attr.data = data
       @attr.currentHood =  @attr.data.hoodDisplayName or @attr.data.hood or ''
+      ToolTip = toolTip.class()
       @toolTip = new ToolTip(@attr.gMap) unless @toolTip
       @getKmlData(data)
 
