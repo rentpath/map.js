@@ -17,6 +17,6 @@ define [
         fitBounds: false
 
     @after 'initialize', ->
-      Markers.attachTo(@node, markerOptions: @attr.markerOptions)
+      Markers.attachTo(@node, @attr)
 
   defineComponent(markersInfoWindow, InfoWindow)

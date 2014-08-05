@@ -10,9 +10,7 @@
         }
       });
       return this.after('initialize', function() {
-        return Markers.attachTo(this.node, {
-          markerOptions: this.attr.markerOptions
-        });
+        return Markers.attachTo(this.node, this.attr);
       });
     };
     return defineComponent(markersInfoWindow, InfoWindow);
