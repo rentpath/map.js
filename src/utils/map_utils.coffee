@@ -6,4 +6,7 @@ define ['jquery'], ($) ->
 
     hideSpinner: () ->
       $('.spinner').hide()
+
+    limitScaleOf: (number) ->
+      number.toFixed(4)
   }

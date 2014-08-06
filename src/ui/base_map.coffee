@@ -3,10 +3,12 @@
 define [
   'jquery',
   'flight/lib/component',
+  '../utils/map_utils',
   '../utils/distance_conversion'
 ], (
   $,
   defineComponent,
+  mapUtils,
   distanceConversion
 ) ->
 
@@ -168,13 +170,13 @@ define [
 
     @mapChangedDataBase = ->
       gMap: @attr.gMap
-      latitude: @latitude()
-      longitude: @longitude()
+      latitude: mapUtils.limitScaleOf(@latitude())
+      longitude: mapUtils.limitScaleOf(@longitude())
       radius: @radius()
-      lat1: @southWestLatitude()
-      lng1: @southWestLongitude()
-      lat2: @northEastLatitude()
-      lng2: @northEastLongitude()
+      lat1: mapUtils.limitScaleOf(@southWestLatitude())
+      lng1: mapUtils.limitScaleOf(@southWestLongitude())
+      lat2: mapUtils.limitScaleOf(@northEastLatitude())
+      lng2: mapUtils.limitScaleOf(@northEastLongitude())
       zip: @geoData().zip
       city: @geoData().city
       state: @geoData().state

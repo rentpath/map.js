@@ -7,6 +7,9 @@
       },
       hideSpinner: function() {
         return $('.spinner').hide();
+      },
+      limitScaleOf: function(number) {
+        return number.toFixed(4);
       }
     };
   });

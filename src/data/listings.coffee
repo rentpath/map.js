@@ -1,6 +1,16 @@
 'use strict'
 
-define [ 'jquery', 'flight/lib/component', '../utils/map_utils', "../utils/distance_conversion",  ], ($, defineComponent, map_utils, distanceConversion) ->
+define [
+  'jquery',
+  'flight/lib/component',
+  '../utils/map_utils',
+  '../utils/distance_conversion'
+], (
+  $,
+  defineComponent,
+  mapUtils,
+  distanceConversion
+) ->
 
   listingsData = ->
 
@@ -18,7 +28,7 @@ define [ 'jquery', 'flight/lib/component', '../utils/map_utils', "../utils/dista
         success: (data) =>
           @trigger 'listingDataAvailable', htmlData: data, query: queryData
         complete: ->
-          map_utils.hideSpinner()
+          mapUtils.hideSpinner()
 
     @decodedQueryData = (data) ->
       decodeURIComponent($.param(@queryData(data)))
@@ -34,7 +44,7 @@ define [ 'jquery', 'flight/lib/component', '../utils/map_utils', "../utils/dista
           @trigger 'markersDataAvailable', data
           @trigger 'markersDataAvailableOnce', @resetEvents()
         complete: ->
-          map_utils.hideSpinner()
+          mapUtils.hideSpinner()
 
     @drawerVisible = ->
       $('#hybrid_list').is(':visible')
@@ -85,7 +95,7 @@ define [ 'jquery', 'flight/lib/component', '../utils/map_utils', "../utils/dista
         latitude: data.latitude
         lng: data.longitude
         longitude: data.longitude
-        miles: distanceConversion.convertMetersToMiles(data.radius)
+        miles: mapUtils.limitScaleOf(distanceConversion.convertMetersToMiles(data.radius))
         drawer_visible: @drawerVisible
         lat1: data.lat1
         lng1: data.lng1
