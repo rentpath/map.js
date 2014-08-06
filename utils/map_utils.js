@@ -8,8 +8,11 @@
       hideSpinner: function() {
         return $('.spinner').hide();
       },
-      limitScaleOf: function(number) {
-        return number.toFixed(4);
+      limitScaleOf: function(number, limit) {
+        if (limit == null) {
+          limit = 4;
+        }
+        return number.toFixed(limit);
       }
     };
   });
