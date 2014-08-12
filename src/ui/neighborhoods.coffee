@@ -155,7 +155,7 @@ define [
       coordinates
 
     @isValidPoint = (arr) ->
-      arr.length == 2 and _.all(arr, _.isNumber)
+      arr.length >= 2 and _.all(arr, _.isNumber)
 
     @makePathsCoordinates = (coordinates) ->
       if this.isValidPoint(coordinates)
