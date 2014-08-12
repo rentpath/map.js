@@ -172,7 +172,7 @@
         return coordinates;
       };
       this.isValidPoint = function(arr) {
-        return arr.length === 2 && _.all(arr, _.isNumber);
+        return arr.length >= 2 && _.all(arr, _.isNumber);
       };
       this.makePathsCoordinates = function(coordinates) {
         if (this.isValidPoint(coordinates)) {
