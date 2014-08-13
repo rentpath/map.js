@@ -10,7 +10,7 @@ define [
   $,
   _
   defineComponent,
-  map_utils,
+  mapUtils,
   distanceConversion
 ) ->
 
@@ -99,16 +99,16 @@ define [
         sort: data.sort
       }
 
-      refinements = map_utils.getRefinements()
+      refinements = mapUtils.getRefinements()
       qData.refinements = encodeURIComponent(refinements) if refinements
 
-      propertyName = map_utils.getPropertyName()
+      propertyName = mapUtils.getPropertyName()
       qData.propertyname = encodeURIComponent(propertyName) if propertyName
 
-      mgtcoid = map_utils.getMgtcoId()
+      mgtcoid = mapUtils.getMgtcoId()
       qData.mgtcoid = encodeURIComponent(mgtcoid) if mgtcoid
 
-      priceRange = map_utils.getPriceRange(@attr.priceRangeRefinements)
+      priceRange = mapUtils.getPriceRange(@attr.priceRangeRefinements)
       for name in ['min_price', 'max_price']
         qData[name] = priceRange[name] if priceRange[name]
 

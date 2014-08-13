@@ -8,6 +8,9 @@ define ['jquery'], ($) ->
 
     if value then value[1] or ''
 
+  limitScaleOf: (number, limit = 4) ->
+   number.toFixed(limit)
+
   assetURL: () ->
     $('meta[name="asset_host"]').attr('content')
 

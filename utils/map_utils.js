@@ -17,6 +17,12 @@
       }
     };
     return {
+      limitScaleOf: function(number, limit) {
+        if (limit == null) {
+          limit = 4;
+        }
+        return number.toFixed(limit);
+      },
       assetURL: function() {
         return $('meta[name="asset_host"]').attr('content');
       },
