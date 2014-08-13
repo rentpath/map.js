@@ -2,11 +2,13 @@
 
 define [
   'jquery',
+  'underscore',
   'flight/lib/component',
   '../utils/map_utils',
-  '../utils/distance_conversion'
+  "../utils/distance_conversion"
 ], (
   $,
+  _
   defineComponent,
   mapUtils,
   distanceConversion
@@ -20,6 +22,7 @@ define [
       hybridSearchRoute: "/map_view/listings"
       mapPinsRoute:  "/map/pins.json"
       hostname: "www.apartmentguide.com"
+      priceRangeRefinements: {}
 
     @getListings = (ev, queryData) ->
       return {} if !@isListVisible() || !@attr.hybridView
@@ -48,19 +51,6 @@ define [
 
     @drawerVisible = ->
       $('#hybrid_list').is(':visible')
-
-    @extractRefinementsFromUrl = ->
-      $(".pageInfo[name=refinements]").attr("content") or ''
-
-    @extractParamFromUrl = (key)->
-      queryParams = location.search.split('&') or []
-      regex = key + '=(.*)'
-      for param in queryParams
-        value = param.match(regex) if param.match(regex)
-      if value
-        value[1] or ''
-      else
-        ''
 
     @renderListings = (skipFitBounds) ->
       if listings = @_parseListingsFromHtml()
@@ -108,13 +98,20 @@ define [
         geoname: data.geoname
         sort: data.sort
       }
-      qData.refinements = encodeURIComponent(@extractRefinementsFromUrl()) if @extractRefinementsFromUrl().length > 0
 
-      propertyName = @extractParamFromUrl('propertyname')
-      qData.propertyname = encodeURIComponent(propertyName) if propertyName.length > 0
+      refinements = mapUtils.getRefinements()
+      qData.refinements = encodeURIComponent(refinements) if refinements
 
-      mgtcoid = @extractParamFromUrl('mgtcoid')
-      qData.mgtcoid = encodeURIComponent(mgtcoid) if mgtcoid.length > 0
+      propertyName = mapUtils.getPropertyName()
+      qData.propertyname = encodeURIComponent(propertyName) if propertyName
+
+      mgtcoid = mapUtils.getMgtcoId()
+      qData.mgtcoid = encodeURIComponent(mgtcoid) if mgtcoid
+
+      priceRange = mapUtils.getPriceRange(@attr.priceRangeRefinements)
+      for name in ['min_price', 'max_price']
+        qData[name] = priceRange[name] if priceRange[name]
+
       qData
 
   return defineComponent(listingsData)
