@@ -2,6 +2,7 @@ define [], () ->
 
   meterToKilometer = 1000
   kmRatio = 0.62137
+  decimalLimit = 4
 
   metersToKilometers = (meters) ->
     return 0 unless distanceParamDefined(meters)
@@ -20,11 +21,11 @@ define [], () ->
 
   return {
     convertMilesToMeters: (miles) ->
-      milesToMeters(miles)
+      milesToMeters(miles).toFixed(decimalLimit)
 
     convertMetersToKilometers: (meters) ->
-      metersToKilometers(meters)
+      metersToKilometers(meters).toFixed(decimalLimit)
 
     convertMetersToMiles: (meters) ->
-      metersToMiles(meters)
+      metersToMiles(meters).toFixed(decimalLimit)
   }
