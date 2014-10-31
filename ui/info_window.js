@@ -44,6 +44,7 @@
           return google.maps.event.addListenerOnce(this.currentOpenWindow, 'domready', (function(_this) {
             return function() {
               return $(document).trigger('uiInfoWindowRendered', {
+                listingId: _this.attr.gMarker.datumId,
                 marker: _this.attr.gMarker,
                 infoWindow: _this.currentOpenWindow
               });

@@ -40,7 +40,7 @@ define [
         google.maps.event.addListenerOnce @currentOpenWindow, 'closeclick', ->
           $(document).trigger 'uiInfoWindowClosed'
         google.maps.event.addListenerOnce @currentOpenWindow, 'domready', =>
-          $(document).trigger 'uiInfoWindowRendered', marker: @attr.gMarker, infoWindow: @currentOpenWindow
+          $(document).trigger 'uiInfoWindowRendered', listingId: @attr.gMarker.datumId, marker: @attr.gMarker, infoWindow: @currentOpenWindow
 
     @after 'initialize', ->
       @on document, 'markerClicked', @showInfoWindowOnMarkerClick
