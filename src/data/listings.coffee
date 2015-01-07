@@ -18,14 +18,12 @@ define [
 
     @defaultAttrs
       executeOnce: false
-      hybridView: true
       hybridSearchRoute: "/map_view/listings"
       mapPinsRoute:  "/map/pins.json"
       hostname: "www.apartmentguide.com"
       priceRangeRefinements: {}
 
     @getListings = (ev, queryData) ->
-      return {} if !@isListVisible() || !@attr.hybridView
       @xhr = $.ajax
         url: "#{@attr.hybridSearchRoute}?#{@decodedQueryData(queryData)}"
         success: (data) =>
@@ -36,9 +34,6 @@ define [
     @decodedQueryData = (data) ->
       decodeURIComponent($.param(@queryData(data)))
 
-    @isListVisible = ->
-      $('#hybrid_list').is(':visible')
-
     @getMarkers = (ev, data) ->
       data.sort = 'distance'
       @xhr = $.ajax
@@ -48,9 +43,6 @@ define [
           @trigger 'markersDataAvailableOnce', @resetEvents()
         complete: ->
           mapUtils.hideSpinner()
-
-    @drawerVisible = ->
-      $('#hybrid_list').is(':visible')
 
     @renderListings = (skipFitBounds) ->
       if listings = @_parseListingsFromHtml()
@@ -86,7 +78,6 @@ define [
         lng: data.longitude
         longitude: data.longitude
         miles: Math.round(distanceConversion.convertMetersToMiles(data.radius))
-        drawer_visible: @drawerVisible
         lat1: data.lat1
         lng1: data.lng1
         lat2: data.lat2

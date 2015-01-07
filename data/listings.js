@@ -6,16 +6,12 @@
     listingsData = function() {
       this.defaultAttrs({
         executeOnce: false,
-        hybridView: true,
         hybridSearchRoute: "/map_view/listings",
         mapPinsRoute: "/map/pins.json",
         hostname: "www.apartmentguide.com",
         priceRangeRefinements: {}
       });
       this.getListings = function(ev, queryData) {
-        if (!this.isListVisible() || !this.attr.hybridView) {
-          return {};
-        }
         return this.xhr = $.ajax({
           url: "" + this.attr.hybridSearchRoute + "?" + (this.decodedQueryData(queryData)),
           success: (function(_this) {
@@ -34,9 +30,6 @@
       this.decodedQueryData = function(data) {
         return decodeURIComponent($.param(this.queryData(data)));
       };
-      this.isListVisible = function() {
-        return $('#hybrid_list').is(':visible');
-      };
       this.getMarkers = function(ev, data) {
         data.sort = 'distance';
         return this.xhr = $.ajax({
@@ -51,9 +44,6 @@
             return mapUtils.hideSpinner();
           }
         });
-      };
-      this.drawerVisible = function() {
-        return $('#hybrid_list').is(':visible');
       };
       this.renderListings = function(skipFitBounds) {
         var listingObjects, listings;
@@ -94,7 +84,6 @@
           lng: data.longitude,
           longitude: data.longitude,
           miles: Math.round(distanceConversion.convertMetersToMiles(data.radius)),
-          drawer_visible: this.drawerVisible,
           lat1: data.lat1,
           lng1: data.lng1,
           lat2: data.lat2,
