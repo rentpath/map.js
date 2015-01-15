@@ -21,6 +21,9 @@ define [
       mapPinCluster: map_utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
       markerClusterer: undefined
       clusterSize: 10
+      clusterTextColor: 'black'
+      clusterTextSize: 11
+      clusterFontWeight: 'bold'
 
     @clearMarkers = ->
       @unbindMarkers()
@@ -36,7 +39,9 @@ define [
         height: 40
         url: @attr.mapPinCluster
         width: 46
-        textColor: "black"
+        textColor: @attr.clusterTextColor
+        textSize: @attr.clusterTextSize
+        fontWeight: @attr.clusterFontWeight
 
       styles: [style,style,style,style,style]
       minimumClusterSize: @attr.clusterSize
