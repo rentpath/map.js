@@ -1,19 +1,17 @@
 define [
   'jquery'
-  ,'es5-shim'
-  ,'es5-sham'
-  ,'flight/lib/utils'
-  ,'./ui/base_map'
-  ,'./ui/markers_info_window'
-  ,'./ui/search_map_by_address'
+  'es5-shim'
+  'es5-sham'
+  'flight/lib/utils'
+  './ui/base_map'
+  './ui/markers_info_window'
 ], (
   $
-  ,es5Shim
-  ,es5Sham
-  ,FlightUtils
-  ,BaseMap
-  ,MarkerInfoWindow
-  ,SearchMapByAddress
+  es5Shim
+  es5Sham
+  FlightUtils
+  BaseMap
+  MarkerInfoWindow
 ) ->
 
   # EXPECTED ARGUMENTS
@@ -25,7 +23,6 @@ define [
   #   canvas: '#map_canvas'
   #   gMapOptions:
   #     draggable: false
-  # addressBar: undefined
   # hybridList: undefined
 
   initialize = ->
@@ -33,6 +30,5 @@ define [
 
     BaseMap.attachTo(args.map.canvas, args.map)
     MarkerInfoWindow.attachTo(args.map.canvas, args.markers)
-    SearchMapByAddress.attachTo(args.addressBar.selector) if args.addressBar
 
   return initialize

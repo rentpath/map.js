@@ -29,7 +29,6 @@ define [
     @after 'initialize', ->
       @on document, 'mapDataAvailable', @initBaseMap
       @on document, 'mapRendered', @consolidateMapChangeEvents
-      @on document, 'mapCanvasResized', @resizeMapContainer
       @on document, 'uiInfoWindowDataRequest', =>
         @attr.infoWindowOpen = true
       return
@@ -44,19 +43,15 @@ define [
       google.maps.event.addListenerOnce data.gMap, 'dragend', =>
         @trigger document, 'uiMapDrag', @mapChangedData()
 
-    @resizeMapContainer = (ev, data) ->
-      if data && data.width && data.height
-        @$node.css({ height: data.height, width: data.width })
-      google.maps.event.trigger @attr.gMap, 'resize'
-
     @intervalId = null
 
-    @firstRender = () ->
+    @firstRender = ->
       # new version of gmap api 3.14 is the next stable version
       # it inludes visualRefresh
       google.maps.visualRefresh = true;
 
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
+
       google.maps.event.addListenerOnce @attr.gMap, 'idle', =>
         @fireOurMapEventsOnce()
         @handleOurMapEvents()
