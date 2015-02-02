@@ -22,7 +22,6 @@
       this.after('initialize', function() {
         this.on(document, 'mapDataAvailable', this.initBaseMap);
         this.on(document, 'mapRendered', this.consolidateMapChangeEvents);
-        this.on(document, 'mapCanvasResized', this.resizeMapContainer);
         this.on(document, 'uiInfoWindowDataRequest', (function(_this) {
           return function() {
             return _this.attr.infoWindowOpen = true;
@@ -44,15 +43,6 @@
             return _this.trigger(document, 'uiMapDrag', _this.mapChangedData());
           };
         })(this));
-      };
-      this.resizeMapContainer = function(ev, data) {
-        if (data && data.width && data.height) {
-          this.$node.css({
-            height: data.height,
-            width: data.width
-          });
-        }
-        return google.maps.event.trigger(this.attr.gMap, 'resize');
       };
       this.intervalId = null;
       this.firstRender = function() {
