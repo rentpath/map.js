@@ -3,16 +3,19 @@
   "version": "0.1.27",
   "main": "map.js",
   "dependencies": {
-    "jquery"            : "latest",
     "flight"            : ">=1.0.4 < 1.1.0",
-    "marker-clusterer"  : "git@github.com:RentPath/marker-clusterer.js.git#v2.1.1",
-    "primedia_events"   : "git@github.com:RentPath/primedia_events.js.git",
-    "accounting"        : "git@github.com:RentPath/accounting.js.git#v0.3.2",
-    "underscore"        : ">=1.6.0 < 1.7.0"
+    "jquery": "latest",
+    "marker-clusterer": "git@github.com:primedia/marker-clusterer.js.git#v2.1.1",
+    "primedia_events": "git@github.com:primedia/primedia_events.js.git",
+    "accounting": "git@github.com:primedia/accounting.js.git#v0.3.2",
+    "underscore": ">=1.6.0 < 1.7.0"
   },
   "ignore": [
     "package.json",
     "README.md",
     "src"
-  ]
+  ],
+  "devDependencies": {
+    "jasmine-flight": "3.0.0"
+  }
 }

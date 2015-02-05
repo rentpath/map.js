@@ -7,3 +7,6 @@
 ## Setup
 - `bundle install`
 - `bundle exec foreman start`
+
+## Testing
+- `karma start`
