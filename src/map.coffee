@@ -3,8 +3,8 @@ define [
   'es5-shim'
   'es5-sham'
   'flight/lib/utils'
-  './ui/base_map'
-  './ui/markers_info_window'
+  'map/ui/base_map'
+  'map/ui/markers_info_window'
 ], (
   $
   es5Shim
