@@ -4,9 +4,8 @@
 - info window
 - hood layers
 
-## Setup
-- `bundle install`
-- `bundle exec foreman start`
+## Compiling CoffeeScript
+- `gulp build`
 
 ## Testing
 - `karma start`
