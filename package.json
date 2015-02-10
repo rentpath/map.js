@@ -1,8 +1,8 @@
 {
   "name": "map",
-  "version": "0.1.25",
+  "version": "0.1.30",
   "description": "Map Module for RentPath Sites",
-  "homepage": "https://github.com/primedia/preserves",
+  "homepage": "https://github.com/rentpath/map.js",
   "author": {
     "name": "RentPath"
   },
@@ -31,5 +31,21 @@
     "karma-phantomjs-launcher": "^0.1.0",
     "karma-requirejs": "^0.2.0",
     "karma-safari-launcher": "^0.1.1"
+  },
+  "scripts": {
+    "compile": "gulp build",
+    "build": "gulp dist",
+    "livereload": "gulp",
+    "watch": "gulp",
+    "watch:dev": "gulp",
+    "watch:test": "karma start",
+    "test": "karma start --single-run",
+    "test:clean": "npm run compile && npm test",
+    "clean:all": "rm -rf app/bower_components node_modules",
+    "prereset": "npm run clean:all",
+    "reset": "npm install",
+    "postreset": "npm run compile",
+    "postinstall": "bower install",
+    "preversion": "npm run reset && npm test && npm run build"
   }
 }
