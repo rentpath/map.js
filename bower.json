@@ -19,6 +19,6 @@
     "jasmine-flight": "3.0.0"
   },
   "resolutions": {
-    "jquery": "1.8.3"
+    "jquery": "~1.11.0"
   }
 }
