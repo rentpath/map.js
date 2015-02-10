@@ -1,7 +1,7 @@
 {
   "name": "map",
   "version": "0.1.30",
-  "main": "map.js",
+  "main": "dist/map.js",
   "dependencies": {
     "flight": ">=1.0.4 < 1.1.0",
     "jquery": "~1.11.0",
