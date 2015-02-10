@@ -15,8 +15,8 @@ define [
 ) ->
 
   # EXPECTED ARGUMENTS
-  # First element is an options object, sample bellow
-  # Add more options needed
+  # First element is an options object, sample below
+  # Add more options as needed
 
   # map:
   #   geoData: geoData

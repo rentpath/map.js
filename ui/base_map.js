@@ -16,13 +16,12 @@
         overlay: void 0,
         draggable: true,
         geoData: {},
-        gMapOptions: {},
-        firstRender: true
+        gMapOptions: {}
       });
       this.after('initialize', function() {
         this.on(document, 'mapDataAvailable', this.initBaseMap);
         this.on(document, 'mapRendered', this.consolidateMapChangeEvents);
-        this.on(document, 'uiInfoWindowDataRequest', (function(_this) {
+        return this.on(document, 'uiInfoWindowDataRequest', (function(_this) {
           return function() {
             return _this.attr.infoWindowOpen = true;
           };
@@ -74,7 +73,7 @@
             return _this.storeEvent('center_changed');
           };
         })(this));
-        google.maps.event.addListener(this.attr.gMap, 'idle', (function(_this) {
+        return google.maps.event.addListener(this.attr.gMap, 'idle', (function(_this) {
           return function() {
             return _this.fireOurMapEvents();
           };
@@ -92,19 +91,16 @@
         clearInterval(this.intervalId);
         if (eventsHash['center_changed']) {
           this.trigger(document, 'uiMapZoomForListings', this.mapChangedData());
-          if (!this.attr.infoWindowOpen && !this.attr.firstRender) {
-            this.trigger(document, 'mapRendered', this.mapChangedData());
-          }
-          this.attr.firstRender = false;
           this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
-          this.trigger(document, "uiNeighborhoodDataRequest", this.mapChangedDataBase());
+          this.trigger(document, 'mapRendered', this.mapChangedData());
+          this.trigger(document, 'uiNeighborhoodDataRequest', this.mapChangedDataBase());
         }
         return this.resetOurEventHash();
       };
       this.resetOurEventHash = function() {
         this.attr.gMapEvents['zoom_changed'] = false;
         this.attr.gMapEvents['center_changed'] = false;
-        this.attr.infoWindowOpen = false;
+        return this.attr.infoWindowOpen = false;
       };
       this.defineGoogleMapOptions = function() {
         var gCenter, geo;

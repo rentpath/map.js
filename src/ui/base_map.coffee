@@ -24,14 +24,12 @@ define [
       draggable: true
       geoData: {}
       gMapOptions: {}
-      firstRender: true
 
     @after 'initialize', ->
       @on document, 'mapDataAvailable', @initBaseMap
       @on document, 'mapRendered', @consolidateMapChangeEvents
       @on document, 'uiInfoWindowDataRequest', =>
         @attr.infoWindowOpen = true
-      return
 
     @initBaseMap = (ev, data) ->
       @data = data || {}
@@ -48,7 +46,7 @@ define [
     @firstRender = ->
       # new version of gmap api 3.14 is the next stable version
       # it inludes visualRefresh
-      google.maps.visualRefresh = true;
+      google.maps.visualRefresh = true
 
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
 
@@ -72,7 +70,6 @@ define [
         @storeEvent('center_changed')
       google.maps.event.addListener @attr.gMap, 'idle', =>
         @fireOurMapEvents()
-      return
 
     @storeEvent = (event) ->
       @attr.gMapEvents[event] = true
@@ -83,13 +80,9 @@ define [
       clearInterval(@intervalId)
       if eventsHash['center_changed']
         @trigger document, 'uiMapZoomForListings', @mapChangedData()
-        if !@attr.infoWindowOpen && !@attr.firstRender
-          @trigger document, 'mapRendered', @mapChangedData()
-
-        @attr.firstRender = false
-
         @trigger document, 'uiInitMarkerCluster', @mapChangedData()
-        @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
+        @trigger document, 'mapRendered', @mapChangedData()
+        @trigger document, 'uiNeighborhoodDataRequest', @mapChangedDataBase()
 
       @resetOurEventHash()
 
@@ -97,7 +90,6 @@ define [
       @attr.gMapEvents['zoom_changed'] = false
       @attr.gMapEvents['center_changed'] = false
       @attr.infoWindowOpen = false
-      return
 
     @defineGoogleMapOptions = () ->
       geo = @getInitialGeo()
