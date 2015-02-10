@@ -4,7 +4,7 @@
   "main": "map.js",
   "dependencies": {
     "flight": ">=1.0.4 < 1.1.0",
-    "jquery": "~1.8",
+    "jquery": "~1.11.0",
     "marker-clusterer": "git@github.com:primedia/marker-clusterer.js.git#v2.1.1",
     "primedia_events": "git@github.com:primedia/primedia_events.js.git",
     "accounting": "git@github.com:primedia/accounting.js.git#v0.3.2",
@@ -19,6 +19,6 @@
     "jasmine-flight": "3.0.0"
   },
   "resolutions": {
-    "jquery": "1.8.3"
+    "jquery": "~1.11.0"
   }
 }
