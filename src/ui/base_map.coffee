@@ -1,14 +1,14 @@
 'use strict'
 
 define [
-  'jquery',
-  'flight/lib/component',
-  '../utils/map_utils',
+  'jquery'
+  'flight/lib/component'
+  '../utils/map_utils'
   '../utils/distance_conversion'
 ], (
-  $,
-  defineComponent,
-  mapUtils,
+  $
+  defineComponent
+  mapUtils
   distanceConversion
 ) ->
 
@@ -23,7 +23,10 @@ define [
       overlay: undefined
       draggable: true
       geoData: {}
-      gMapOptions: {}
+      gMapOptions:
+        draggable: undefined
+
+    @data = {}
 
     @after 'initialize', ->
       @on document, 'mapDataAvailable', @initBaseMap
@@ -93,14 +96,16 @@ define [
 
     @defineGoogleMapOptions = () ->
       geo = @getInitialGeo()
-      gCenter = new google.maps.LatLng(geo.lat, geo.lng)
-      return {
-        center: gCenter
-        zoom: @radiusToZoom(@geoDataRadiusMiles())
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+      options =
+        center:       new google.maps.LatLng(geo.lat, geo.lng)
+        zoom:         @radiusToZoom(@geoDataRadiusMiles())
+        mapTypeId:    google.maps.MapTypeId.ROADMAP
         scaleControl: true
-        draggable: @attr.gMapOptions.draggable
-      }
+
+      for k, v of @attr.gMapOptions
+        options[k] = v
+
+      options
 
     @radiusToZoom = (radius = 10) ->
       Math.round(14-Math.log(radius)/Math.LN2) + 1
