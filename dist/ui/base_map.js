@@ -14,8 +14,11 @@ define(['jquery', 'flight/lib/component', '../utils/map_utils', '../utils/distan
       overlay: void 0,
       draggable: true,
       geoData: {},
-      gMapOptions: {}
+      gMapOptions: {
+        draggable: void 0
+      }
     });
+    this.data = {};
     this.after('initialize', function() {
       this.on(document, 'mapDataAvailable', this.initBaseMap);
       this.on(document, 'mapRendered', this.consolidateMapChangeEvents);
@@ -101,16 +104,20 @@ define(['jquery', 'flight/lib/component', '../utils/map_utils', '../utils/distan
       return this.attr.infoWindowOpen = false;
     };
     this.defineGoogleMapOptions = function() {
-      var gCenter, geo;
+      var geo, k, options, v, _ref;
       geo = this.getInitialGeo();
-      gCenter = new google.maps.LatLng(geo.lat, geo.lng);
-      return {
-        center: gCenter,
+      options = {
+        center: new google.maps.LatLng(geo.lat, geo.lng),
         zoom: this.radiusToZoom(this.geoDataRadiusMiles()),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        scaleControl: true,
-        draggable: this.attr.gMapOptions.draggable
+        scaleControl: true
       };
+      _ref = this.attr.gMapOptions;
+      for (k in _ref) {
+        v = _ref[k];
+        options[k] = v;
+      }
+      return options;
     };
     this.radiusToZoom = function(radius) {
       if (radius == null) {

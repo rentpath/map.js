@@ -8,6 +8,7 @@ module.exports = (config) ->
 
     # list of files / patterns to load in the browser
     files: [
+      'http://maps.googleapis.com/maps/api/js?libraries=geometry,places&sensor=false'
       'test/test-main.coffee',
       {pattern: 'src/**/*.coffee', included: false},
       {pattern: 'test/spec/**/*_spec.coffee', included: false},
@@ -16,6 +17,7 @@ module.exports = (config) ->
       {pattern: 'app/bower_components/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true},
       {pattern: 'app/bower_components/jasmine-flight/lib/jasmine-flight.js', watched: false, served: true, included: true},
       {pattern: 'app/bower_components/flight/**/*.js', included: false}
+      {pattern: 'app/bower_components/underscore/*.js', watched: false, served: true, included: true}
     ]
 
     # list of files to exclude
