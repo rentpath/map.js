@@ -33,14 +33,14 @@ define(['jquery', 'flight/lib/component', '../ui/clusters', '../utils/map_utils'
       return this.addMarkers(data);
     };
     this.addMarkers = function(data) {
-      var all_markers, listing, m, _i, _len, _ref;
+      var all_markers, i, len1, listing, m, ref;
       this.attr.markerClusterer.clearMarkers();
       this.attr.markers = [];
       this.attr.markersIndex = {};
       all_markers = [];
-      _ref = data.listings;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        listing = _ref[_i];
+      ref = data.listings;
+      for (i = 0, len1 = ref.length; i < len1; i++) {
+        listing = ref[i];
         m = this.createMarker(listing);
         all_markers.push(m);
         this.sendCustomMarkerTrigger(m);

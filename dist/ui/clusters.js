@@ -16,14 +16,14 @@ define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', '../ut
       return this.attr.markers.clearMarkers();
     };
     this.unbindMarkers = function() {
-      var marker, _i, _len, _ref, _results;
-      _ref = this.attr.markerClusterer;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        marker = _ref[_i];
-        _results.push(google.maps.event.clearListeners(marker, "click"));
+      var i, len, marker, ref, results;
+      ref = this.attr.markerClusterer;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        marker = ref[i];
+        results.push(google.maps.event.clearListeners(marker, "click"));
       }
-      return _results;
+      return results;
     };
     this.mapClusterOptions = function() {
       var batchSize, style;
