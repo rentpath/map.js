@@ -104,7 +104,7 @@ define(['jquery', 'flight/lib/component', '../utils/map_utils', '../utils/distan
       return this.attr.infoWindowOpen = false;
     };
     this.defineGoogleMapOptions = function() {
-      var geo, k, options, v, _ref;
+      var geo, k, options, ref, v;
       geo = this.getInitialGeo();
       options = {
         center: new google.maps.LatLng(geo.lat, geo.lng),
@@ -112,9 +112,9 @@ define(['jquery', 'flight/lib/component', '../utils/map_utils', '../utils/distan
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         scaleControl: true
       };
-      _ref = this.attr.gMapOptions;
-      for (k in _ref) {
-        v = _ref[k];
+      ref = this.attr.gMapOptions;
+      for (k in ref) {
+        v = ref[k];
         options[k] = v;
       }
       return options;

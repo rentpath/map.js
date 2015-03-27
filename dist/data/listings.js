@@ -75,7 +75,7 @@ define(['jquery', 'underscore', 'flight/lib/component', '../utils/map_utils', ".
       return this.on(document, 'uiMapZoomNoMarkers', this.getListings);
     });
     return this.queryData = function(data) {
-      var mgtcoid, name, priceRange, propertyName, qData, refinements, _i, _len, _ref;
+      var i, len, mgtcoid, name, priceRange, propertyName, qData, ref, refinements;
       qData = {
         lat: data.latitude,
         latitude: data.latitude,
@@ -106,9 +106,9 @@ define(['jquery', 'underscore', 'flight/lib/component', '../utils/map_utils', ".
         qData.mgtcoid = encodeURIComponent(mgtcoid);
       }
       priceRange = mapUtils.getPriceRange(this.attr.priceRangeRefinements);
-      _ref = ['min_price', 'max_price'];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        name = _ref[_i];
+      ref = ['min_price', 'max_price'];
+      for (i = 0, len = ref.length; i < len; i++) {
+        name = ref[i];
         if (priceRange[name]) {
           qData[name] = priceRange[name];
         }
