@@ -13,7 +13,7 @@ module.exports = (config) ->
       {pattern: 'src/**/*.coffee', included: false},
       {pattern: 'test/spec/**/*_spec.coffee', included: false},
       {pattern: 'test/spec/fixtures/**', watched: true, served: true, included: false},
-      {pattern: 'app/bower_components/jquery/dist/jquery.js', watched: false, served: true, included: true},
+      {pattern: 'app/bower_components/jquery/jquery.js', watched: false, served: true, included: true},
       {pattern: 'app/bower_components/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true},
       {pattern: 'app/bower_components/jasmine-flight/lib/jasmine-flight.js', watched: false, served: true, included: true},
       {pattern: 'app/bower_components/flight/**/*.js', included: false}

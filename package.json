@@ -2,50 +2,51 @@
   "name": "map",
   "version": "1.0.1",
   "description": "Map Module for RentPath Sites",
-  "homepage": "https://github.com/rentpath/map.js",
+  "license": "MIT",
+  "repository": "rentpath/map.js",
   "author": {
-    "name": "RentPath"
+    "name": "RentPath",
+    "email": "",
+    "url": "https://github.com/rentpath/"
   },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/primedia/map.js.git"
-    }
-  ],
-  "github": "https://github.com/primedia/map.js.git",
   "devDependencies": {
     "coffee-script": "~1.7.0",
     "del": "^1.1.0",
-    "gulp": "^3.8.10",
+    "generator-flight": "~0.8.0",
+    "gulp": "~3.8.11",
     "gulp-coffee": "^2.2.0",
+    "gulp-compass": "~1.1.8",
+    "gulp-jshint": "~1.5.3",
     "gulp-karma": "0.0.4",
+    "gulp-livereload": "~0.2.0",
     "gulp-sourcemaps": "~1.2.0",
     "gulp-util": "^3.0.1",
-    "jasmine-core": "^2.2.0",
-    "karma": "^0.12.31",
-    "karma-chrome-launcher": "^0.1.7",
+    "karma": "~0.12.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-cli": "~0.0.4",
     "karma-coffee-preprocessor": "^0.2.1",
-    "karma-firefox-launcher": "^0.1.0",
-    "karma-ie-launcher": "^0.1.1",
-    "karma-jasmine": "^0.3.5",
-    "karma-phantomjs-launcher": "^0.1.0",
-    "karma-requirejs": "^0.2.0",
-    "karma-safari-launcher": "^0.1.1"
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-jasmine": "~0.2.0",
+    "karma-requirejs": "~0.2.1",
+    "node-static": "~0.7.3",
+    "requirejs": "~2.1.11",
+    "tiny-lr": "~0.0.5"
   },
   "scripts": {
-    "compile": "gulp build",
-    "build": "gulp dist",
+    "build": "gulp build",
     "livereload": "gulp",
+    "start": "static -p 8899 app",
     "watch": "gulp",
-    "watch:dev": "gulp",
+    "watch:dev": "npm run server > server.log & npm run livereload",
     "watch:test": "karma start",
     "test": "karma start --single-run",
-    "test:clean": "npm run compile && npm test",
-    "clean:all": "rm -rf app/bower_components node_modules",
-    "prereset": "npm run clean:all",
+    "clean": "rm -rf app/bower_components node_modules",
+    "prereset": "npm run clean",
     "reset": "npm install",
-    "postreset": "npm run compile",
     "postinstall": "bower install",
     "preversion": "npm run reset && npm test && npm run build"
+  },
+  "dependencies": {
+    "bower": "~1.3.1"
   }
 }
