@@ -1,5 +1,5 @@
 define [
-  'src/ui/base_map'
+  'map/components/ui/base_map'
 ],
 (
   BaseMap

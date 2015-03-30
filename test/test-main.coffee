@@ -1,4 +1,5 @@
 allTestFiles = []
+
 TEST_REGEXP = /(spec|test)\.js$/i
 pathToModule = (path) ->
   path.replace(/^\/base\//, "").replace /\.js$/, ""
@@ -15,7 +16,7 @@ require.config
   baseUrl: "/base"
 
   paths: {
-    map: 'src'
+    map: 'app/coffeescript'
     flight: 'app/bower_components/flight'
     jquery: 'app/bower_components/jquery/jquery'
   }

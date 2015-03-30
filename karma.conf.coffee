@@ -10,7 +10,7 @@ module.exports = (config) ->
     files: [
       'http://maps.googleapis.com/maps/api/js?libraries=geometry,places&sensor=false'
       'test/test-main.coffee',
-      {pattern: 'src/**/*.coffee', included: false},
+      {pattern: 'app/coffeescript/**/*.coffee', included: false},
       {pattern: 'test/spec/**/*_spec.coffee', included: false},
       {pattern: 'test/spec/fixtures/**', watched: true, served: true, included: false},
       {pattern: 'app/bower_components/jquery/jquery.js', watched: false, served: true, included: true},
