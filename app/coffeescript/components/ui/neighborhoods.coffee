@@ -5,7 +5,7 @@ define [
   'underscore'
   'flight/lib/component'
   'accounting'
-  'map/components/utils/mobile_detection'
+  'map/components/mixins/mobile_detection'
   'map/components/ui/tool_tip'
 ], (
   $,

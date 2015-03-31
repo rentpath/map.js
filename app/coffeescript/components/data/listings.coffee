@@ -4,8 +4,8 @@ define [
   'jquery'
   'underscore'
   'flight/lib/component'
-  'map/components/utils/map_utils'
-  "map/components/utils/distance_conversion"
+  'map/components/mixins/map_utils'
+  "map/components/mixins/distance_conversion"
 ], (
   $,
   _
@@ -77,7 +77,7 @@ define [
         latitude: data.latitude
         lng: data.longitude
         longitude: data.longitude
-        miles: Math.round(distanceConversion.convertMetersToMiles(data.radius))
+        miles: Math.round(convertMetersToMiles(data.radius))
         lat1: data.lat1
         lng1: data.lng1
         lat2: data.lat2
@@ -105,4 +105,4 @@ define [
 
       qData
 
-  return defineComponent(listingsData)
+  return defineComponent(listingsData, distanceConversion)

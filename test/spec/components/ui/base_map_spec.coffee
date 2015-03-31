@@ -1,25 +1,25 @@
-define [ 'map/components/ui/base_map' ], ( BaseMap ) ->
+define [ ], ( ) ->
 
-  beforeEach ->
-    @subject = new BaseMap document
+  describeComponent 'map/components/ui/base_map', ->
+    describe "#defineGoogleMapOptions", ->
+      it "should build a hash", ->
+        @setupComponent()
 
-  describe "#defineGoogleMapOptions", ->
-    it "should build a hash", ->
-      expect(@subject.defineGoogleMapOptions()).toEqual
-        center:       new google.maps.LatLng(@subject.attr.latitude, @subject.attr.longitude)
-        zoom:         12
-        mapTypeId:    google.maps.MapTypeId.ROADMAP
-        scaleControl: true
-        draggable:    undefined
+        expect(@component.defineGoogleMapOptions()).toEqual
+          center:       new google.maps.LatLng(@component.attr.latitude, @component.attr.longitude)
+          zoom:         12
+          mapTypeId:    google.maps.MapTypeId.ROADMAP
+          scaleControl: true
+          draggable:    undefined
 
-    it "should pass along gMapOptions", ->
-      @subject = new BaseMap document,
-        gMapOptions:
-          panControl: false
+      it "should pass along gMapOptions", ->
+        @setupComponent
+          gMapOptions:
+            panControl: false
 
-      expect(@subject.defineGoogleMapOptions()).toEqual
-        center:       new google.maps.LatLng(@subject.attr.latitude, @subject.attr.longitude)
-        zoom:         12
-        mapTypeId:    google.maps.MapTypeId.ROADMAP
-        scaleControl: true
-        panControl:   false
+        expect(@component.defineGoogleMapOptions()).toEqual
+          center:       new google.maps.LatLng(@component.attr.latitude, @component.attr.longitude)
+          zoom:         12
+          mapTypeId:    google.maps.MapTypeId.ROADMAP
+          scaleControl: true
+          panControl:   false

@@ -1,5 +1,5 @@
 'use strict';
-define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/components/utils/map_utils', 'map/components/utils/mobile_detection'], function(compose, defineComponent, markerClusterer, map_utils, mobileDetection) {
+define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/components/mixins/map_utils', 'map/components/mixins/mobile_detection'], function(compose, defineComponent, markerClusterer, map_utils, mobileDetection) {
   var initMarkerClusters;
   initMarkerClusters = function() {
     compose.mixin(this, [mobileDetection]);

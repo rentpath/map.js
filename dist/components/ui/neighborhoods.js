@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'underscore', 'flight/lib/component', 'accounting', 'map/components/utils/mobile_detection', 'map/components/ui/tool_tip'], function($, _, defineComponent, accounting, mobileDetection, toolTip) {
+define(['jquery', 'underscore', 'flight/lib/component', 'accounting', 'map/components/mixins/mobile_detection', 'map/components/ui/tool_tip'], function($, _, defineComponent, accounting, mobileDetection, toolTip) {
   var neighborhoodsOverlay;
   _.templateSettings = {
     interpolate: /\{\{(.+?)\}\}/g,

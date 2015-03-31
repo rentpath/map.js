@@ -9,18 +9,22 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       'http://maps.googleapis.com/maps/api/js?libraries=geometry,places&sensor=false'
-      'test/test-main.coffee',
-      {pattern: 'app/coffeescript/**/*.coffee', included: false},
-      {pattern: 'test/spec/**/*_spec.coffee', included: false},
-      {pattern: 'test/spec/fixtures/**', watched: true, served: true, included: false},
-      {pattern: 'app/bower_components/jquery/jquery.js', watched: false, served: true, included: true},
-      {pattern: 'app/bower_components/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true},
-      {pattern: 'app/bower_components/jasmine-flight/lib/jasmine-flight.js', watched: false, served: true, included: true},
+
+      {pattern: 'app/bower_components/underscore/*.js', watched: false, served: true, included: true}
+      {pattern: 'app/bower_components/jquery/jquery.js', watched: false, served: true, included: true}
+      {pattern: 'app/bower_components/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true}
+      {pattern: 'app/bower_components/jasmine-flight/lib/jasmine-flight.js', watched: false, served: true, included: true}
+
       {pattern: 'app/bower_components/flight/**/*.js', included: false}
       {pattern: 'app/bower_components/primedia_events/primedia-events.js', included: false}
       {pattern: 'app/bower_components/marker-clusterer/marker-clusterer.js', included: false}
       {pattern: 'app/bower_components/accounting/accounting.js', included: false}
-      {pattern: 'app/bower_components/underscore/*.js', watched: false, served: true, included: true}
+
+      {pattern: 'app/coffeescript/**/*.coffee', included: false}
+      {pattern: 'test/spec/**/*_spec.coffee', included: false}
+      {pattern: 'test/spec/fixtures/**', watched: true, served: true, included: false}
+
+      'test/test-main.coffee'
     ]
 
     # list of files to exclude
@@ -34,6 +38,11 @@ module.exports = (config) ->
       '**/*.coffee': ['coffee']
       '*/.html': []
     }
+
+    coffeePreprocessor:
+      options:
+        bare: true
+        sourceMap: true
 
     # test results reporter to use
     # possible values: 'dots', 'progress'
