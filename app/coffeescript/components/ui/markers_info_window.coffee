@@ -2,8 +2,8 @@
 
 define [
   'flight/lib/component'
-  'map/components//ui/markers'
-  'map/components//ui/info_window'
+  'map/components/ui/markers'
+  'map/components/ui/info_window'
 ], (
   defineComponent
   Markers

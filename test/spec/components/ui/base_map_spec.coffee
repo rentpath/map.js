@@ -1,9 +1,5 @@
-define [
-  'map/components/ui/base_map'
-],
-(
-  BaseMap
-) ->
+define [ 'map/components/ui/base_map' ], ( BaseMap ) ->
+
   beforeEach ->
     @subject = new BaseMap document
 

@@ -17,6 +17,9 @@ module.exports = (config) ->
       {pattern: 'app/bower_components/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true},
       {pattern: 'app/bower_components/jasmine-flight/lib/jasmine-flight.js', watched: false, served: true, included: true},
       {pattern: 'app/bower_components/flight/**/*.js', included: false}
+      {pattern: 'app/bower_components/primedia_events/primedia-events.js', included: false}
+      {pattern: 'app/bower_components/marker-clusterer/marker-clusterer.js', included: false}
+      {pattern: 'app/bower_components/accounting/accounting.js', included: false}
       {pattern: 'app/bower_components/underscore/*.js', watched: false, served: true, included: true}
     ]
 
