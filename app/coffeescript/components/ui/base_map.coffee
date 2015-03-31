@@ -176,7 +176,7 @@ define [
       hoodDisplayName: @geoData().hood_display_name
 
     @zoomCircle = ->
-      radius = @convertMilesToMeters(@geoDataRadiusMiles())
+      radius = convertMilesToMeters(@geoDataRadiusMiles())
       circleOptions =
         center: @mapCenter()
         map: @attr.gMap

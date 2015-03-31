@@ -5,22 +5,25 @@ define([], function() {
     meterToKilometer = 1000;
     kmRatio = 0.62137;
     this._metersToKilometers = function(meters) {
-      if (!meters) {
+      if (!this._distanceParamDefined(meters)) {
         return 0;
       }
       return (meters / meterToKilometer) * kmRatio;
     };
     this._milesToMeters = function(miles) {
-      if (!miles) {
+      if (!this._distanceParamDefined(miles)) {
         return 0;
       }
       return (miles / kmRatio) * meterToKilometer;
     };
     this._metersToMiles = function(meters) {
-      if (!meters) {
+      if (!this._distanceParamDefined(meters)) {
         return 0;
       }
       return (meters / meterToKilometer) * kmRatio;
+    };
+    this._distanceParamDefined = function(p) {
+      return typeof p !== 'undefined' && p && p !== '';
     };
     this.convertMilesToMeters = function(miles) {
       return this._milesToMeters(miles);
