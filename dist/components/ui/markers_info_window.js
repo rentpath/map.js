@@ -1,5 +1,5 @@
 'use strict';
-define(['flight/lib/component', 'map/components//ui/markers', 'map/components//ui/info_window'], function(defineComponent, Markers, InfoWindow) {
+define(['flight/lib/component', 'map/components/ui/markers', 'map/components/ui/info_window'], function(defineComponent, Markers, InfoWindow) {
   var markersInfoWindow;
   markersInfoWindow = function() {
     this.defaultAttrs({

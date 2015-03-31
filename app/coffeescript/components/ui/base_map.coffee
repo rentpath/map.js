@@ -3,8 +3,8 @@
 define [
   'jquery'
   'flight/lib/component'
-  'map/components/utils/map_utils'
-  'map/components/utils/distance_conversion'
+  'map/components/mixins/map_utils'
+  'map/components/mixins/distance_conversion'
 ], (
   $
   defineComponent
@@ -176,7 +176,7 @@ define [
       hoodDisplayName: @geoData().hood_display_name
 
     @zoomCircle = ->
-      radius = distanceConversion.convertMilesToMeters(@geoDataRadiusMiles())
+      radius = convertMilesToMeters(@geoDataRadiusMiles())
       circleOptions =
         center: @mapCenter()
         map: @attr.gMap
@@ -195,5 +195,4 @@ define [
       lat: @data.lat || @data.latitude || @attr.latitude
       lng: @data.lng || @data.longitude || @attr.longitude
 
-
-  return defineComponent(defaultMap)
+  return defineComponent(defaultMap, distanceConversion)

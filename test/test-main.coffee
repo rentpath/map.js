@@ -16,8 +16,8 @@ require.config
   baseUrl: "/base"
 
   paths: {
-    map: 'app/coffeescript'
     flight: 'app/bower_components/flight'
+    map: 'app/coffeescript'
     jquery: 'app/bower_components/jquery/jquery'
     accounting: 'app/bower_components/accounting/accounting'
     primedia_events: 'app/bower_components/primedia_events/primedia-events'
@@ -31,4 +31,4 @@ require.config
   callback: window.__karma__.start
 
 # Uncomment to load flight fixtures.
-# window.jasmine.getFixtures().fixturesPath = 'base/test/spec/fixtures/'
+window.jasmine.getFixtures().fixturesPath = 'base/test/spec/fixtures/'
