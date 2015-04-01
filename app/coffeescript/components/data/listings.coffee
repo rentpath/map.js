@@ -77,7 +77,7 @@ define [
         latitude: data.latitude
         lng: data.longitude
         longitude: data.longitude
-        miles: Math.round(convertMetersToMiles(data.radius))
+        miles: Math.round(@convertMetersToMiles(data.radius))
         lat1: data.lat1
         lng1: data.lng1
         lat2: data.lat2
