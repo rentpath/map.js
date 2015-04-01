@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/utils/map_utils', 'map/components/utils/distance_conversion'], function($, defineComponent, mapUtils, distanceConversion) {
+define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'map/components/mixins/distance_conversion'], function($, defineComponent, mapUtils, distanceConversion) {
   var defaultMap;
   defaultMap = function() {
     this.defaultAttrs({
@@ -201,7 +201,7 @@ define(['jquery', 'flight/lib/component', 'map/components/utils/map_utils', 'map
     };
     this.zoomCircle = function() {
       var circle, circleOptions, radius;
-      radius = distanceConversion.convertMilesToMeters(this.geoDataRadiusMiles());
+      radius = convertMilesToMeters(this.geoDataRadiusMiles());
       circleOptions = {
         center: this.mapCenter(),
         map: this.attr.gMap,
@@ -224,5 +224,5 @@ define(['jquery', 'flight/lib/component', 'map/components/utils/map_utils', 'map
       };
     };
   };
-  return defineComponent(defaultMap);
+  return defineComponent(defaultMap, distanceConversion);
 });

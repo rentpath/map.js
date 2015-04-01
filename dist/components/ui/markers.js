@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/components/utils/map_utils', 'primedia_events'], function($, defineComponent, Clusters, map_utils, events) {
+define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/components/mixins/map_utils', 'primedia_events'], function($, defineComponent, Clusters, map_utils, events) {
   var markersOverlay;
   markersOverlay = function() {
     this.defaultAttrs({

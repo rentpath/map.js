@@ -4,7 +4,7 @@ define [
   'jquery'
   'flight/lib/component'
   'map/components/ui/clusters'
-  'map/components/utils/map_utils'
+  'map/components/mixins/map_utils'
   'primedia_events'
 ], (
   $
