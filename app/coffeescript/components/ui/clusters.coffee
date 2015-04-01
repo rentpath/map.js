@@ -5,25 +5,23 @@ define [
   'flight/lib/component',
   'marker-clusterer',
   'map/components/utils/map_utils',
-  'map/components/utils/mobile_detection'
+  'map/components/utils/mobile_detection',
+  'map/components/utils/cluster_opts'
 ], (
   compose,
   defineComponent,
   markerClusterer,
   map_utils,
-  mobileDetection
+  mobileDetection,
+  clusterOpts
 ) ->
 
   initMarkerClusters = ->
     compose.mixin(@, [mobileDetection])
+    compose.mixin(@, [clusterOpts])
 
     @defaultAttrs
-      mapPinCluster: map_utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
       markerClusterer: undefined
-      clusterSize: 10
-      clusterTextColor: 'black'
-      clusterTextSize: 11
-      clusterFontWeight: 'bold'
 
     @clearMarkers = ->
       @unbindMarkers()
@@ -34,18 +32,9 @@ define [
         google.maps.event.clearListeners marker, "click"
 
     @mapClusterOptions = ->
-      batchSize = if @isMobile() then 200 else null
-      style =
-        height: 40
-        url: @attr.mapPinCluster
-        width: 46
-        textColor: @attr.clusterTextColor
-        textSize: @attr.clusterTextSize
-        fontWeight: @attr.clusterFontWeight
-
-      styles: [style,style,style,style,style]
-      minimumClusterSize: @attr.clusterSize
-      batchSize: batchSize
+      styles: @clusterStyleArray()
+      minimumClusterSize: @clusterSize()
+      batchSize: if @isMobile() then 200 else null
 
     @initClusterer = (ev, data) ->
       @attr.markerClusterer = new MarkerClusterer(data.gMap, [], @mapClusterOptions())
