@@ -32,12 +32,9 @@ define [
         google.maps.event.clearListeners marker, "click"
 
     @mapClusterOptions = ->
-      batchSize = if @isMobile() then 200 else null
-      style = @clusterStyles()
-
-      styles: [style,style,style,style,style]
+      styles: @clusterStyleArray()
       minimumClusterSize: @clusterSize()
-      batchSize: batchSize
+      batchSize: if @isMobile() then 200 else null
 
     @initClusterer = (ev, data) ->
       @attr.markerClusterer = new MarkerClusterer(data.gMap, [], @mapClusterOptions())
