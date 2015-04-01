@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/repos/52b37e98f3ea0062e700e4ae/badges/6a901a611affabf8847f/gpa.svg)](https://codeclimate.com/repos/52b37e98f3ea0062e700e4ae/feed)
+
 ## Google Map API Wrapper
 - pins
 - clusters
