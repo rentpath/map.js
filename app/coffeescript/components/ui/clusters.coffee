@@ -4,21 +4,17 @@ define [
   'flight/lib/compose',
   'flight/lib/component',
   'marker-clusterer',
-  'map/components/utils/map_utils',
-  'map/components/utils/mobile_detection',
-  'map/components/utils/cluster_opts'
+  'map/components/mixins/mobile_detection',
+  'map/components/mixins/cluster_opts'
 ], (
   compose,
   defineComponent,
   markerClusterer,
-  map_utils,
   mobileDetection,
   clusterOpts
 ) ->
 
   initMarkerClusters = ->
-    compose.mixin(@, [mobileDetection])
-    compose.mixin(@, [clusterOpts])
 
     @defaultAttrs
       markerClusterer: undefined
@@ -47,4 +43,4 @@ define [
       @on document, 'mapRenderedFirst', @initClusterer
       @on document, 'clusterImageChange', @setClusterImage
 
-  return initMarkerClusters
+  return defineComponent(initMarkerClusters, mobileDetection, clusterOpts)
