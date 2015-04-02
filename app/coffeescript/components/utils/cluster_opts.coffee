@@ -1,10 +1,5 @@
 'use strict'
 
-#
-# BEWARE: This is not full proof since agent strings can be masqueraded.
-#  Depending on your need this may or may not work
-#
-
 define [ 'flight/lib/component' ], ( defineComponent ) ->
 
   clusterOpts = ->
