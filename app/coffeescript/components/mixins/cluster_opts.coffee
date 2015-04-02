@@ -5,26 +5,27 @@ define [
 ) ->
 
   clusterOpts = ->
-    @attributes = ->
+    @defaultAttrs
       clusterURL: map_utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
       clusterHeight: 40
       clusterWidth: 46
       clusterTextColor: 'black'
       clusterTextSize: 11
       clusterFontWeight: 'bold'
+      clusterSize: 10
 
-    @clusterStyles = ->
-      url: @attributes().clusterURL
-      height: @attributes().clusterHeight
-      width: @attributes().clusterWidth
-      textColor: @attributes().clusterTextColor
-      textSize: @attributes().clusterTextSize
-      fontWeight: @attributes().clusterFontWeight
+    @_clusterStyles = ->
+      url: @attr.clusterURL
+      height: @attr.clusterHeight
+      width: @attr.clusterWidth
+      textColor: @attr.clusterTextColor
+      textSize: @attr.clusterTextSize
+      fontWeight: @attr.clusterFontWeight
 
     @clusterStyleArray = ->
-      [@clusterStyles, @clusterStyles, @clusterStyles, @clusterStyles, @clusterStyles]
+      [@_clusterStyles(), @_clusterStyles(), @_clusterStyles(), @_clusterStyles(), @_clusterStyles()]
 
     @clusterSize = ->
-      clusterSize: 10
+      @attr.clusterSize
 
   return clusterOpts
