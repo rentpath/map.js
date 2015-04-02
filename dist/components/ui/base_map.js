@@ -201,7 +201,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     };
     this.zoomCircle = function() {
       var circle, circleOptions, radius;
-      radius = convertMilesToMeters(this.geoDataRadiusMiles());
+      radius = this.convertMilesToMeters(this.geoDataRadiusMiles());
       circleOptions = {
         center: this.mapCenter(),
         map: this.attr.gMap,

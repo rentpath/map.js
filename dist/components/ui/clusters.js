@@ -1,15 +1,9 @@
 'use strict';
-define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/components/mixins/map_utils', 'map/components/mixins/mobile_detection'], function(compose, defineComponent, markerClusterer, map_utils, mobileDetection) {
+define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/components/mixins/mobile_detection', 'map/components/mixins/cluster_opts'], function(compose, defineComponent, markerClusterer, mobileDetection, clusterOpts) {
   var initMarkerClusters;
   initMarkerClusters = function() {
-    compose.mixin(this, [mobileDetection]);
     this.defaultAttrs({
-      mapPinCluster: map_utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png",
-      markerClusterer: void 0,
-      clusterSize: 10,
-      clusterTextColor: 'black',
-      clusterTextSize: 11,
-      clusterFontWeight: 'bold'
+      markerClusterer: void 0
     });
     this.clearMarkers = function() {
       this.unbindMarkers();
@@ -26,20 +20,10 @@ define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/c
       return results;
     };
     this.mapClusterOptions = function() {
-      var batchSize, style;
-      batchSize = this.isMobile() ? 200 : null;
-      style = {
-        height: 40,
-        url: this.attr.mapPinCluster,
-        width: 46,
-        textColor: this.attr.clusterTextColor,
-        textSize: this.attr.clusterTextSize,
-        fontWeight: this.attr.clusterFontWeight
-      };
       return {
-        styles: [style, style, style, style, style],
-        minimumClusterSize: this.attr.clusterSize,
-        batchSize: batchSize
+        styles: this.clusterStyleArray(),
+        minimumClusterSize: this.clusterSize(),
+        batchSize: this.isMobile() ? 200 : null
       };
     };
     this.initClusterer = function(ev, data) {
@@ -54,5 +38,5 @@ define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/c
       return this.on(document, 'clusterImageChange', this.setClusterImage);
     });
   };
-  return initMarkerClusters;
+  return defineComponent(initMarkerClusters, mobileDetection, clusterOpts);
 });
