@@ -4,29 +4,24 @@ define [
   'jquery'
   'flight/lib/component'
   'map/components/ui/clusters'
-  'map/components/mixins/map_utils'
   'primedia_events'
 ], (
   $
   defineComponent
-  Clusters
-  map_utils
+  clusters
   events
 ) ->
 
   markersOverlay = ->
 
     @defaultAttrs
-       searchGeoData: {}
-       markers: []
-       markersIndex: {}
-       gMap: undefined
-       markerClusterer: undefined
-       mapPin: map_utils.assetURL() + "/images/nonsprite/map/map_pin_red4.png"
-       mapPinFree: map_utils.assetURL() + "/images/nonsprite/map/map_pin_free2.png"
-       mapPinShadow: map_utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
-       markerOptions:
-        fitBounds: false
+      searchGeoData: {}
+      markers: []
+      markersIndex: {}
+      gMap: undefined
+      markerClusterer: undefined
+      markerOptions:
+       fitBounds: false
 
     @initAttr = (ev, data) ->
       @attr.gMap = data.gMap if data.gMap
@@ -111,6 +106,10 @@ define [
           leadForm.init geoData
 
     @after 'initialize', ->
+      @attr.mapPin = @assetURL() + "/images/nonsprite/map/map_pin_red4.png"
+      @attr.mapPinFree = @assetURL() + "/images/nonsprite/map/map_pin_free2.png"
+      @attr.mapPinShadow = @assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
+
       @on document, 'mapRenderedFirst', @initAttr
       @on document, 'markersUpdateAttr', @initAttr
       @on document, 'markersDataAvailable', @render
@@ -118,4 +117,4 @@ define [
       @on document, 'animatePin', @markerAnimation
       return
 
-  return defineComponent(markersOverlay, Clusters)
+  return defineComponent(markersOverlay, clusters)

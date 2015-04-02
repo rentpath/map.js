@@ -1,7 +1,7 @@
 'use strict';
-define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/components/mixins/mobile_detection', 'map/components/mixins/cluster_opts'], function(compose, defineComponent, markerClusterer, mobileDetection, clusterOpts) {
-  var initMarkerClusters;
-  initMarkerClusters = function() {
+define(['flight/lib/component', 'marker-clusterer', 'map/components/mixins/mobile_detection', 'map/components/mixins/cluster_opts'], function(defineComponent, markerClusterer, mobileDetection, clusterOpts) {
+  var markerClusters;
+  markerClusters = function() {
     this.defaultAttrs({
       markerClusterer: void 0
     });
@@ -34,9 +34,10 @@ define(['flight/lib/compose', 'flight/lib/component', 'marker-clusterer', 'map/c
       return this.off(document, 'clusterImageChange');
     };
     return this.after('initialize', function() {
+      this.attr.mapPinCluster = this.assetURL() + "/images/nonsprite/map/map_cluster_red4.png";
       this.on(document, 'mapRenderedFirst', this.initClusterer);
       return this.on(document, 'clusterImageChange', this.setClusterImage);
     });
   };
-  return defineComponent(initMarkerClusters, mobileDetection, clusterOpts);
+  return defineComponent(markerClusters, mobileDetection, clusterOpts);
 });

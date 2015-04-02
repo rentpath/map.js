@@ -1,8 +1,9 @@
-define(['map/components/mixins/map_utils'], function(map_utils) {
+define(['flight/lib/compose', 'map/components/mixins/map_utils'], function(compose, mapUtils) {
   var clusterOpts;
   clusterOpts = function() {
+    compose.mixin(this, [mapUtils]);
     this.defaultAttrs({
-      clusterURL: map_utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png",
+      clusterURLPath: "/images/nonsprite/map/map_cluster_red4.png",
       clusterHeight: 40,
       clusterWidth: 46,
       clusterTextColor: 'black',
@@ -12,7 +13,7 @@ define(['map/components/mixins/map_utils'], function(map_utils) {
     });
     this._clusterStyles = function() {
       return {
-        url: this.attr.clusterURL,
+        url: "" + (this.assetOriginFromMetaTag()) + this.attr.clusterURLPath,
         height: this.attr.clusterHeight,
         width: this.attr.clusterWidth,
         textColor: this.attr.clusterTextColor,
