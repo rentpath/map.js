@@ -1,12 +1,16 @@
 define [
+  'flight/lib/compose'
   'map/components/mixins/map_utils'
 ], (
-  map_utils
+  compose
+  mapUtils
 ) ->
 
   clusterOpts = ->
+    compose.mixin(this, [ mapUtils ])
+
     @defaultAttrs
-      clusterURL: map_utils.assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
+      clusterURLPath: "/images/nonsprite/map/map_cluster_red4.png"
       clusterHeight: 40
       clusterWidth: 46
       clusterTextColor: 'black'
@@ -15,7 +19,7 @@ define [
       clusterSize: 10
 
     @_clusterStyles = ->
-      url: @attr.clusterURL
+      url: "#{@assetOriginFromMetaTag()}#{@attr.clusterURLPath}"
       height: @attr.clusterHeight
       width: @attr.clusterWidth
       textColor: @attr.clusterTextColor

@@ -1,32 +1,47 @@
 define [ 'jquery' ], ( $ ) ->
 
-  _extractParamFromUrl = (key)->
-    queryParams = location.search.split('&') or []
-    regex = key + '=(.*)'
-    for param in queryParams
-      value = param.match(regex) if param.match(regex)
+  mapUtils = ->
+    @defaultAttrs
+      assetHostSelector:    'meta[name="asset_host"]'
+      spinnerSelector:      '.spinner'
+      refinementsSelector:  '.pageInfo[name="refinements"]'
+      propertyNameParam:    'propertyname'
+      mgtcoidParam:         'mgtcoid'
+      propertyManagementRE: 'property-management'
 
-    if value then value[1] or ''
+    @_extractParamFromUrl = (key)->
+      queryParams = location.search.split('&') or []
+      regex = key + '=(.*)'
+      for param in queryParams
+        value = param.match(regex) if param.match(regex)
 
-  limitScaleOf: (number, limit = 4) ->
-   number.toFixed(limit)
+      if value then value[1] or ''
 
-  assetURL: () ->
-    $('meta[name="asset_host"]').attr('content')
+    @limitScaleOf = (number, limit = 4) ->
+     number.toFixed(limit)
 
-  hideSpinner: () ->
-    $('.spinner').hide()
+    @assetURL = ->
+      console.log 'assetURL() is deprecated. Use assetOriginFromMetaTag() instead.'
+      @assetOriginFromMetaTag()
 
-  getMgtcoId: (pathname = window.location.pathname) ->
-    (pathname.match('property-management') and pathname.split('/')[5]) or _extractParamFromUrl('mgtcoid')
+    @hideSpinner = () ->
+      $(@attr.spinnerSelector).hide()
 
-  getRefinements: ->
-    $(".pageInfo[name=refinements]").attr("content") or ''
+    @getMgtcoId = (pathname = window.location.pathname) ->
+      (pathname.match(@attr.propertyManagementRE) and pathname.split('/')[5]) or @_extractParamFromUrl(@atr.mgtcoidParam)
 
-  getPropertyName: ->
-    _extractParamFromUrl('propertyname')
+    @getRefinements = ->
+      $(@attr.refinementsSelector).attr("content") or ''
 
-  getPriceRange: (refinements) ->
-    _ref = _ref1 = undefined
-    min_price: (if (_ref = refinements.min_price)? then _ref.value else undefined)
-    max_price: (if (_ref1 = refinements.max_price)? then _ref1.value else undefined)
+    @getPropertyName = ->
+      @_extractParamFromUrl(@attr.propertyNameParam)
+
+    @getPriceRange = (refinements) ->
+      _ref = _ref1 = undefined
+      min_price: (if (_ref = refinements.min_price)? then _ref.value else undefined)
+      max_price: (if (_ref1 = refinements.max_price)? then _ref1.value else undefined)
+
+    @assetOriginFromMetaTag = ->
+      $(@attr.assetHostSelector).attr('content')
+
+  return mapUtils

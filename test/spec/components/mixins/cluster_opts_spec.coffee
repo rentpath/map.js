@@ -2,7 +2,8 @@ define [ ], () ->
 
   describeMixin 'map/components/mixins/cluster_opts', ->
     beforeEach ->
-      @setupComponent()
+      @fixture = readFixtures('map_utils.html')
+      @setupComponent(@fixture)
 
     it "should be defined", ->
       expect(@component).toBeDefined()
@@ -14,8 +15,7 @@ define [ ], () ->
           styles = @component.clusterStyleArray()[0]
 
         it "should return the preset URL", ()->
-          # TODO: Update after map_utils is refactored to mixin
-          # expect(styles.url).toBe()
+           expect(styles.url).toBe('http://localhost/images/nonsprite/map/map_cluster_red4.png')
 
         it "should return the preset height", ()->
           expect(styles.height).toBe(40)
@@ -33,35 +33,38 @@ define [ ], () ->
           expect(styles.fontWeight).toBe('bold')
 
       describe "with override values", ->
-        styles = {}
         beforeEach ->
-          @setupComponent
-            clusterHeight: 50
-            clusterWidth: 55
-            clusterTextColor: 'red'
-            clusterTextSize: 14
-            clusterFontWeight: 'normal'
-            clusterSize: 5
-          styles = @component.clusterStyleArray()[0]
+          @setupComponent(@fixture,
+            {
+              clusterURLPath: '/foo'
+              clusterHeight: 50
+              clusterWidth: 55
+              clusterTextColor: 'red'
+              clusterTextSize: 14
+              clusterFontWeight: 'normal'
+              clusterSize: 5
+            })
+
+
+          @styles = @component.clusterStyleArray()[0]
 
         it "should return the preset URL", ()->
-          # TODO: Update after map_utils is refactored to mixin
-          # expect(styles.url).toBe()
+          expect(@styles.url).toBe('http://localhost/foo')
 
         it "should return the overridden height", ()->
-          expect(styles.height).toBe(50)
+          expect(@styles.height).toBe(50)
 
         it "should return the overridden width", ()->
-          expect(styles.width).toBe(55)
+          expect(@styles.width).toBe(55)
 
         it "should return the overridden text color", ()->
-          expect(styles.textColor).toBe('red')
+          expect(@styles.textColor).toBe('red')
 
         it "should return the overridden text size", ()->
-          expect(styles.textSize).toBe(14)
+          expect(@styles.textSize).toBe(14)
 
         it "should return the overridden font weight", ()->
-          expect(styles.fontWeight).toBe('normal')
+          expect(@styles.fontWeight).toBe('normal')
 
     describe "#clusterSize", ->
       describe "with preset value", ->
@@ -70,8 +73,7 @@ define [ ], () ->
 
       describe "with override value", ->
         beforeEach ->
-          @setupComponent
-            clusterSize: 5
+          @setupComponent(@fixture, { clusterSize: 5 })
         it "should return the overridden cluster size", ()->
           expect(@component.clusterSize()).toBe(5)
 

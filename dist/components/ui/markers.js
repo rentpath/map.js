@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/components/mixins/map_utils', 'primedia_events'], function($, defineComponent, Clusters, map_utils, events) {
+define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'primedia_events'], function($, defineComponent, clusters, events) {
   var markersOverlay;
   markersOverlay = function() {
     this.defaultAttrs({
@@ -8,9 +8,6 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
       markersIndex: {},
       gMap: void 0,
       markerClusterer: void 0,
-      mapPin: map_utils.assetURL() + "/images/nonsprite/map/map_pin_red4.png",
-      mapPinFree: map_utils.assetURL() + "/images/nonsprite/map/map_pin_free2.png",
-      mapPinShadow: map_utils.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png",
       markerOptions: {
         fitBounds: false
       }
@@ -142,6 +139,9 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
       }
     };
     return this.after('initialize', function() {
+      this.attr.mapPin = this.assetURL() + "/images/nonsprite/map/map_pin_red4.png";
+      this.attr.mapPinFree = this.assetURL() + "/images/nonsprite/map/map_pin_free2.png";
+      this.attr.mapPinShadow = this.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png";
       this.on(document, 'mapRenderedFirst', this.initAttr);
       this.on(document, 'markersUpdateAttr', this.initAttr);
       this.on(document, 'markersDataAvailable', this.render);
@@ -149,5 +149,5 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
       this.on(document, 'animatePin', this.markerAnimation);
     });
   };
-  return defineComponent(markersOverlay, Clusters);
+  return defineComponent(markersOverlay, clusters);
 });
