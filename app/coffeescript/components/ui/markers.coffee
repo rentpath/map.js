@@ -16,6 +16,7 @@ define [
 
     @defaultAttrs
       searchGeoData: {}
+      listingCountSelector: '#mapview_listing_count'
       markers: []
       markersIndex: {}
       gMap: undefined
@@ -81,7 +82,7 @@ define [
 
     @updateListingsCount = ->
       lCount = @attr.markers.length
-      $("#mapview_listing_count").html "Apartments Found: " + lCount
+      $(@attr.listingCountSelector).html "Apartments Found: " + lCount
 
     # These functions should be moved to Listing component
     @iconBasedOnType = (datum) ->
