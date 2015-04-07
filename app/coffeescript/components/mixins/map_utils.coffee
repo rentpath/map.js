@@ -44,4 +44,6 @@ define [ 'jquery' ], ( $ ) ->
     @assetOriginFromMetaTag = ->
       $(@attr.assetHostSelector).attr('content')
 
+    return
+
   return mapUtils

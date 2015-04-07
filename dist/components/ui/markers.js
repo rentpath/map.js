@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'primedia_events'], function($, defineComponent, clusters, events) {
+define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/components/mixins/map_utils', 'primedia_events'], function($, defineComponent, clusters, mapUtils, events) {
   var markersOverlay;
   markersOverlay = function() {
     this.defaultAttrs({
@@ -12,7 +12,10 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'primedi
       markerClusterer: void 0,
       markerOptions: {
         fitBounds: false
-      }
+      },
+      mapPin: "/images/nonsprite/map/map_pin_red4.png",
+      mapPinFree: "/images/nonsprite/map/map_pin_free2.png",
+      mapPinShadow: "/images/nonsprite/map/map_pin_shadow3.png"
     });
     this.initAttr = function(ev, data) {
       if (data.gMap) {
@@ -140,10 +143,13 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'primedi
         });
       }
     };
+    this._prepend_origin = function(value) {
+      return value = "" + (this.assetOriginFromMetaTag()) + value;
+    };
     return this.after('initialize', function() {
-      this.attr.mapPin = this.assetURL() + "/images/nonsprite/map/map_pin_red4.png";
-      this.attr.mapPinFree = this.assetURL() + "/images/nonsprite/map/map_pin_free2.png";
-      this.attr.mapPinShadow = this.assetURL() + "/images/nonsprite/map/map_pin_shadow3.png";
+      this._prepend_origin(this.attr.mapPin);
+      this._prepend_origin(this.attr.mapPinFree);
+      this._prepend_origin(this.attr.mapPinShadow);
       this.on(document, 'mapRenderedFirst', this.initAttr);
       this.on(document, 'markersUpdateAttr', this.initAttr);
       this.on(document, 'markersDataAvailable', this.render);
@@ -151,5 +157,5 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'primedi
       this.on(document, 'animatePin', this.markerAnimation);
     });
   };
-  return defineComponent(markersOverlay, clusters);
+  return defineComponent(markersOverlay, clusters, mapUtils);
 });

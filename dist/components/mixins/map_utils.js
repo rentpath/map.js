@@ -56,7 +56,7 @@ define(['jquery'], function($) {
         max_price: ((_ref1 = refinements.max_price) != null ? _ref1.value : void 0)
       };
     };
-    return this.assetOriginFromMetaTag = function() {
+    this.assetOriginFromMetaTag = function() {
       return $(this.attr.assetHostSelector).attr('content');
     };
   };
