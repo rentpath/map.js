@@ -4,11 +4,24 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
   listingsData = function() {
     this.defaultAttrs({
       executeOnce: false,
-      hybridSearchRoute: "/map_view/listings",
-      mapPinsRoute: "/map/pins.json",
-      hostname: "www.apartmentguide.com",
-      priceRangeRefinements: {}
+      hybridSearchRoute: '/map_view/listings',
+      mapPinsRoute: '/map/pins.json',
+      hostname: 'www.apartmentguide.com',
+      priceRangeRefinements: {},
+      possibleRefinements: ['min_price', 'max_price'],
+      sortByAttribute: 'distance'
     });
+    this.mapConfig = function() {
+      return {
+        executeOnce: this.attr.executeOnce,
+        hybridSearchRoute: this.attr.hybridSearchRoute,
+        mapPinsRoute: this.attr.mapPinsRoute,
+        hostname: this.attr.hostname,
+        priceRangeRefinements: this.attr.priceRangeRefinements,
+        possibleRefinements: this.attr.possibleRefinements,
+        sortByAttribute: this.attr.sortByAttribute
+      };
+    };
     this.getListings = function(ev, queryData) {
       return this.xhr = $.ajax({
         url: this.attr.hybridSearchRoute + "?" + (this.decodedQueryData(queryData)),
@@ -29,7 +42,7 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       return decodeURIComponent($.param(this.queryData(data)));
     };
     this.getMarkers = function(ev, data) {
-      data.sort = 'distance';
+      data.sort = this.attr.sortByAttribute;
       return this.xhr = $.ajax({
         url: this.attr.mapPinsRoute + "?" + (this.decodedQueryData(data)),
         success: (function(_this) {
@@ -106,7 +119,7 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         qData.mgtcoid = encodeURIComponent(mgtcoid);
       }
       priceRange = mapUtils.getPriceRange(this.attr.priceRangeRefinements);
-      ref = ['min_price', 'max_price'];
+      ref = this.attr.possibleRefinements;
       for (i = 0, len = ref.length; i < len; i++) {
         name = ref[i];
         if (priceRange[name]) {

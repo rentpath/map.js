@@ -18,10 +18,21 @@ define [
 
     @defaultAttrs
       executeOnce: false
-      hybridSearchRoute: "/map_view/listings"
-      mapPinsRoute:  "/map/pins.json"
-      hostname: "www.apartmentguide.com"
+      hybridSearchRoute: '/map_view/listings'
+      mapPinsRoute:  '/map/pins.json'
+      hostname: 'www.apartmentguide.com'
       priceRangeRefinements: {}
+      possibleRefinements: ['min_price', 'max_price']
+      sortByAttribute: 'distance'
+
+    @mapConfig = ->
+      executeOnce: @attr.executeOnce
+      hybridSearchRoute: @attr.hybridSearchRoute
+      mapPinsRoute: @attr.mapPinsRoute
+      hostname: @attr.hostname
+      priceRangeRefinements: @attr.priceRangeRefinements
+      possibleRefinements: @attr.possibleRefinements
+      sortByAttribute: @attr.sortByAttribute
 
     @getListings = (ev, queryData) ->
       @xhr = $.ajax
@@ -35,7 +46,7 @@ define [
       decodeURIComponent($.param(@queryData(data)))
 
     @getMarkers = (ev, data) ->
-      data.sort = 'distance'
+      data.sort = @attr.sortByAttribute
       @xhr = $.ajax
         url: "#{@attr.mapPinsRoute}?#{@decodedQueryData(data)}"
         success: (data) =>
@@ -100,7 +111,7 @@ define [
       qData.mgtcoid = encodeURIComponent(mgtcoid) if mgtcoid
 
       priceRange = mapUtils.getPriceRange(@attr.priceRangeRefinements)
-      for name in ['min_price', 'max_price']
+      for name in @attr.possibleRefinements
         qData[name] = priceRange[name] if priceRange[name]
 
       qData
