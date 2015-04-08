@@ -4,6 +4,8 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'primedi
   markersOverlay = function() {
     this.defaultAttrs({
       searchGeoData: {},
+      listingCountSelector: '#mapview_listing_count',
+      listingCountText: 'Apartments Found: ',
       markers: [],
       markersIndex: {},
       gMap: void 0,
@@ -98,7 +100,7 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'primedi
     this.updateListingsCount = function() {
       var lCount;
       lCount = this.attr.markers.length;
-      return $("#mapview_listing_count").html("Apartments Found: " + lCount);
+      return $(this.attr.listingCountSelector).html(this.attr.listingCountText + lCount);
     };
     this.iconBasedOnType = function(datum) {
       if (datum.free) {
