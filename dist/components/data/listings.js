@@ -56,21 +56,6 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         }
       });
     };
-    this.renderListings = function(skipFitBounds) {
-      var listingObjects, listings;
-      if (listings = this._parseListingsFromHtml()) {
-        zutron.getSavedListings();
-        listingObjects = this._addListingstoMapUpdate(listings, skipFitBounds);
-        this._addInfoWindowsToListings(listingObjects);
-        return this.listing_count = this._listingsCount(listingObjects);
-      }
-    };
-    this.parseListingsFromHtml = function() {
-      var jListingData, listingData, listings;
-      listingData = $('#listingData').attr('data-listingData');
-      jListingData = $.parseJSON(listingData);
-      return listings = jListingData != null ? jListingData.listings : {};
-    };
     this.resetEvents = function() {
       if (this.attr.executeOnce) {
         this.off(document, 'uiMarkersDataRequest');

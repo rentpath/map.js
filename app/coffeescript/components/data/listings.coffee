@@ -55,18 +55,6 @@ define [
         complete: ->
           mapUtils.hideSpinner()
 
-    @renderListings = (skipFitBounds) ->
-      if listings = @_parseListingsFromHtml()
-        zutron.getSavedListings()
-        listingObjects = @_addListingstoMapUpdate(listings, skipFitBounds)
-        @_addInfoWindowsToListings(listingObjects)
-        @listing_count = @_listingsCount(listingObjects)
-
-    @parseListingsFromHtml = () ->
-      listingData = $('#listingData').attr('data-listingData')
-      jListingData = $.parseJSON(listingData)
-      listings = if jListingData? then jListingData.listings else {}
-
     @resetEvents = ->
       if @attr.executeOnce
         @off document, 'uiMarkersDataRequest'
