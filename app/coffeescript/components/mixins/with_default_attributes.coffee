@@ -10,12 +10,14 @@ define [
 
   withDefaultAttr = ->
 
-    @defaultAttr = ->
+    @defaultAttrs = (properties) ->
       flight.utils.push(@defaults, properties, true) || (@defaults = properties)
 
     @initAttributes = (attrs = {}) ->
       attr = Object.create(attrs)
-      attr[key] = this.defaults[key] for key in this.defaults when (!attrs.hasOwnProperty(key))
+      attr[k] = v for k,v of this.defaults when (!attrs.hasOwnProperty(k))
       this.attr = attr
-            
+
+    return
+    
   return withDefaultAttr
