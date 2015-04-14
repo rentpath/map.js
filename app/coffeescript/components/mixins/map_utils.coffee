@@ -28,7 +28,7 @@ define [ 'jquery' ], ( $ ) ->
       $(@attr.spinnerSelector).hide()
 
     @getMgtcoId = (pathname = window.location.pathname) ->
-      (pathname.match(@attr.propertyManagementRE) and pathname.split('/')[5]) or @_extractParamFromUrl(@atr.mgtcoidParam)
+      (pathname.match(@attr.propertyManagementRE) and pathname.split('/')[5]) or @_extractParamFromUrl(@attr.mgtcoidParam)
 
     @getRefinements = ->
       $(@attr.refinementsSelector).attr("content") or ''
