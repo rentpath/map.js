@@ -24,8 +24,7 @@ define(['jquery', 'flight/lib/compose', 'map/common', 'map/components/ui/base_ma
       }
     };
     compose.mixin(this, [withDefaultAttrs, mapUtils]);
-    this.initAttributes(this.attr);
-    this.mergeAttributes(this.attr, arguments[0]);
+    this.overrideAttrsWith(arguments[0]);
     theMap.initMap(this.attr);
     baseMap.attachTo(this.attr.map.canvasId, this.attr.map);
     return markerInfoWindow.attachTo(this.attr.map.canvasId, this.attr.markers);

@@ -34,16 +34,19 @@ define [
         markerOptions:
           fitBounds: true
 
+    # pull in mixins and their defaultAttrs.
+
     compose.mixin(@, [ withDefaultAttrs, mapUtils ])
 
-    @initAttributes(@attr)
-    @mergeAttributes(@attr, arguments[0])
+    # override @attr with arguments from the caller.
+
+    @overrideAttrsWith(arguments[0])
 
     # instantiate a google map centered at lat, lng.
 
     theMap.initMap(@attr)
 
-    # add baseline flight components to the map.
+    # add some baseline flight components to the map.
 
     baseMap.attachTo(@attr.map.canvasId, @attr.map)
     markerInfoWindow.attachTo(@attr.map.canvasId, @attr.markers)
