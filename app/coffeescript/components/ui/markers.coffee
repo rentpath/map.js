@@ -4,11 +4,13 @@ define [
   'jquery'
   'flight/lib/component'
   'map/components/ui/clusters'
+  'map/components/mixins/map_utils'
   'primedia_events'
 ], (
   $
   defineComponent
   clusters
+  mapUtils
   events
 ) ->
 
@@ -24,6 +26,9 @@ define [
       markerClusterer: undefined
       markerOptions:
        fitBounds: false
+      mapPin:       "/images/nonsprite/map/map_pin_red4.png"
+      mapPinFree:   "/images/nonsprite/map/map_pin_free2.png"
+      mapPinShadow: "/images/nonsprite/map/map_pin_shadow3.png"
 
     @initAttr = (ev, data) ->
       @attr.gMap = data.gMap if data.gMap
@@ -107,10 +112,13 @@ define [
         $.when(@getGeoDataForListing()).then (geoData) ->
           leadForm.init geoData
 
+    @_prepend_origin = (value) ->
+      value = "#{@assetOriginFromMetaTag()}#{value}"
+
     @after 'initialize', ->
-      @attr.mapPin = @assetURL() + "/images/nonsprite/map/map_pin_red4.png"
-      @attr.mapPinFree = @assetURL() + "/images/nonsprite/map/map_pin_free2.png"
-      @attr.mapPinShadow = @assetURL() + "/images/nonsprite/map/map_pin_shadow3.png"
+      @_prepend_origin(@attr.mapPin)
+      @_prepend_origin(@attr.mapPinFree)
+      @_prepend_origin(@attr.mapPinShadow)
 
       @on document, 'mapRenderedFirst', @initAttr
       @on document, 'markersUpdateAttr', @initAttr
@@ -119,4 +127,4 @@ define [
       @on document, 'animatePin', @markerAnimation
       return
 
-  return defineComponent(markersOverlay, clusters)
+  return defineComponent(markersOverlay, clusters, mapUtils)

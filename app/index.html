@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>map.js</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/css/main.css">
+
+    <meta name="asset_host" content="http://assets.local.apartmentguide.com">
+  </head>
+
+  <body>
+    <h1>Maps Demo</h1>
+
+    <h2>Basic Map</h2>
+    <div id="map_wrapper">
+      <div id="map_canvas"></div>
+    </div>
+
+    <!--[if lt IE 9]>
+    <script src="/bower_components/es5-shim/es5-shim.js"></script>
+    <script src="/bower_components/es5-shim/es5-sham.js"></script>
+    <![endif]-->
+
+    <script id="gmap_config" src="http://maps.googleapis.com/maps/api/js?libraries=geometry,places&sensor=false&client=gme-rentpathinc&channel=apartmentguide.com"></script>
+
+    <script src="/bower_components/jquery/jquery.js"></script>
+    <script src="/bower_components/requirejs/require.js" data-main="js/demo/main.js"></script>
+  </body>
+</html>

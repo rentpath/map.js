@@ -19,6 +19,7 @@
     "gulp-jshint": "~1.5.3",
     "gulp-karma": "0.0.4",
     "gulp-livereload": "~0.2.0",
+    "gulp-replace": "^0.5.3",
     "gulp-sourcemaps": "~1.2.0",
     "gulp-util": "^3.0.1",
     "karma": "~0.12.0",

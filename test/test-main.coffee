@@ -19,9 +19,11 @@ require.config
     flight: 'app/bower_components/flight'
     map: 'app/coffeescript'
     jquery: 'app/bower_components/jquery/jquery'
+    "jquery.cookie": 'app/bower_components/jquery.cookie/jquery.cookie'
     accounting: 'app/bower_components/accounting/accounting'
     primedia_events: 'app/bower_components/primedia_events/primedia-events'
     'marker-clusterer': 'app/bower_components/marker-clusterer/marker-clusterer'
+    'image-helper': 'app/bower_components/image-helper/image-helper'
   }
 
   # dynamically load all test files
