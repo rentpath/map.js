@@ -40,7 +40,7 @@ define(['jquery'], function($) {
       if (pathname == null) {
         pathname = window.location.pathname;
       }
-      return (pathname.match(this.attr.propertyManagementRE) && pathname.split('/')[5]) || this._extractParamFromUrl(this.atr.mgtcoidParam);
+      return (pathname.match(this.attr.propertyManagementRE) && pathname.split('/')[5]) || this._extractParamFromUrl(this.attr.mgtcoidParam);
     };
     this.getRefinements = function() {
       return $(this.attr.refinementsSelector).attr("content") || '';

@@ -18,10 +18,21 @@ define [
 
     @defaultAttrs
       executeOnce: false
-      hybridSearchRoute: "/map_view/listings"
-      mapPinsRoute:  "/map/pins.json"
-      hostname: "www.apartmentguide.com"
+      hybridSearchRoute: '/map_view/listings'
+      mapPinsRoute:  '/map/pins.json'
+      hostname: 'www.apartmentguide.com'
       priceRangeRefinements: {}
+      possibleRefinements: ['min_price', 'max_price']
+      sortByAttribute: 'distance'
+
+    @mapConfig = ->
+      executeOnce: @attr.executeOnce
+      hybridSearchRoute: @attr.hybridSearchRoute
+      mapPinsRoute: @attr.mapPinsRoute
+      hostname: @attr.hostname
+      priceRangeRefinements: @attr.priceRangeRefinements
+      possibleRefinements: @attr.possibleRefinements
+      sortByAttribute: @attr.sortByAttribute
 
     @getListings = (ev, queryData) ->
       @xhr = $.ajax
@@ -29,32 +40,20 @@ define [
         success: (data) =>
           @trigger 'listingDataAvailable', htmlData: data, query: queryData
         complete: ->
-          mapUtils.hideSpinner()
+          @hideSpinner()
 
     @decodedQueryData = (data) ->
       decodeURIComponent($.param(@queryData(data)))
 
     @getMarkers = (ev, data) ->
-      data.sort = 'distance'
+      data.sort = @attr.sortByAttribute
       @xhr = $.ajax
         url: "#{@attr.mapPinsRoute}?#{@decodedQueryData(data)}"
         success: (data) =>
           @trigger 'markersDataAvailable', data
           @trigger 'markersDataAvailableOnce', @resetEvents()
         complete: ->
-          mapUtils.hideSpinner()
-
-    @renderListings = (skipFitBounds) ->
-      if listings = @_parseListingsFromHtml()
-        zutron.getSavedListings()
-        listingObjects = @_addListingstoMapUpdate(listings, skipFitBounds)
-        @_addInfoWindowsToListings(listingObjects)
-        @listing_count = @_listingsCount(listingObjects)
-
-    @parseListingsFromHtml = () ->
-      listingData = $('#listingData').attr('data-listingData')
-      jListingData = $.parseJSON(listingData)
-      listings = if jListingData? then jListingData.listings else {}
+          @hideSpinner()
 
     @resetEvents = ->
       if @attr.executeOnce
@@ -90,19 +89,19 @@ define [
         sort: data.sort
       }
 
-      refinements = mapUtils.getRefinements()
+      refinements = @getRefinements()
       qData.refinements = encodeURIComponent(refinements) if refinements
 
-      propertyName = mapUtils.getPropertyName()
+      propertyName = @getPropertyName()
       qData.propertyname = encodeURIComponent(propertyName) if propertyName
 
-      mgtcoid = mapUtils.getMgtcoId()
+      mgtcoid = @getMgtcoId()
       qData.mgtcoid = encodeURIComponent(mgtcoid) if mgtcoid
 
-      priceRange = mapUtils.getPriceRange(@attr.priceRangeRefinements)
-      for name in ['min_price', 'max_price']
+      priceRange = @getPriceRange(@attr.priceRangeRefinements)
+      for name in @attr.possibleRefinements
         qData[name] = priceRange[name] if priceRange[name]
 
       qData
 
-  return defineComponent(listingsData, distanceConversion)
+  return defineComponent(listingsData, distanceConversion, mapUtils)
