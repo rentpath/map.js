@@ -5,6 +5,7 @@ define [
   'map/components/ui/base_map'
   'map/components/ui/markers_info_window'
   'map/components/mixins/map_utils'
+  'map/components/mixins/with_default_attributes'
 ], (
   $
   compose
@@ -12,6 +13,7 @@ define [
   baseMap
   markerInfoWindow
   mapUtils
+  withDefaultAttrs
 ) ->
 
   initialize = ->
@@ -32,19 +34,10 @@ define [
         markerOptions:
           fitBounds: true
 
-    # defaultAttrs defined in mixins will trigger this, copying
-    # those settings into @attr.
+    compose.mixin(@, [ withDefaultAttrs, mapUtils ])
 
-    @defaultAttrs = (attrs) ->
-      for k,v of attrs
-        @attr[k] = v
-      @attr
-
-    compose.mixin(@, [ mapUtils ])
-
-    # merge in overrides.
-
-    @attr = @defaultAttrs(arguments[0])
+    @initAttributes(@attr)
+    @mergeAttributes(@attr, arguments[0])
 
     # instantiate a google map centered at lat, lng.
 
