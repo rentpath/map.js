@@ -34,7 +34,7 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
           };
         })(this),
         complete: function() {
-          return mapUtils.hideSpinner();
+          return this.hideSpinner();
         }
       });
     };
@@ -52,7 +52,7 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
           };
         })(this),
         complete: function() {
-          return mapUtils.hideSpinner();
+          return this.hideSpinner();
         }
       });
     };
@@ -91,19 +91,19 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         geoname: data.geoname,
         sort: data.sort
       };
-      refinements = mapUtils.getRefinements();
+      refinements = this.getRefinements();
       if (refinements) {
         qData.refinements = encodeURIComponent(refinements);
       }
-      propertyName = mapUtils.getPropertyName();
+      propertyName = this.getPropertyName();
       if (propertyName) {
         qData.propertyname = encodeURIComponent(propertyName);
       }
-      mgtcoid = mapUtils.getMgtcoId();
+      mgtcoid = this.getMgtcoId();
       if (mgtcoid) {
         qData.mgtcoid = encodeURIComponent(mgtcoid);
       }
-      priceRange = mapUtils.getPriceRange(this.attr.priceRangeRefinements);
+      priceRange = this.getPriceRange(this.attr.priceRangeRefinements);
       ref = this.attr.possibleRefinements;
       for (i = 0, len = ref.length; i < len; i++) {
         name = ref[i];
@@ -114,5 +114,5 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       return qData;
     };
   };
-  return defineComponent(listingsData, distanceConversion);
+  return defineComponent(listingsData, distanceConversion, mapUtils);
 });

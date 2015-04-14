@@ -40,7 +40,7 @@ define [
         success: (data) =>
           @trigger 'listingDataAvailable', htmlData: data, query: queryData
         complete: ->
-          mapUtils.hideSpinner()
+          @hideSpinner()
 
     @decodedQueryData = (data) ->
       decodeURIComponent($.param(@queryData(data)))
@@ -53,7 +53,7 @@ define [
           @trigger 'markersDataAvailable', data
           @trigger 'markersDataAvailableOnce', @resetEvents()
         complete: ->
-          mapUtils.hideSpinner()
+          @hideSpinner()
 
     @resetEvents = ->
       if @attr.executeOnce
@@ -89,19 +89,19 @@ define [
         sort: data.sort
       }
 
-      refinements = mapUtils.getRefinements()
+      refinements = @getRefinements()
       qData.refinements = encodeURIComponent(refinements) if refinements
 
-      propertyName = mapUtils.getPropertyName()
+      propertyName = @getPropertyName()
       qData.propertyname = encodeURIComponent(propertyName) if propertyName
 
-      mgtcoid = mapUtils.getMgtcoId()
+      mgtcoid = @getMgtcoId()
       qData.mgtcoid = encodeURIComponent(mgtcoid) if mgtcoid
 
-      priceRange = mapUtils.getPriceRange(@attr.priceRangeRefinements)
+      priceRange = @getPriceRange(@attr.priceRangeRefinements)
       for name in @attr.possibleRefinements
         qData[name] = priceRange[name] if priceRange[name]
 
       qData
 
-  return defineComponent(listingsData, distanceConversion)
+  return defineComponent(listingsData, distanceConversion, mapUtils)
