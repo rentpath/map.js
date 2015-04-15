@@ -16,7 +16,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       geoData: {},
       gMapOptions: {
         draggable: void 0
-      }
+      },
+      pinControlsSelector: '#pin_search_controls',
+      pinControlsCloseIconSelector: 'a.icon_close'
     });
     this.data = {};
     this.after('initialize', function() {
@@ -161,9 +163,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       return this.customMarkerDialogClose();
     };
     this.customMarkerDialogClose = function() {
-      return $('#pin_search_controls a.icon_close').click((function(_this) {
+      return $(this.attr.pinControlsSelector + " " + this.attr.pinControlsCloseIconSelector).click((function(_this) {
         return function() {
-          return $('#pin_search_controls').remove();
+          return $(_this.attr.pinControlsSelector).remove();
         };
       })(this));
     };
