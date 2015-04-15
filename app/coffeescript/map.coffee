@@ -5,6 +5,7 @@ define [
   'map/components/ui/base_map'
   'map/components/ui/markers_info_window'
   'map/components/mixins/map_utils'
+  'map/components/mixins/with_default_attributes'
 ], (
   $
   compose
@@ -12,6 +13,7 @@ define [
   baseMap
   markerInfoWindow
   mapUtils
+  withDefaultAttrs
 ) ->
 
   initialize = ->
@@ -32,25 +34,19 @@ define [
         markerOptions:
           fitBounds: true
 
-    # defaultAttrs defined in mixins will trigger this, copying
-    # those settings into @attr.
+    # pull in mixins and their defaultAttrs.
 
-    @defaultAttrs = (attrs) ->
-      for k,v of attrs
-        @attr[k] = v
-      @attr
+    compose.mixin(@, [ withDefaultAttrs, mapUtils ])
 
-    compose.mixin(@, [ mapUtils ])
+    # override @attr with arguments from the caller.
 
-    # merge in overrides.
-
-    @attr = @defaultAttrs(arguments[0])
+    @overrideAttrsWith(arguments[0])
 
     # instantiate a google map centered at lat, lng.
 
     theMap.initMap(@attr)
 
-    # add baseline flight components to the map.
+    # add some baseline flight components to the map.
 
     baseMap.attachTo(@attr.map.canvasId, @attr.map)
     markerInfoWindow.attachTo(@attr.map.canvasId, @attr.markers)
