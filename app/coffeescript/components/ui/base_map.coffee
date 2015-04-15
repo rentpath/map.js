@@ -25,6 +25,8 @@ define [
       geoData: {}
       gMapOptions:
         draggable: undefined
+      pinControlsSelector: '#pin_search_controls'
+      pinControlsCloseIconSelector: 'a.icon_close'
 
     @data = {}
 
@@ -144,8 +146,8 @@ define [
       @customMarkerDialogClose()
 
     @customMarkerDialogClose = ->
-      $('#pin_search_controls a.icon_close').click =>
-        $('#pin_search_controls').remove()
+      $("#{@attr.pinControlsSelector} #{@attr.pinControlsCloseIconSelector}").click =>
+        $(@attr.pinControlsSelector).remove()
 
     @mapRenderedFirstData = ->
       data = @mapChangedData()
