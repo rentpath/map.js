@@ -1,7 +1,6 @@
 define [
   'jquery'
   'flight/lib/compose'
-  'map/common'
   'map/components/ui/base_map'
   'map/components/ui/markers_info_window'
   'map/components/mixins/map_utils'
@@ -9,7 +8,6 @@ define [
 ], (
   $
   compose
-  theMap
   baseMap
   markerInfoWindow
   mapUtils
@@ -19,7 +17,7 @@ define [
   initialize = ->
     @attr =
       map:
-        canvasId: 'map_canvas'
+        canvasId: '#map_canvas'
         geoData:
           lat: "33.9644"
           lng: "-84.2275"
@@ -43,10 +41,6 @@ define [
     @overrideAttrsWith(arguments[0])
 
     # instantiate a google map centered at lat, lng.
-
-    theMap.initMap(@attr)
-
-    # add some baseline flight components to the map.
 
     baseMap.attachTo(@attr.map.canvasId, @attr.map)
     markerInfoWindow.attachTo(@attr.map.canvasId, @attr.markers)

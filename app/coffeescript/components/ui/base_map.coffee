@@ -164,13 +164,13 @@ define [
 
     @mapChangedDataBase = ->
       gMap: @attr.gMap
-      latitude: mapUtils.limitScaleOf(@latitude())
-      longitude: mapUtils.limitScaleOf(@longitude())
+      latitude: @limitScaleOf(@latitude())
+      longitude: @limitScaleOf(@longitude())
       radius: @radius()
-      lat1: mapUtils.limitScaleOf(@southWestLatitude())
-      lng1: mapUtils.limitScaleOf(@southWestLongitude())
-      lat2: mapUtils.limitScaleOf(@northEastLatitude())
-      lng2: mapUtils.limitScaleOf(@northEastLongitude())
+      lat1: @limitScaleOf(@southWestLatitude())
+      lng1: @limitScaleOf(@southWestLongitude())
+      lat2: @limitScaleOf(@northEastLatitude())
+      lng2: @limitScaleOf(@northEastLongitude())
       zip: @geoData().zip
       city: @geoData().city
       state: @geoData().state
@@ -197,4 +197,4 @@ define [
       lat: @data.lat || @data.latitude || @attr.latitude
       lng: @data.lng || @data.longitude || @attr.longitude
 
-  return defineComponent(defaultMap, distanceConversion)
+  return defineComponent(defaultMap, mapUtils, distanceConversion)
