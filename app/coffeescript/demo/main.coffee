@@ -12,25 +12,17 @@ requirejs.config
     "marker-clusterer": "marker-clusterer/marker-clusterer"
     "image-helper": "image-helper/image-helper"
 
-require [
-  'jquery'
-  'flight/lib/compose'
-  'map/map'
-  'jquery.cookie'
-], (
-  $
-  compose
-  Map
-) ->
+require [ 'map/map' ], ( Map ) ->
 
   #
-  # Things to try:
-  #   1. Change canvasId to '#map_canvas_alt' and rerun the demo.
+  # Things to try by changing the MapDemo.mapOptions object in app/index.html:
+  #
+  #   1. Change canvasId to 'map_canvas_alt' and rerun the demo.
 
-  mapAttrs =
-    map:
-      canvasId: '#map_canvas'
+  # initialize and render an empty map.
+  new Map(MapDemo.mapOptions)
 
+||||||| merged common ancestors
   new Map(mapAttrs)
-  $(document).trigger('mapDataAvailable')
-
+=======
+>>>>>>> [WV][000000] Extracted default map options

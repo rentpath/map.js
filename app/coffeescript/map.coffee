@@ -5,6 +5,7 @@ define [
   'map/components/ui/markers_info_window'
   'map/components/mixins/map_utils'
   'map/components/mixins/with_default_attributes'
+  'jquery.cookie'
 ], (
   $
   compose
@@ -25,10 +26,6 @@ define [
           draggable: true
           panControl: false
       markers:
-        mapPin:        "/assets/nonsprite/map/map_pin_red4.png"
-        mapPinFree:    "/assets/nonsprite/map/map_pin_free2.png"
-        mapPinShadow:  "/assets/nonsprite/map/map_pin_shadow3.png"
-        mapPinCluster: "/assets/nonsprite/map/map_cluster_red4.png"
         markerOptions:
           fitBounds: true
 

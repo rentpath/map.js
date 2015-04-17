@@ -14,10 +14,6 @@ define(['jquery', 'flight/lib/compose', 'map/components/ui/base_map', 'map/compo
         }
       },
       markers: {
-        mapPin: "/assets/nonsprite/map/map_pin_red4.png",
-        mapPinFree: "/assets/nonsprite/map/map_pin_free2.png",
-        mapPinShadow: "/assets/nonsprite/map/map_pin_shadow3.png",
-        mapPinCluster: "/assets/nonsprite/map/map_cluster_red4.png",
         markerOptions: {
           fitBounds: true
         }
