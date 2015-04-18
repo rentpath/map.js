@@ -19,7 +19,7 @@ define [
       clusterSize: 10
 
     @_clusterStyles = ->
-      url: "#{@assetOriginFromMetaTag()}#{@attr.clusterURLPath}"
+      url: "#{@assetURL()}#{@attr.clusterURLPath}"
       height: @attr.clusterHeight
       width: @attr.clusterWidth
       textColor: @attr.clusterTextColor

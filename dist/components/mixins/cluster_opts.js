@@ -13,7 +13,7 @@ define(['flight/lib/compose', 'map/components/mixins/map_utils'], function(compo
     });
     this._clusterStyles = function() {
       return {
-        url: "" + (this.assetOriginFromMetaTag()) + this.attr.clusterURLPath,
+        url: "" + (this.assetURL()) + this.attr.clusterURLPath,
         height: this.attr.clusterHeight,
         width: this.attr.clusterWidth,
         textColor: this.attr.clusterTextColor,

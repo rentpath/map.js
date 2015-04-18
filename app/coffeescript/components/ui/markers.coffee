@@ -113,7 +113,7 @@ define [
           leadForm.init geoData
 
     @_prepend_origin = (value) ->
-      value = "#{@assetOriginFromMetaTag()}#{value}"
+      value = "#{@assetURL()}#{value}"
 
     @after 'initialize', ->
       @_prepend_origin(@attr.mapPin)

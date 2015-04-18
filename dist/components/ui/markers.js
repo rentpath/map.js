@@ -144,7 +144,7 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
       }
     };
     this._prepend_origin = function(value) {
-      return value = "" + (this.assetOriginFromMetaTag()) + value;
+      return value = "" + (this.assetURL()) + value;
     };
     return this.after('initialize', function() {
       this._prepend_origin(this.attr.mapPin);

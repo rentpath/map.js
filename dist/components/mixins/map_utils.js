@@ -2,7 +2,7 @@ define(['jquery'], function($) {
   var mapUtils;
   mapUtils = function() {
     this.defaultAttrs({
-      assetHostSelector: 'meta[name="asset_host"]',
+      assetUrl: void 0,
       spinnerSelector: '.spinner',
       refinementsSelector: '.pageInfo[name="refinements"]',
       propertyNameParam: 'propertyname',
@@ -30,8 +30,7 @@ define(['jquery'], function($) {
       return number.toFixed(limit);
     };
     this.assetURL = function() {
-      console.log('assetURL() is deprecated. Use assetOriginFromMetaTag() instead.');
-      return this.assetOriginFromMetaTag();
+      return this.attr.assetUrl || this.assetOriginFromMetaTag();
     };
     this.hideSpinner = function() {
       return $(this.attr.spinnerSelector).hide();

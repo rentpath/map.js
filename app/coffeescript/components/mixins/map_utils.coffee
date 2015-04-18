@@ -2,7 +2,8 @@ define [ 'jquery' ], ( $ ) ->
 
   mapUtils = ->
     @defaultAttrs
-      assetHostSelector:    'meta[name="asset_host"]'
+      assetUrl: undefined
+      assetHostSelector:    'meta[name="asset_host"]'      
       spinnerSelector:      '.spinner'
       refinementsSelector:  '.pageInfo[name="refinements"]'
       propertyNameParam:    'propertyname'
@@ -21,8 +22,7 @@ define [ 'jquery' ], ( $ ) ->
      number.toFixed(limit)
 
     @assetURL = ->
-      console.log 'assetURL() is deprecated. Use assetOriginFromMetaTag() instead.'
-      @assetOriginFromMetaTag()
+      @attr.assetUrl || @assetOriginFromMetaTag()
 
     @hideSpinner = () ->
       $(@attr.spinnerSelector).hide()
