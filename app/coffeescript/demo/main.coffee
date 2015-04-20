@@ -21,8 +21,3 @@ require [ 'map/map' ], ( Map ) ->
 
   # initialize and render an empty map.
   new Map(MapDemo.mapOptions)
-
-||||||| merged common ancestors
-  new Map(mapAttrs)
-=======
->>>>>>> [WV][000000] Extracted default map options
