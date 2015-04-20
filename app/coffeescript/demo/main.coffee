@@ -12,7 +12,13 @@ requirejs.config
     "marker-clusterer": "marker-clusterer/marker-clusterer"
     "image-helper": "image-helper/image-helper"
 
-require [ 'map/map' ], ( Map ) ->
+require [
+  'jquery'
+  'map/map'
+], (
+  $
+  Map
+) ->
 
   #
   # Things to try by changing the MapDemo.mapOptions object in app/index.html:
@@ -21,3 +27,6 @@ require [ 'map/map' ], ( Map ) ->
 
   # initialize and render an empty map.
   new Map(MapDemo.mapOptions)
+
+  $(document).trigger('mapDataAvailable')
+
