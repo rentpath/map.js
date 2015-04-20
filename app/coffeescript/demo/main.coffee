@@ -25,10 +25,12 @@ require [
 
   #
   # Things to try:
-  #   1. Change canvasId to 'map_canvas_alt' and rerun the demo.
+  #   1. Change canvasId to '#map_canvas_alt' and rerun the demo.
 
   mapAttrs =
     map:
-      canvasId: 'map_canvas'
+      canvasId: '#map_canvas'
 
   new Map(mapAttrs)
+  $(document).trigger('mapDataAvailable')
+
