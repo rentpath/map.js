@@ -33,9 +33,11 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
             });
           };
         })(this),
-        complete: function() {
-          return this.hideSpinner();
-        }
+        complete: (function(_this) {
+          return function() {
+            return _this.hideSpinner();
+          };
+        })(this)
       });
     };
     this.decodedQueryData = function(data) {
@@ -51,9 +53,11 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
             return _this.trigger('markersDataAvailableOnce', _this.resetEvents());
           };
         })(this),
-        complete: function() {
-          return this.hideSpinner();
-        }
+        complete: (function(_this) {
+          return function() {
+            return _this.hideSpinner();
+          };
+        })(this)
       });
     };
     this.resetEvents = function() {

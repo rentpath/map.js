@@ -39,7 +39,7 @@ define [
         url: "#{@attr.hybridSearchRoute}?#{@decodedQueryData(queryData)}"
         success: (data) =>
           @trigger 'listingDataAvailable', htmlData: data, query: queryData
-        complete: ->
+        complete: =>
           @hideSpinner()
 
     @decodedQueryData = (data) ->
@@ -52,7 +52,7 @@ define [
         success: (data) =>
           @trigger 'markersDataAvailable', data
           @trigger 'markersDataAvailableOnce', @resetEvents()
-        complete: ->
+        complete: =>
           @hideSpinner()
 
     @resetEvents = ->
