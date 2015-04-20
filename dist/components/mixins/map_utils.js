@@ -3,6 +3,7 @@ define(['jquery'], function($) {
   mapUtils = function() {
     this.defaultAttrs({
       assetUrl: void 0,
+      assetHostSelector: 'meta[name="asset_host"]',
       spinnerSelector: '.spinner',
       refinementsSelector: '.pageInfo[name="refinements"]',
       propertyNameParam: 'propertyname',
