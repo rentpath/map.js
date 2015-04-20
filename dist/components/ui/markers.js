@@ -2,6 +2,7 @@
 define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/components/mixins/map_utils', 'primedia_events'], function($, defineComponent, clusters, mapUtils, events) {
   var markersOverlay;
   markersOverlay = function() {
+    var _prepend_origin, _updateCluster;
     this.defaultAttrs({
       searchGeoData: {},
       listingCountSelector: '#mapview_listing_count',
@@ -12,11 +13,11 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
       markerClusterer: void 0,
       markerOptions: {
         fitBounds: false
-      },
-      mapPin: "/images/nonsprite/map/map_pin_red4.png",
-      mapPinFree: "/images/nonsprite/map/map_pin_free2.png",
-      mapPinShadow: "/images/nonsprite/map/map_pin_shadow3.png"
+      }
     });
+    _prepend_origin = function(value) {
+      return value = "" + (this.assetOriginFromMetaTag()) + value;
+    };
     this.initAttr = function(ev, data) {
       if (data.gMap) {
         this.attr.gMap = data.gMap;
@@ -34,14 +35,20 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
     this.render = function(ev, data) {
       return this.addMarkers(data);
     };
+    _updateCluster = function(markers) {
+      this.attr.markerClusterer.addMarkers(all_markers);
+      if (this.attr.markerOptions.fitBounds) {
+        return this.attr.markerClusterer.fitMapToMarkers();
+      }
+    };
     this.addMarkers = function(data) {
-      var all_markers, i, len1, listing, m, ref;
+      var all_markers, i, len, listing, m, ref;
       this.attr.markerClusterer.clearMarkers();
       this.attr.markers = [];
       this.attr.markersIndex = {};
       all_markers = [];
       ref = data.listings;
-      for (i = 0, len1 = ref.length; i < len1; i++) {
+      for (i = 0, len = ref.length; i < len; i++) {
         listing = ref[i];
         m = this.createMarker(listing);
         all_markers.push(m);
@@ -52,19 +59,21 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
         });
         this.attr.markersIndex[listing.id] = this.attr.markers.length - 1;
       }
-      this.attr.markerClusterer.addMarkers(all_markers);
+      _updateCluster(all_markers);
       this.updateListingsCount();
-      if (this.attr.markerOptions.fitBounds) {
-        this.attr.markerClusterer.fitMapToMarkers();
-      }
       return this.trigger('uiSetMarkerInfoWindow');
     };
     this.createMarker = function(datum) {
+      var shadowPin;
+      shadowPin = this.shadowBaseOnType(datum);
+      if (shadowPin !== '') {
+        shadowPin = _prepend_origin(shadowPin);
+      }
       return new google.maps.Marker({
         position: new google.maps.LatLng(datum.lat, datum.lng),
         map: this.attr.gMap,
-        icon: this.iconBasedOnType(datum),
-        shadow: this.shadowBaseOnType(datum),
+        icon: _prepend_origin(this.iconBasedOnType(datum)),
+        shadow: shadowPin,
         title: this.markerTitle(datum),
         datumId: datum.id
       });
@@ -78,11 +87,6 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
           gMap: _this.attr.gMap
         });
       });
-    };
-    this.currentMarker = function() {
-      var len;
-      len = this.attrs.markers.length;
-      return this.attr.markers[len - 1];
     };
     this.markerTitle = function(datum) {
       return datum.name || '';
@@ -119,42 +123,12 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
         return this.attr.mapPinShadow;
       }
     };
-    this.optimizedBasedOnHost = function() {
-      if (window.location.hostname.match(/ci\.|local/)) {
-        return false;
-      } else {
-        return true;
-      }
-    };
-    this.getGeoDataForListing = function(listing) {
-      return services.getGeoData({
-        urlParameters: {
-          city: (listing.propertycity ? listing.propertycity.replace(" ", "-") : ""),
-          state: (listing.propertystatelong ? listing.propertystatelong.replace(" ", "-") : "")
-        }
-      });
-    };
-    this.initializeLeadForm = function() {
-      if ($.isEmptyObject(this.attr.searchGeoData)) {
-        return leadForm.init(this.attr.searchGeoData);
-      } else {
-        return $.when(this.getGeoDataForListing()).then(function(geoData) {
-          return leadForm.init(geoData);
-        });
-      }
-    };
-    this._prepend_origin = function(value) {
-      return value = "" + (this.assetOriginFromMetaTag()) + value;
-    };
     return this.after('initialize', function() {
-      this._prepend_origin(this.attr.mapPin);
-      this._prepend_origin(this.attr.mapPinFree);
-      this._prepend_origin(this.attr.mapPinShadow);
       this.on(document, 'mapRenderedFirst', this.initAttr);
       this.on(document, 'markersUpdateAttr', this.initAttr);
       this.on(document, 'markersDataAvailable', this.render);
-      this.on(document, 'uiMapZoom', this.updateListingsCount);
       this.on(document, 'animatePin', this.markerAnimation);
+      return this.on(document, 'uiMapZoom', this.updateListingsCount);
     });
   };
   return defineComponent(markersOverlay, clusters, mapUtils);
