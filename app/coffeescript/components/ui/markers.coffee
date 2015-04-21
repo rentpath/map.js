@@ -26,9 +26,9 @@ define [
       markerClusterer: undefined
       markerOptions:
        fitBounds: false
-      mapPin:       "/images/nonsprite/map/map_pin_red4.png"
-      mapPinFree:   "/images/nonsprite/map/map_pin_free2.png"
-      mapPinShadow: "/images/nonsprite/map/map_pin_shadow3.png"
+
+    _prepend_origin = (value) ->
+      value = "#{@assetOriginFromMetaTag()}#{value}"
 
     @initAttr = (ev, data) ->
       @attr.gMap = data.gMap if data.gMap
@@ -38,6 +38,10 @@ define [
 
     @render = (ev, data) ->
       @addMarkers(data)
+
+    _updateCluster = (markers) ->
+      @attr.markerClusterer.addMarkers(all_markers)
+      @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
 
     @addMarkers = (data) ->
       @attr.markerClusterer.clearMarkers()
@@ -52,18 +56,20 @@ define [
         @attr.markers.push {googleMarker: m, markerData: listing}
         @attr.markersIndex[listing.id] = @attr.markers.length - 1
 
-      @attr.markerClusterer.addMarkers(all_markers)
+      _updateCluster(all_markers)
       @updateListingsCount()
-      @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
       @trigger 'uiSetMarkerInfoWindow'
 
     @createMarker = (datum) ->
+      shadowPin = @shadowBaseOnType(datum)
+      shadowPin = _prepend_origin(shadowPin) unless shadowPin == ''
+
       new google.maps.Marker(
         position: new google.maps.LatLng(datum.lat, datum.lng)
         map: @attr.gMap
-        icon: @iconBasedOnType(datum)
-        shadow: @shadowBaseOnType(datum)
-        title: @markerTitle(datum) # @setListingTitleBaseOnHost(listing)
+        icon: _prepend_origin(@iconBasedOnType(datum))
+        shadow: shadowPin
+        title: @markerTitle(datum)
         datumId: datum.id
       )
 
@@ -72,20 +78,18 @@ define [
       google.maps.event.addListener marker, 'click', ->
         $(document).trigger 'markerClicked', gMarker: @, gMap: _this.attr.gMap
 
-    @currentMarker = () ->
-      len = @attrs.markers.length
-      @attr.markers[len - 1]
-
     @markerTitle = (datum) ->
       datum.name || ''
 
     @markerAnimation = (ev, data) ->
       return unless @attr.markersIndex
+
       markerIndex = @attr.markersIndex[data.id.slice(7)]
       markerObject = @attr.markers[markerIndex].googleMarker if @attr.markers[markerIndex]
-      if markerObject?
-        markerObject.setAnimation(data.animation)
 
+      markerObject.setAnimation(data.animation) if markerObject?
+
+    # TODO: Move to it's own component. Maybe this is application's responsibility?
     @updateListingsCount = ->
       lCount = @attr.markers.length
       $(@attr.listingCountSelector).html(@attr.listingCountText + lCount)
@@ -97,34 +101,13 @@ define [
     @shadowBaseOnType = (datum) ->
       if datum.free then "" else @attr.mapPinShadow
 
-    @optimizedBasedOnHost = () ->
-      if window.location.hostname.match(/ci\.|local/) then false else true
-
-    @getGeoDataForListing = (listing) ->
-      services.getGeoData(urlParameters:
-        city: (if listing.propertycity then listing.propertycity.replace(" ", "-") else "")
-        state: (if listing.propertystatelong then listing.propertystatelong.replace(" ", "-") else ""))
-
-    @initializeLeadForm = () ->
-      if $.isEmptyObject(@attr.searchGeoData)
-        leadForm.init @attr.searchGeoData
-      else
-        $.when(@getGeoDataForListing()).then (geoData) ->
-          leadForm.init geoData
-
-    @_prepend_origin = (value) ->
-      value = "#{@assetURL()}#{value}"
-
     @after 'initialize', ->
-      @_prepend_origin(@attr.mapPin)
-      @_prepend_origin(@attr.mapPinFree)
-      @_prepend_origin(@attr.mapPinShadow)
-
       @on document, 'mapRenderedFirst', @initAttr
       @on document, 'markersUpdateAttr', @initAttr
       @on document, 'markersDataAvailable', @render
-      @on document, 'uiMapZoom', @updateListingsCount
       @on document, 'animatePin', @markerAnimation
-      return
+      # TODO: put into it's own component.
+      @on document, 'uiMapZoom', @updateListingsCount
+
 
   return defineComponent(markersOverlay, clusters, mapUtils)

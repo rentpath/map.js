@@ -187,13 +187,13 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.mapChangedDataBase = function() {
       return {
         gMap: this.attr.gMap,
-        latitude: mapUtils.limitScaleOf(this.latitude()),
-        longitude: mapUtils.limitScaleOf(this.longitude()),
+        latitude: this.limitScaleOf(this.latitude()),
+        longitude: this.limitScaleOf(this.longitude()),
         radius: this.radius(),
-        lat1: mapUtils.limitScaleOf(this.southWestLatitude()),
-        lng1: mapUtils.limitScaleOf(this.southWestLongitude()),
-        lat2: mapUtils.limitScaleOf(this.northEastLatitude()),
-        lng2: mapUtils.limitScaleOf(this.northEastLongitude()),
+        lat1: this.limitScaleOf(this.southWestLatitude()),
+        lng1: this.limitScaleOf(this.southWestLongitude()),
+        lat2: this.limitScaleOf(this.northEastLatitude()),
+        lng2: this.limitScaleOf(this.northEastLongitude()),
         zip: this.geoData().zip,
         city: this.geoData().city,
         state: this.geoData().state,
@@ -226,5 +226,5 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       };
     };
   };
-  return defineComponent(defaultMap, distanceConversion);
+  return defineComponent(defaultMap, mapUtils, distanceConversion);
 });
