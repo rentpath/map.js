@@ -1,19 +1,21 @@
 'use strict'
 
 define [
-  'flight/lib/component'
+  'flight/lib/compose'
   'marker-clusterer'
   'map/components/mixins/mobile_detection'
   'map/components/mixins/cluster_opts'
 ], (
-  defineComponent
+  compose
   markerClusterer
   mobileDetection
   clusterOpts
 ) ->
 
   markerClusters = ->
-
+    
+    compose.mixin(@, [mobileDetection, clusterOpts])
+      
     @defaultAttrs
       markerClusterer: undefined
 
@@ -38,9 +40,7 @@ define [
       @off document, 'clusterImageChange'
 
     @after 'initialize', ->
-      @attr.mapPinCluster = @assetURL() + "/images/nonsprite/map/map_cluster_red4.png"
-
       @on document, 'mapRenderedFirst', @initClusterer
       @on document, 'clusterImageChange', @setClusterImage
 
-  return defineComponent(markerClusters, mobileDetection, clusterOpts)
+  return markerClusters

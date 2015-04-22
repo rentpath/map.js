@@ -3,7 +3,7 @@ define [ ], () ->
   describeMixin 'map/components/mixins/cluster_opts', ->
     beforeEach ->
       @fixture = readFixtures('map_utils.html')
-      @setupComponent(@fixture)
+      @setupComponent(@fixture, {mapPinCluster: 'http://localhost/images/nonsprite/map/map_cluster_red4.png'})
 
     it "should be defined", ->
       expect(@component).toBeDefined()
@@ -36,7 +36,7 @@ define [ ], () ->
         beforeEach ->
           @setupComponent(@fixture,
             {
-              clusterURLPath: '/foo'
+              mapPinCluster: 'http://localhost/foo'
               clusterHeight: 50
               clusterWidth: 55
               clusterTextColor: 'red'

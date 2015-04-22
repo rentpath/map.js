@@ -1,4 +1,4 @@
-define [ 'map/components/ui/clusters' ], ( Clusters ) ->
+define [ 'map/components/mixins/clusters' ], ( Clusters ) ->
 
   describe "being true", ->
     it "should work", () ->
