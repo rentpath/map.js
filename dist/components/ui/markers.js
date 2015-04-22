@@ -1,8 +1,7 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/components/mixins/map_utils', 'primedia_events'], function($, defineComponent, clusters, mapUtils, events) {
+define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map/components/mixins/map_utils', 'primedia_events'], function($, defineComponent, clusters, mapUtils, events) {
   var markersOverlay;
   markersOverlay = function() {
-    var _prepend_origin, _updateCluster;
     this.defaultAttrs({
       searchGeoData: {},
       listingCountSelector: '#mapview_listing_count',
@@ -15,7 +14,7 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
         fitBounds: false
       }
     });
-    _prepend_origin = function(value) {
+    this.prepend_origin = function(value) {
       return value = "" + (this.assetOriginFromMetaTag()) + value;
     };
     this.initAttr = function(ev, data) {
@@ -35,8 +34,8 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
     this.render = function(ev, data) {
       return this.addMarkers(data);
     };
-    _updateCluster = function(markers) {
-      this.attr.markerClusterer.addMarkers(all_markers);
+    this.updateCluster = function(markers) {
+      this.attr.markerClusterer.addMarkers(markers);
       if (this.attr.markerOptions.fitBounds) {
         return this.attr.markerClusterer.fitMapToMarkers();
       }
@@ -59,20 +58,17 @@ define(['jquery', 'flight/lib/component', 'map/components/ui/clusters', 'map/com
         });
         this.attr.markersIndex[listing.id] = this.attr.markers.length - 1;
       }
-      _updateCluster(all_markers);
+      this.updateCluster(all_markers);
       this.updateListingsCount();
       return this.trigger('uiSetMarkerInfoWindow');
     };
     this.createMarker = function(datum) {
       var shadowPin;
       shadowPin = this.shadowBaseOnType(datum);
-      if (shadowPin !== '') {
-        shadowPin = _prepend_origin(shadowPin);
-      }
       return new google.maps.Marker({
         position: new google.maps.LatLng(datum.lat, datum.lng),
         map: this.attr.gMap,
-        icon: _prepend_origin(this.iconBasedOnType(datum)),
+        icon: this.iconBasedOnType(datum),
         shadow: shadowPin,
         title: this.markerTitle(datum),
         datumId: datum.id
