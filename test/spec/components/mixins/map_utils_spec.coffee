@@ -21,7 +21,7 @@ define [ ], () ->
 
       describe '#assetUrl', ->
         it "should return the meta tag content value", ->
-          expect(@component.assetOriginFromMetaTag()).toEqual('http://localhost')
+          expect(@component.assetURL()).toEqual('http://localhost')
 
       describe '#getRefinements', ->
         it "should return the meta tag content value", ->
@@ -32,4 +32,12 @@ define [ ], () ->
           expect($('.spinner:visible').length).toEqual(2)
           @component.hideSpinner()
           expect($('.spinner:visible').length).toBe(0)
+
+    describe 'defaults', ->
+
+      describe '#assetUrl', ->
+        it "should return the assetUrl baset url", ->
+          fixture = readFixtures('map_utils.html')
+          @setupComponent(fixture, {assetUrl: 'http://assets.localhost'})
+          expect(@component.assetURL()).toEqual('http://assets.localhost')
 
