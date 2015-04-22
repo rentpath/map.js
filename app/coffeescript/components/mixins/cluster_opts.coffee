@@ -19,7 +19,7 @@ define [
       clusterSize: 10
 
     @_clusterStyles = ->
-      url: this.attr.mapPinCluster
+      url: @attr.mapPinCluster
       height: @attr.clusterHeight
       width: @attr.clusterWidth
       textColor: @attr.clusterTextColor
