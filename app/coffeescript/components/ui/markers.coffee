@@ -3,7 +3,7 @@
 define [
   'jquery'
   'flight/lib/component'
-  'map/components/ui/clusters'
+  'map/components/mixins/clusters'
   'map/components/mixins/map_utils'
   'primedia_events'
 ], (
@@ -27,7 +27,7 @@ define [
       markerOptions:
        fitBounds: false
 
-    _prepend_origin = (value) ->
+    @prepend_origin = (value) ->
       value = "#{@assetOriginFromMetaTag()}#{value}"
 
     @initAttr = (ev, data) ->
@@ -39,8 +39,8 @@ define [
     @render = (ev, data) ->
       @addMarkers(data)
 
-    _updateCluster = (markers) ->
-      @attr.markerClusterer.addMarkers(all_markers)
+    @updateCluster = (markers) ->
+      @attr.markerClusterer.addMarkers(markers)
       @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
 
     @addMarkers = (data) ->
@@ -56,18 +56,17 @@ define [
         @attr.markers.push {googleMarker: m, markerData: listing}
         @attr.markersIndex[listing.id] = @attr.markers.length - 1
 
-      _updateCluster(all_markers)
+      @updateCluster(all_markers)
       @updateListingsCount()
       @trigger 'uiSetMarkerInfoWindow'
 
     @createMarker = (datum) ->
       shadowPin = @shadowBaseOnType(datum)
-      shadowPin = _prepend_origin(shadowPin) unless shadowPin == ''
 
       new google.maps.Marker(
         position: new google.maps.LatLng(datum.lat, datum.lng)
         map: @attr.gMap
-        icon: _prepend_origin(@iconBasedOnType(datum))
+        icon: @iconBasedOnType(datum)
         shadow: shadowPin
         title: @markerTitle(datum)
         datumId: datum.id
