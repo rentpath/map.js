@@ -27,7 +27,7 @@ define [
           panControl: false
       markers:
         markerOptions:
-          fitBounds: true
+          fitBounds: false
 
     # pull in mixins and their defaultAttrs.
 

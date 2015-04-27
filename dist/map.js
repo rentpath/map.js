@@ -15,7 +15,7 @@ define(['jquery', 'flight/lib/compose', 'map/components/ui/base_map', 'map/compo
       },
       markers: {
         markerOptions: {
-          fitBounds: true
+          fitBounds: false
         }
       }
     };
