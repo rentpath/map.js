@@ -6,6 +6,7 @@ define(['jquery', 'underscore', 'flight/lib/component'], function($, _, defineCo
       pinRoute: "/map/pin/"
     });
     this.getData = function(ev, data) {
+      console.log("in getData, listingId=", data.listingId);
       return this.xhr = $.ajax({
         url: "" + this.attr.pinRoute + data.listingId,
         success: (function(_this) {

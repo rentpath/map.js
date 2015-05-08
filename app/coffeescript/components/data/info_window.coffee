@@ -15,8 +15,8 @@ define [
     @defaultAttrs
       pinRoute: "/map/pin/"
 
-
     @getData = (ev, data) ->
+      console.log "in getData, listingId=", data.listingId
       @xhr = $.ajax
         url: "#{@attr.pinRoute}#{data.listingId}"
         success: (ajaxData) =>

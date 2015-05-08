@@ -3,8 +3,7 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
   var infoWindow;
   infoWindow = function() {
     ({
-      currentOpenWindow: null,
-      eventsWired: false
+      currentOpenWindow: null
     });
     this.defaultAttrs({
       gMap: {},

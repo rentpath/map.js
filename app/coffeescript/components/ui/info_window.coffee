@@ -11,7 +11,6 @@ define [
   infoWindow = ->
 
     currentOpenWindow: null
-    eventsWired: false
 
     @defaultAttrs
       gMap: {}

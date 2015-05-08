@@ -88,6 +88,19 @@ define [
 
       markerObject.setAnimation(data.animation) if markerObject?
 
+    # FIXME: DRY with @markerAnimation above.
+    @showInfoWindow = (ev, data) ->
+      console.log "in showInfoWindow", data
+      return unless @attr.markersIndex
+
+      markerIndex = @attr.markersIndex[data.id.slice(7)]
+      markerObject = @attr.markers[markerIndex].googleMarker if @attr.markers[markerIndex]
+      console.log "markerObject", markerObject
+      console.log "markerObject.position", markerObject.position
+
+      #@trigger document, 'markerClicked', { gMarker: markerObject, gMap: @attr.gMap } if markerObject?
+      $(document).trigger 'markerClicked', { gMarker: markerObject, gMap: @attr.gMap } if markerObject?
+
     # TODO: Move to it's own component. Maybe this is application's responsibility?
     @updateListingsCount = ->
       lCount = @attr.markers.length
@@ -105,6 +118,7 @@ define [
       @on document, 'markersUpdateAttr', @initAttr
       @on document, 'markersDataAvailable', @render
       @on document, 'animatePin', @markerAnimation
+      @on document, 'showInfoWindow', @showInfoWindow
       # TODO: put into it's own component.
       @on document, 'uiMapZoom', @updateListingsCount
 
