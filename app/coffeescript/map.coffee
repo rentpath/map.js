@@ -2,7 +2,8 @@ define [
   'jquery'
   'flight/lib/compose'
   'map/components/ui/base_map'
-  'map/components/ui/markers_info_window'
+  'map/components/ui/markers_with_lazy_info_window'
+  'map/components/ui/markers_with_preload_info_window'
   'map/components/mixins/map_utils'
   'map/components/mixins/with_default_attributes'
   'jquery.cookie'
@@ -10,7 +11,8 @@ define [
   $
   compose
   baseMap
-  markerInfoWindow
+  markersLazyInfoWindow
+  markersPreloadInfoWindow
   mapUtils
   withDefaultAttrs
 ) ->
@@ -28,6 +30,7 @@ define [
       markers:
         markerOptions:
           fitBounds: false
+      lazyInfoWindows: true
 
     # pull in mixins and their defaultAttrs.
 
@@ -40,6 +43,8 @@ define [
     # instantiate a google map centered at lat, lng.
 
     baseMap.attachTo(@attr.map.canvasId, @attr.map)
-    markerInfoWindow.attachTo(@attr.map.canvasId, @attr.markers)
+
+    infoWindow = if @attr.lazyInfoWindows then markersLazyInfoWindow else markersPreloadInfoWindow
+    infoWindow.attachTo(@attr.map.canvasId, @attr.markers)
 
   return initialize

@@ -1,4 +1,4 @@
-define [ 'map/components/ui/markers_info_window' ], ( markersInfoWindow ) ->
+define [ 'map/components/ui/lazy_info_window' ], ( infoWindow ) ->
 
   describe "being true", ->
     it "should work", () ->

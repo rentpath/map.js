@@ -35,6 +35,8 @@ define [
       @on document, 'mapRendered', @consolidateMapChangeEvents
       @on document, 'uiInfoWindowDataRequest', =>
         @attr.infoWindowOpen = true
+      @on document, 'uiShowInfoWindow', =>
+        @attr.infoWindowOpen = true
 
     @initBaseMap = (ev, data) ->
       @data = data || {}

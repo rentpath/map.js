@@ -24,7 +24,12 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.after('initialize', function() {
       this.on(document, 'mapDataAvailable', this.initBaseMap);
       this.on(document, 'mapRendered', this.consolidateMapChangeEvents);
-      return this.on(document, 'uiInfoWindowDataRequest', (function(_this) {
+      this.on(document, 'uiInfoWindowDataRequest', (function(_this) {
+        return function() {
+          return _this.attr.infoWindowOpen = true;
+        };
+      })(this));
+      return this.on(document, 'uiShowInfoWindow', (function(_this) {
         return function() {
           return _this.attr.infoWindowOpen = true;
         };

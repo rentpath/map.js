@@ -3,11 +3,11 @@
 define [
   'flight/lib/component'
   'map/components/ui/markers'
-  'map/components/ui/info_window'
+  'map/components/ui/lazy_info_window'
 ], (
   defineComponent
   Markers
-  InfoWindow
+  LazyInfoWindow
 ) ->
 
   markersInfoWindow = ->
@@ -19,4 +19,4 @@ define [
     @after 'initialize', ->
       Markers.attachTo(@node, @attr)
 
-  defineComponent(markersInfoWindow, InfoWindow)
+  defineComponent(markersInfoWindow, LazyInfoWindow)

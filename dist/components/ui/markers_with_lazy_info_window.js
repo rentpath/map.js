@@ -1,5 +1,5 @@
 'use strict';
-define(['flight/lib/component', 'map/components/ui/markers', 'map/components/ui/info_window'], function(defineComponent, Markers, InfoWindow) {
+define(['flight/lib/component', 'map/components/ui/markers', 'map/components/ui/lazy_info_window'], function(defineComponent, Markers, LazyInfoWindow) {
   var markersInfoWindow;
   markersInfoWindow = function() {
     this.defaultAttrs({
@@ -11,5 +11,5 @@ define(['flight/lib/component', 'map/components/ui/markers', 'map/components/ui/
       return Markers.attachTo(this.node, this.attr);
     });
   };
-  return defineComponent(markersInfoWindow, InfoWindow);
+  return defineComponent(markersInfoWindow, LazyInfoWindow);
 });

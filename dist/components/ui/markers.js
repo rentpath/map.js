@@ -100,6 +100,21 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
         return markerObject.setAnimation(data.animation);
       }
     };
+    this.showInfoWindow = function(ev, data) {
+      var marker, markerIndex;
+      if (!this.attr.markersIndex) {
+        return;
+      }
+      markerIndex = this.attr.markersIndex[data.id];
+      marker = this.attr.markers[markerIndex];
+      if (marker) {
+        return $(document).trigger('uiShowInfoWindow', {
+          infoHtml: marker.markerData.infoHtml,
+          gMap: this.attr.gMap,
+          gMarker: marker.googleMarker
+        });
+      }
+    };
     this.updateListingsCount = function() {
       var lCount;
       lCount = this.attr.markers.length;
@@ -124,6 +139,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       this.on(document, 'markersUpdateAttr', this.initAttr);
       this.on(document, 'markersDataAvailable', this.render);
       this.on(document, 'animatePin', this.markerAnimation);
+      this.on(document, 'showInfoWindow', this.showInfoWindow);
       return this.on(document, 'uiMapZoom', this.updateListingsCount);
     });
   };
