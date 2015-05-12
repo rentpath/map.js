@@ -68,7 +68,7 @@ define [
       @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
 
 
-    @handleOurMapEvents = (event_type) ->
+    @handleOurMapEvents = ->
       google.maps.event.addListener @attr.gMap, 'zoom_changed', =>
         @storeEvent('zoom_changed')
       google.maps.event.addListener @attr.gMap, 'center_changed', =>
@@ -83,7 +83,7 @@ define [
       eventsHash = @attr.gMapEvents
       eventsHash['center_changed'] = false if @attr.infoWindowOpen == true
       clearInterval(@intervalId)
-      if eventsHash['center_changed']
+      if eventsHash['center_changed'] || eventsHash['zoom_changed']
         @trigger document, 'uiMapZoomForListings', @mapChangedData()
         @trigger document, 'uiInitMarkerCluster', @mapChangedData()
         @trigger document, 'mapRendered', @mapChangedData()

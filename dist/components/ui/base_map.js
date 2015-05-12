@@ -65,7 +65,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
       return this.trigger(document, "uiNeighborhoodDataRequest", this.mapChangedDataBase());
     };
-    this.handleOurMapEvents = function(event_type) {
+    this.handleOurMapEvents = function() {
       google.maps.event.addListener(this.attr.gMap, 'zoom_changed', (function(_this) {
         return function() {
           return _this.storeEvent('zoom_changed');
@@ -92,7 +92,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
         eventsHash['center_changed'] = false;
       }
       clearInterval(this.intervalId);
-      if (eventsHash['center_changed']) {
+      if (eventsHash['center_changed'] || eventsHash['zoom_changed']) {
         this.trigger(document, 'uiMapZoomForListings', this.mapChangedData());
         this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
         this.trigger(document, 'mapRendered', this.mapChangedData());
