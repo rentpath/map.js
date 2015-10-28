@@ -26,6 +26,8 @@ define [
       markerClusterer: undefined
       markerOptions:
        fitBounds: false
+      shouldCluster: (markers) ->
+        true
 
     @prepend_origin = (value) ->
       value = "#{@assetOriginFromMetaTag()}#{value}"
@@ -40,11 +42,13 @@ define [
       @addMarkers(data)
 
     @updateCluster = (markers) ->
-      @attr.markerClusterer.addMarkers(markers)
-      @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
+      if @attr.shouldCluster(markers)
+        @initClusterer @attr.gMap
+        @attr.markerClusterer.addMarkers(markers)
+        @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
 
     @addMarkers = (data) ->
-      @attr.markerClusterer.clearMarkers()
+      @attr.markerClusterer?.clearMarkers()
       @attr.markers = []
       @attr.markersIndex = {}
       all_markers = []

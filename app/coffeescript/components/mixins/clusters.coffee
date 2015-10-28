@@ -13,9 +13,9 @@ define [
 ) ->
 
   markerClusters = ->
-    
+
     compose.mixin(@, [mobileDetection, clusterOpts])
-      
+
     @defaultAttrs
       markerClusterer: undefined
 
@@ -32,15 +32,14 @@ define [
       minimumClusterSize: @clusterSize()
       batchSize: if @isMobile() then 200 else null
 
-    @initClusterer = (ev, data) ->
-      @attr.markerClusterer = new MarkerClusterer(data.gMap, [], @mapClusterOptions())
+    @initClusterer = (gMap) ->
+      @attr.markerClusterer ?= new MarkerClusterer(gMap, [], @mapClusterOptions())
 
     @setClusterImage = (ev, data) ->
       @attr.mapPinCluster = data.pinsClusterImage
       @off document, 'clusterImageChange'
 
     @after 'initialize', ->
-      @on document, 'mapRenderedFirst', @initClusterer
       @on document, 'clusterImageChange', @setClusterImage
 
   return markerClusters

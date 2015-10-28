@@ -12,6 +12,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       markerClusterer: void 0,
       markerOptions: {
         fitBounds: false
+      },
+      shouldCluster: function(markers) {
+        return true;
       }
     });
     this.prepend_origin = function(value) {
@@ -35,20 +38,25 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return this.addMarkers(data);
     };
     this.updateCluster = function(markers) {
-      this.attr.markerClusterer.addMarkers(markers);
-      if (this.attr.markerOptions.fitBounds) {
-        return this.attr.markerClusterer.fitMapToMarkers();
+      if (this.attr.shouldCluster(markers)) {
+        this.initClusterer(this.attr.gMap);
+        this.attr.markerClusterer.addMarkers(markers);
+        if (this.attr.markerOptions.fitBounds) {
+          return this.attr.markerClusterer.fitMapToMarkers();
+        }
       }
     };
     this.addMarkers = function(data) {
-      var all_markers, i, len, listing, m, ref;
-      this.attr.markerClusterer.clearMarkers();
+      var all_markers, listing, m, _i, _len, _ref, _ref1;
+      if ((_ref = this.attr.markerClusterer) != null) {
+        _ref.clearMarkers();
+      }
       this.attr.markers = [];
       this.attr.markersIndex = {};
       all_markers = [];
-      ref = data.listings;
-      for (i = 0, len = ref.length; i < len; i++) {
-        listing = ref[i];
+      _ref1 = data.listings;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        listing = _ref1[_i];
         m = this.createMarker(listing);
         all_markers.push(m);
         this.sendCustomMarkerTrigger(m);

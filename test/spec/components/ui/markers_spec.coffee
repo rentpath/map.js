@@ -1,6 +1,5 @@
-define [ 'map/components/ui/markers' ], ( markers ) ->
-
-  describeMixin 'map/components/ui/markers', ->
+define [], () ->
+  describeComponent 'map/components/ui/markers', ->
     beforeEach ->
       @setupComponent()
 
@@ -35,3 +34,24 @@ define [ 'map/components/ui/markers' ], ( markers ) ->
 
       it "should return the overriden markerOptions", ->
         expect(@component.attr.markerOptions.fitBounds).toBe(true)
+
+    describe "#updateCluster", ->
+      describe "when attr.shouldCluster is true", ->
+        beforeEach ->
+          @setupComponent
+            shouldCluster: (markers) ->
+              true
+
+        it "should init markerClusterer", ->
+          @component.updateCluster([])
+          expect(@component.attr.markerClusterer).toBeDefined()
+
+      describe "when attr.shouldCluster is false", ->
+        beforeEach ->
+          @setupComponent
+            shouldCluster: (markers) ->
+              false
+
+        it "should not init markerClusterer", ->
+          @component.updateCluster([])
+          expect(@component.attr.markerClusterer).not.toBeDefined()
