@@ -106,7 +106,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       return this.attr.infoWindowOpen = false;
     };
     this.defineGoogleMapOptions = function() {
-      var geo, k, options, ref, v;
+      var geo, k, options, v, _ref;
       geo = this.getInitialGeo();
       options = {
         center: new google.maps.LatLng(geo.lat, geo.lng),
@@ -114,9 +114,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         scaleControl: true
       };
-      ref = this.attr.gMapOptions;
-      for (k in ref) {
-        v = ref[k];
+      _ref = this.attr.gMapOptions;
+      for (k in _ref) {
+        v = _ref[k];
         options[k] = v;
       }
       return options;
