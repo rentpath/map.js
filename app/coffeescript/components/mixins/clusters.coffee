@@ -33,7 +33,18 @@ define [
       batchSize: if @isMobile() then 200 else null
 
     @initClusterer = (gMap) ->
-      @attr.markerClusterer ?= new MarkerClusterer(gMap, [], @mapClusterOptions())
+      return if @attr.markerClusterer
+
+      @attr.markerClusterer = new MarkerClusterer(gMap, [], @mapClusterOptions())
+
+      google.maps.event.addListener @attr.markerClusterer, 'mouseover', (cluster) ->
+        $(document).trigger 'markerClusterMouseOver', cluster: cluster
+
+      google.maps.event.addListener @attr.markerClusterer, 'mouseout', (cluster) ->
+        $(document).trigger 'markerClusterMouseOut', cluster: cluster
+
+      google.maps.event.addListener @attr.markerClusterer, 'click', (cluster) ->
+        $(document).trigger 'markerClusterClick', cluster: cluster
 
     @setClusterImage = (ev, data) ->
       @attr.mapPinCluster = data.pinsClusterImage
