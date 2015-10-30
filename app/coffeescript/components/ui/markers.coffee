@@ -66,6 +66,7 @@ define [
 
     @createMarker = (datum) ->
       shadowPin = @shadowBaseOnType(datum)
+      listingType = if datum.free then "free" else "paid"
 
       new google.maps.Marker(
         position: new google.maps.LatLng(datum.lat, datum.lng)
@@ -74,12 +75,19 @@ define [
         shadow: shadowPin
         title: @markerTitle(datum)
         datumId: datum.id
+        listingType: listingType
       )
 
     @sendCustomMarkerTrigger = (marker) ->
       _this = this
       google.maps.event.addListener marker, 'click', ->
         $(document).trigger 'markerClicked', gMarker: @, gMap: _this.attr.gMap
+
+      google.maps.event.addListener marker, 'mouseover', (marker) ->
+        $(document).trigger 'markerMousedOver', gMarker: @, gMap: _this.attr.gMap
+
+      google.maps.event.addListener marker, 'mouseout', (marker) ->
+        $(document).trigger 'markerMousedOut', gMarker: @, gMap: _this.attr.gMap
 
     @markerTitle = (datum) ->
       datum.name || ''
