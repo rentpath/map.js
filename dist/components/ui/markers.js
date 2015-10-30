@@ -80,6 +80,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return this.attr.markersIndex = {};
     };
     this.removeGoogleMarker = function(gmarker) {
+      google.maps.event.clearListeners(gmarker, "click");
       gmarker.setMap(null);
       return gmarker = null;
     };

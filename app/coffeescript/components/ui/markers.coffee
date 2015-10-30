@@ -69,6 +69,7 @@ define [
       @attr.markersIndex = {}
 
     @removeGoogleMarker = (gmarker) ->
+      google.maps.event.clearListeners gmarker, "click"
       gmarker.setMap(null)
       gmarker = null
 
