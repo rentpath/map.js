@@ -48,9 +48,7 @@ define [
         @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
 
     @addMarkers = (data) ->
-      @attr.markerClusterer?.clearMarkers()
-      @attr.markers = []
-      @attr.markersIndex = {}
+      @clearAllMarkers()
       all_markers = []
 
       for listing in data.listings
@@ -63,6 +61,16 @@ define [
       @updateCluster(all_markers)
       @updateListingsCount()
       @trigger 'uiSetMarkerInfoWindow'
+
+    @clearAllMarkers = ->
+      @attr.markerClusterer?.clearMarkers()
+      @removeGoogleMarker(marker.googleMarker) for marker in @attr.markers
+      @attr.markers = []
+      @attr.markersIndex = {}
+
+    @removeGoogleMarker = (gmarker) ->
+      gmarker.setMap(null)
+      gmarker = null
 
     @createMarker = (datum) ->
       shadowPin = @shadowBaseOnType(datum)
