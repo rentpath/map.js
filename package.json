@@ -1,6 +1,6 @@
 {
   "name": "map",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Map Module for RentPath Sites",
   "license": "MIT",
   "repository": "rentpath/map.js",

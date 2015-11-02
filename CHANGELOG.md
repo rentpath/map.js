@@ -1,3 +1,8 @@
+# v1.4.1
+* [bugfix] Remove unused methods and ensure that the event listeners that were intended to be removed (presumably to free memory) actually are.
+
+[Compare v1.4.0..v1.4.1](https://github.com/RentPath/map.js/compare/v1.4.0...v1.4.1)
+
 # v1.4.0
 * [feature] Added 2 new events that are triggered on the document when a user interacts with a marker.
 The events are: `markerMousedOver`, and `markerMousedOut`.
