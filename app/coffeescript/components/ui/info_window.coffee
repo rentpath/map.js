@@ -20,7 +20,7 @@ define [
     @showInfoWindowOnMarkerClick = (ev, data) ->
       @attr.gMarker = data.gMarker
       @attr.gMap = data.gMap
-      @trigger document, 'uiInfoWindowDataRequest', listingId: @attr.gMarker.datumId
+      @trigger document, 'uiInfoWindowDataRequest', listingId: @attr.gMarker.datum.id
 
     @render = (ev, data) ->
       @closeOpenInfoWindow()

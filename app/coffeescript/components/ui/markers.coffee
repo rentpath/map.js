@@ -66,7 +66,6 @@ define [
 
     @createMarker = (datum) ->
       shadowPin = @shadowBaseOnType(datum)
-      listingType = if datum.free then "free" else "paid"
 
       new google.maps.Marker(
         position: new google.maps.LatLng(datum.lat, datum.lng)
@@ -74,8 +73,7 @@ define [
         icon: @iconBasedOnType(datum)
         shadow: shadowPin
         title: @markerTitle(datum)
-        datumId: datum.id
-        listingType: listingType
+        datum: datum
       )
 
     @sendCustomMarkerTrigger = (marker) ->

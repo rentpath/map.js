@@ -71,17 +71,15 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return this.trigger('uiSetMarkerInfoWindow');
     };
     this.createMarker = function(datum) {
-      var listingType, shadowPin;
+      var shadowPin;
       shadowPin = this.shadowBaseOnType(datum);
-      listingType = datum.free ? "free" : "paid";
       return new google.maps.Marker({
         position: new google.maps.LatLng(datum.lat, datum.lng),
         map: this.attr.gMap,
         icon: this.iconBasedOnType(datum),
         shadow: shadowPin,
         title: this.markerTitle(datum),
-        datumId: datum.id,
-        listingType: listingType
+        datum: datum
       });
     };
     this.sendCustomMarkerTrigger = function(marker) {
