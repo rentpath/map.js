@@ -6,20 +6,6 @@ define(['flight/lib/compose', 'marker-clusterer', 'map/components/mixins/mobile_
     this.defaultAttrs({
       markerClusterer: void 0
     });
-    this.clearMarkers = function() {
-      this.unbindMarkers();
-      return this.attr.markers.clearMarkers();
-    };
-    this.unbindMarkers = function() {
-      var i, len, marker, ref, results;
-      ref = this.attr.markerClusterer;
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        marker = ref[i];
-        results.push(google.maps.event.clearListeners(marker, "click"));
-      }
-      return results;
-    };
     this.mapClusterOptions = function() {
       return {
         styles: this.clusterStyleArray(),

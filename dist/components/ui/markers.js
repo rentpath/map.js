@@ -47,16 +47,12 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       }
     };
     this.addMarkers = function(data) {
-      var all_markers, i, len, listing, m, ref, ref1;
-      if ((ref = this.attr.markerClusterer) != null) {
-        ref.clearMarkers();
-      }
-      this.attr.markers = [];
-      this.attr.markersIndex = {};
+      var all_markers, i, len, listing, m, ref;
+      this.clearAllMarkers();
       all_markers = [];
-      ref1 = data.listings;
-      for (i = 0, len = ref1.length; i < len; i++) {
-        listing = ref1[i];
+      ref = data.listings;
+      for (i = 0, len = ref.length; i < len; i++) {
+        listing = ref[i];
         m = this.createMarker(listing);
         all_markers.push(m);
         this.sendCustomMarkerTrigger(m);
@@ -69,6 +65,24 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       this.updateCluster(all_markers);
       this.updateListingsCount();
       return this.trigger('uiSetMarkerInfoWindow');
+    };
+    this.clearAllMarkers = function() {
+      var i, len, marker, ref, ref1;
+      if ((ref = this.attr.markerClusterer) != null) {
+        ref.clearMarkers();
+      }
+      ref1 = this.attr.markers;
+      for (i = 0, len = ref1.length; i < len; i++) {
+        marker = ref1[i];
+        this.removeGoogleMarker(marker.googleMarker);
+      }
+      this.attr.markers = [];
+      return this.attr.markersIndex = {};
+    };
+    this.removeGoogleMarker = function(gmarker) {
+      google.maps.event.clearListeners(gmarker, "click");
+      gmarker.setMap(null);
+      return gmarker = null;
     };
     this.createMarker = function(datum) {
       var shadowPin;
