@@ -19,14 +19,6 @@ define [
     @defaultAttrs
       markerClusterer: undefined
 
-    @clearMarkers = ->
-      @unbindMarkers()
-      @attr.markers.clearMarkers()
-
-    @unbindMarkers = ->
-      for marker in @attr.markerClusterer
-        google.maps.event.clearListeners marker, "click"
-
     @mapClusterOptions = ->
       styles: @clusterStyleArray()
       minimumClusterSize: @clusterSize()
