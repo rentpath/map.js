@@ -79,23 +79,23 @@ define(['jquery', 'underscore', 'flight/lib/component', 'accounting', 'map/compo
       });
     };
     this.buildPolygons = function(data) {
-      var hoodData, polygonData, row, rows, _i, _len, _results;
+      var hoodData, i, len, polygonData, results, row, rows;
       if (!(data && data.rows)) {
         return;
       }
       rows = data.rows;
       this.clearPolygons();
-      _results = [];
-      for (_i = 0, _len = rows.length; _i < _len; _i++) {
-        row = rows[_i];
+      results = [];
+      for (i = 0, len = rows.length; i < len; i++) {
+        row = rows[i];
         if (!rows[0]) {
           continue;
         }
         polygonData = this.buildPaths(row);
         hoodData = this.buildHoodData(row);
-        _results.push(this.wireupPolygon(polygonData, hoodData));
+        results.push(this.wireupPolygon(polygonData, hoodData));
       }
-      return _results;
+      return results;
     };
     this.wireupPolygon = function(polygonData, hoodData) {
       var hoodLayer, initialOptions, isCurrentHood, mouseOutOptions, mouseOverOptions;
@@ -192,13 +192,13 @@ define(['jquery', 'underscore', 'flight/lib/component', 'accounting', 'map/compo
       }
       return $.when(this.getOnboardData(polygonData)).then((function(_this) {
         return function(onboardData) {
-          var data, demographic, key, value, _ref;
+          var data, demographic, key, ref, value;
           data = _.extend(_this.attr.infoWindowData, polygonData);
           if (!_.isEmpty(onboardData)) {
             demographic = onboardData.demographic;
-            _ref = _this.attr.infoWindowData;
-            for (key in _ref) {
-              value = _ref[key];
+            ref = _this.attr.infoWindowData;
+            for (key in ref) {
+              value = ref[key];
               if (demographic[key]) {
                 data[key] = _this.formatValue(key, demographic[key]);
               }
@@ -209,13 +209,13 @@ define(['jquery', 'underscore', 'flight/lib/component', 'accounting', 'map/compo
       })(this));
     };
     this.clearPolygons = function() {
-      var x, _i, _len, _ref;
+      var i, len, ref, x;
       if (!this.attr.polygons.length) {
         return;
       }
-      _ref = this.attr.polygons;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        x = _ref[_i];
+      ref = this.attr.polygons;
+      for (i = 0, len = ref.length; i < len; i++) {
+        x = ref[i];
         x.setMap(null);
       }
       this.attr.polygons = [];

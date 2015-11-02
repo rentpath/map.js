@@ -14,7 +14,7 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
       this.attr.gMarker = data.gMarker;
       this.attr.gMap = data.gMap;
       return this.trigger(document, 'uiInfoWindowDataRequest', {
-        listingId: this.attr.gMarker.datumId
+        listingId: this.attr.gMarker.datum.id
       });
     };
     this.render = function(ev, data) {
