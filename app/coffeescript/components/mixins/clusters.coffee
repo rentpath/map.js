@@ -38,6 +38,9 @@ define [
       google.maps.event.addListener @attr.markerClusterer, 'click', (cluster) ->
         $(document).trigger 'markerClusterClick', cluster: cluster
 
+      google.maps.event.addListener @attr.markerClusterer, 'clusteringend', (clusterer) ->
+        $(document).trigger 'markerClusteringEnd', clusterer: clusterer
+
     @setClusterImage = (ev, data) ->
       @attr.mapPinCluster = data.pinsClusterImage
       @off document, 'clusterImageChange'

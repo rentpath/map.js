@@ -6,12 +6,14 @@ define [
   'map/components/mixins/clusters'
   'map/components/mixins/map_utils'
   'primedia_events'
+  'map/markerAnimate' # FIXME: move to separate gethub repo?
 ], (
   $
   defineComponent
   clusters
   mapUtils
   events
+  markerAnimate
 ) ->
 
   markersOverlay = ->
@@ -22,12 +24,16 @@ define [
       listingCountText: 'Apartments Found: '
       markers: []
       markersIndex: {}
+      clusteredListings: {}  # keys are listing IDs; values are cluster lat/lng
+      needClusterData: false
+      markersToAnimate: []
       gMap: undefined
       markerClusterer: undefined
       markerOptions:
        fitBounds: false
       shouldCluster: (markers) ->
         true
+      declusterAnimationTime: 0
 
     @prepend_origin = (value) ->
       value = "#{@assetOriginFromMetaTag()}#{value}"
@@ -48,42 +54,75 @@ define [
         @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
 
     @addMarkers = (data) ->
+      console.log("BEGIN addMarkers", data.listings.length)
+      @attr.needClusterData = true
       @clearAllMarkers()
       all_markers = []
 
+      shouldCluster = @attr.shouldCluster(data.listings) # ugh
+
       for listing in data.listings
-        m = @createMarker(listing)
+        m = @createMarker(listing, shouldCluster)
         all_markers.push(m)
         @sendCustomMarkerTrigger(m)
         @attr.markers.push {googleMarker: m, markerData: listing}
         @attr.markersIndex[listing.id] = @attr.markers.length - 1
 
+      @attr.clusteredListings = {}
       @updateCluster(all_markers)
       @updateListingsCount()
       @trigger 'uiSetMarkerInfoWindow'
+      @animateMarkers()
 
     @clearAllMarkers = ->
       @attr.markerClusterer?.clearMarkers()
       @removeGoogleMarker(marker.googleMarker) for marker in @attr.markers
       @attr.markers = []
       @attr.markersIndex = {}
+      @attr.markersToAnimate = []
 
     @removeGoogleMarker = (gmarker) ->
       google.maps.event.clearListeners gmarker, "click"
       gmarker.setMap(null)
       gmarker = null
 
-    @createMarker = (datum) ->
+    @createMarker = (datum, shouldCluster) ->
       shadowPin = @shadowBaseOnType(datum)
 
-      new google.maps.Marker(
-        position: new google.maps.LatLng(datum.lat, datum.lng)
+      shouldAnimate = @shouldAnimate(datum.id, shouldCluster) # gag
+      if shouldAnimate
+        position = @previouslyClusteredLatLng(datum.id)
+      else
+        position = new google.maps.LatLng(datum.lat, datum.lng)
+
+      marker = new google.maps.Marker(
+        position: position
         map: @attr.gMap
         icon: @iconBasedOnType(datum)
         shadow: shadowPin
         title: @markerTitle(datum)
         datum: datum
       )
+      if shouldAnimate
+        @attr.markersToAnimate.push(marker)
+
+      marker
+
+    @shouldAnimate = (listingId, shouldCluster) ->
+      # FIXME: is there same way we can avoid having to pass in shouldCluster ???
+      @attr.declusterAnimationTime && !shouldCluster && @previouslyClusteredLatLng(listingId)
+
+    @previouslyClusteredLatLng = (listingId) ->
+      @attr.clusteredListings[listingId]
+
+    @animateMarkers = ->
+      console.log("animateMarkers", @attr.markersToAnimate)
+      for marker in @attr.markersToAnimate
+        position = new google.maps.LatLng(marker.datum.lat, marker.datum.lng)
+        marker.animateTo position,
+          duration: @attr.declusterAnimationTime
+          #easing: 'easeOutCubic'
+          easing: 'linear'
 
     @sendCustomMarkerTrigger = (marker) ->
       _this = this
@@ -119,11 +158,24 @@ define [
     @shadowBaseOnType = (datum) ->
       if datum.free then "" else @attr.mapPinShadow
 
+    @noteClusteredListings = (ev, data) ->
+      return unless @attr.needClusterData
+      @attr.needClusterData = false
+      @attr.clusteredListings = {}
+      console.log("BEGIN clusteredListings", @attr.clusteredListings)
+      for cluster in data.clusterer.getClusters()
+        markers = cluster.getMarkers()
+        if markers.length >= cluster.minClusterSize_
+          for marker in markers
+            @attr.clusteredListings[marker.datum.id] = cluster.getCenter()
+      console.log("END clusteredListings", @attr.clusteredListings)
+
     @after 'initialize', ->
       @on document, 'mapRenderedFirst', @initAttr
       @on document, 'markersUpdateAttr', @initAttr
       @on document, 'markersDataAvailable', @render
       @on document, 'animatePin', @markerAnimation
+      @on document, 'markerClusteringEnd', @noteClusteredListings
       # TODO: put into it's own component.
       @on document, 'uiMapZoom', @updateListingsCount
 
