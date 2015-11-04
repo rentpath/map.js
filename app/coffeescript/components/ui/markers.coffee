@@ -29,6 +29,10 @@ define [
       shouldCluster: (markers) ->
         true
 
+      mapPin: '' # can be either a function or url to the pin
+      mapPinFree: ''
+      mapPinShadow: '' # can be either a function or url to the pin
+
     @prepend_origin = (value) ->
       value = "#{@assetOriginFromMetaTag()}#{value}"
 
@@ -74,7 +78,7 @@ define [
       gmarker = null
 
     @createMarker = (datum) ->
-      shadowPin = @shadowBaseOnType(datum)
+      shadowPin = @shadowBasedOnType(datum)
 
       new google.maps.Marker(
         position: new google.maps.LatLng(datum.lat, datum.lng)
@@ -112,12 +116,19 @@ define [
       lCount = @attr.markers.length
       $(@attr.listingCountSelector).html(@attr.listingCountText + lCount)
 
-    # These functions should be moved to Listing component
     @iconBasedOnType = (datum) ->
-      if datum.free then @attr.mapPinFree else @attr.mapPin
+      if typeof(@attr.mapPin) is "function"
+        @attr.mapPin(datum)
+      else
+        # DEPRECATED: Please pass in a function to `@attr.mapPin`
+        if datum.free then @attr.mapPinFree else @attr.mapPin
 
-    @shadowBaseOnType = (datum) ->
-      if datum.free then "" else @attr.mapPinShadow
+    @shadowBasedOnType = (datum) ->
+      if typeof(@attr.mapPinShadow) is "function"
+        @attr.mapPinShadow(datum)
+      else
+        # DEPRECATED: Please pass in a function to `@attr.mapPinShadow`
+        if datum.free then "" else @attr.mapPinShadow
 
     @after 'initialize', ->
       @on document, 'mapRenderedFirst', @initAttr

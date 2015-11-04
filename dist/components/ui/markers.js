@@ -15,7 +15,10 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       },
       shouldCluster: function(markers) {
         return true;
-      }
+      },
+      mapPin: '',
+      mapPinFree: '',
+      mapPinShadow: ''
     });
     this.prepend_origin = function(value) {
       return value = "" + (this.assetOriginFromMetaTag()) + value;
@@ -47,12 +50,12 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       }
     };
     this.addMarkers = function(data) {
-      var all_markers, i, len, listing, m, ref;
+      var all_markers, listing, m, _i, _len, _ref;
       this.clearAllMarkers();
       all_markers = [];
-      ref = data.listings;
-      for (i = 0, len = ref.length; i < len; i++) {
-        listing = ref[i];
+      _ref = data.listings;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        listing = _ref[_i];
         m = this.createMarker(listing);
         all_markers.push(m);
         this.sendCustomMarkerTrigger(m);
@@ -67,13 +70,13 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return this.trigger('uiSetMarkerInfoWindow');
     };
     this.clearAllMarkers = function() {
-      var i, len, marker, ref, ref1;
-      if ((ref = this.attr.markerClusterer) != null) {
-        ref.clearMarkers();
+      var marker, _i, _len, _ref, _ref1;
+      if ((_ref = this.attr.markerClusterer) != null) {
+        _ref.clearMarkers();
       }
-      ref1 = this.attr.markers;
-      for (i = 0, len = ref1.length; i < len; i++) {
-        marker = ref1[i];
+      _ref1 = this.attr.markers;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        marker = _ref1[_i];
         this.removeGoogleMarker(marker.googleMarker);
       }
       this.attr.markers = [];
@@ -86,7 +89,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
     };
     this.createMarker = function(datum) {
       var shadowPin;
-      shadowPin = this.shadowBaseOnType(datum);
+      shadowPin = this.shadowBasedOnType(datum);
       return new google.maps.Marker({
         position: new google.maps.LatLng(datum.lat, datum.lng),
         map: this.attr.gMap,
@@ -140,17 +143,25 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return $(this.attr.listingCountSelector).html(this.attr.listingCountText + lCount);
     };
     this.iconBasedOnType = function(datum) {
-      if (datum.free) {
-        return this.attr.mapPinFree;
+      if (typeof this.attr.mapPin === "function") {
+        return this.attr.mapPin(datum);
       } else {
-        return this.attr.mapPin;
+        if (datum.free) {
+          return this.attr.mapPinFree;
+        } else {
+          return this.attr.mapPin;
+        }
       }
     };
-    this.shadowBaseOnType = function(datum) {
-      if (datum.free) {
-        return "";
+    this.shadowBasedOnType = function(datum) {
+      if (typeof this.attr.mapPinShadow === "function") {
+        return this.attr.mapPinShadow(datum);
       } else {
-        return this.attr.mapPinShadow;
+        if (datum.free) {
+          return "";
+        } else {
+          return this.attr.mapPinShadow;
+        }
       }
     };
     return this.after('initialize', function() {
