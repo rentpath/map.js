@@ -25,7 +25,9 @@ define [
       batchSize: if @isMobile() then 200 else null
 
     @initClusterer = (gMap) ->
-      return if @attr.markerClusterer
+      if @attr.markerClusterer
+        @attr.markerClusterer.setOptions map: gMap
+        return
 
       @attr.markerClusterer = new MarkerClusterer(gMap, [], @mapClusterOptions())
 

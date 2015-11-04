@@ -48,10 +48,10 @@ define [
       @addMarkers(data)
 
     @updateCluster = (markers) ->
-      if @attr.shouldCluster(markers)
-        @initClusterer @attr.gMap
-        @attr.markerClusterer.addMarkers(markers)
-        @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
+      #if @attr.shouldCluster(markers)  # FIXME: handle map variation 2
+      @initClusterer @attr.gMap
+      @attr.markerClusterer.addMarkers(markers)
+      @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
 
     @addMarkers = (data) ->
       console.log("BEGIN addMarkers", data.listings.length)
@@ -72,7 +72,10 @@ define [
       @updateCluster(all_markers)
       @updateListingsCount()
       @trigger 'uiSetMarkerInfoWindow'
-      @animateMarkers()
+      if @attr.markersToAnimate.length
+        setTimeout =>
+          @animateMarkers()
+        , 1000
 
     @clearAllMarkers = ->
       @attr.markerClusterer?.clearMarkers()
@@ -117,6 +120,12 @@ define [
 
     @animateMarkers = ->
       console.log("animateMarkers", @attr.markersToAnimate)
+
+      return unless @attr.markersToAnimate.length
+
+      # Uncluster the markers
+      @attr.markerClusterer.setOptions map: null
+
       for marker in @attr.markersToAnimate
         position = new google.maps.LatLng(marker.datum.lat, marker.datum.lng)
         marker.animateTo position,
