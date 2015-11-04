@@ -52,7 +52,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.firstRender = function() {
       google.maps.visualRefresh = true;
       this.attr.gMap = new google.maps.Map(this.node, this.defineGoogleMapOptions());
-      this.attr.minZoom = this.mapZoom();
+      this.attr.minZoom = this.currentZoom();
       google.maps.event.addListenerOnce(this.attr.gMap, 'idle', (function(_this) {
         return function() {
           _this.fireOurMapEventsOnce();
@@ -91,7 +91,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     };
     this.checkForZoomOut = function() {
       var newZoom;
-      newZoom = this.mapZoom();
+      newZoom = this.currentZoom();
       if (newZoom < this.attr.minZoom) {
         this.attr.minZoom = newZoom;
         return this.storeEvent('zoomed_out');
@@ -105,7 +105,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       }
       clearInterval(this.intervalId);
       if (eventsHash['center_changed']) {
-        this.attr.minZoom = this.mapZoom();
+        this.attr.minZoom = this.currentZoom();
       }
       if (eventsHash['center_changed'] || eventsHash['zoomed_out']) {
         this.trigger(document, 'uiMapZoomForListings', this.mapChangedData());
@@ -175,7 +175,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       var gLatLng;
       return gLatLng = this.attr.gMap.getCenter();
     };
-    this.mapZoom = function() {
+    this.currentZoom = function() {
       return this.attr.gMap.getZoom();
     };
     this.addCustomMarker = function() {

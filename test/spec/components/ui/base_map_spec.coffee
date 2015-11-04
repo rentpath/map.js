@@ -95,13 +95,13 @@ define [], () ->
 
         describe "when current zoom greater than minimum zoom seen", ->
           it "should not turn on zoomed_out in event hash", ->
-            spyOn(@component, "mapZoom").and.returnValue 11
+            spyOn(@component, "currentZoom").and.returnValue 11
             @component.checkForZoomOut()
             expect(@component.attr.gMapEvents.zoomed_out).toBe(false)
 
         describe "when current zoom less than minimum zoom seen", ->
           it "should turn on zoomed_out in event hash", ->
-            spyOn(@component, "mapZoom").and.returnValue 9
+            spyOn(@component, "currentZoom").and.returnValue 9
             @component.checkForZoomOut()
             expect(@component.attr.gMapEvents.zoomed_out).toBe(true)
 

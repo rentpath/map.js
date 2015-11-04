@@ -56,7 +56,7 @@ define [
 
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
 
-      @attr.minZoom = @mapZoom()
+      @attr.minZoom = @currentZoom()
 
       google.maps.event.addListenerOnce @attr.gMap, 'idle', =>
         @fireOurMapEventsOnce()
@@ -84,7 +84,7 @@ define [
       @attr.gMapEvents[event] = true
 
     @checkForZoomOut = ->
-      newZoom = @mapZoom()
+      newZoom = @currentZoom()
       if newZoom < @attr.minZoom
         @attr.minZoom = newZoom
         @storeEvent('zoomed_out')
@@ -96,7 +96,7 @@ define [
 
       if eventsHash['center_changed']
         # Reset minZoom to the current zoom level.
-        @attr.minZoom = @mapZoom()
+        @attr.minZoom = @currentZoom()
 
       if eventsHash['center_changed'] || eventsHash['zoomed_out']
         @trigger document, 'uiMapZoomForListings', @mapChangedData()
@@ -158,7 +158,7 @@ define [
     @mapCenter = ->
       gLatLng = @attr.gMap.getCenter()
 
-    @mapZoom = ->
+    @currentZoom = ->
       @attr.gMap.getZoom()
 
     @addCustomMarker = ->
