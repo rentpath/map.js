@@ -18,7 +18,8 @@ define [
       latitude: 33.9411
       longitude: -84.2136
       gMap: {}
-      gMapEvents: {'center_changed': false, 'zoom_changed': false}
+      gMapEvents: {'center_changed': false, 'zoom_changed': false, 'zoomed_out': false}
+      minZoom: undefined
       infoWindowOpen: false
       overlay: undefined
       draggable: true
@@ -55,6 +56,8 @@ define [
 
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
 
+      @attr.minZoom = @mapZoom()
+
       google.maps.event.addListenerOnce @attr.gMap, 'idle', =>
         @fireOurMapEventsOnce()
         @handleOurMapEvents()
@@ -71,6 +74,7 @@ define [
     @handleOurMapEvents = ->
       google.maps.event.addListener @attr.gMap, 'zoom_changed', =>
         @storeEvent('zoom_changed')
+        @checkForZoomOut()
       google.maps.event.addListener @attr.gMap, 'center_changed', =>
         @storeEvent('center_changed')
       google.maps.event.addListener @attr.gMap, 'idle', =>
@@ -79,11 +83,22 @@ define [
     @storeEvent = (event) ->
       @attr.gMapEvents[event] = true
 
+    @checkForZoomOut = ->
+      newZoom = @mapZoom()
+      if newZoom < @attr.minZoom
+        @attr.minZoom = newZoom
+        @storeEvent('zoomed_out')
+
     @fireOurMapEvents = () ->
       eventsHash = @attr.gMapEvents
       eventsHash['center_changed'] = false if @attr.infoWindowOpen == true
       clearInterval(@intervalId)
-      if eventsHash['center_changed'] || eventsHash['zoom_changed']
+
+      if eventsHash['center_changed']
+        # Reset minZoom to the current zoom level.
+        @attr.minZoom = @mapZoom()
+
+      if eventsHash['center_changed'] || eventsHash['zoomed_out']
         @trigger document, 'uiMapZoomForListings', @mapChangedData()
         @trigger document, 'uiInitMarkerCluster', @mapChangedData()
         @trigger document, 'mapRendered', @mapChangedData()
@@ -92,8 +107,9 @@ define [
       @resetOurEventHash()
 
     @resetOurEventHash = () ->
-      @attr.gMapEvents['zoom_changed'] = false
       @attr.gMapEvents['center_changed'] = false
+      @attr.gMapEvents['zoom_changed'] = false
+      @attr.gMapEvents['zoomed_out'] = false
       @attr.infoWindowOpen = false
 
     @defineGoogleMapOptions = () ->
@@ -141,6 +157,9 @@ define [
 
     @mapCenter = ->
       gLatLng = @attr.gMap.getCenter()
+
+    @mapZoom = ->
+      @attr.gMap.getZoom()
 
     @addCustomMarker = ->
       @customMarkerDialogClose()
