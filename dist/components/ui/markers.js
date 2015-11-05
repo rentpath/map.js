@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map/components/mixins/map_utils', 'primedia_events'], function($, defineComponent, clusters, mapUtils, events) {
+define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map/components/mixins/map_utils', 'map/components/mixins/stored_markers', 'primedia_events'], function($, defineComponent, clusters, mapUtils, storedMarkers, events) {
   var markersOverlay;
   markersOverlay = function() {
     this.defaultAttrs({
@@ -18,7 +18,8 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       },
       mapPin: '',
       mapPinFree: '',
-      mapPinShadow: ''
+      mapPinShadow: '',
+      saveMarkerClick: false
     });
     this.prepend_origin = function(value) {
       return value = "" + (this.assetOriginFromMetaTag()) + value;
@@ -88,13 +89,16 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return gmarker = null;
     };
     this.createMarker = function(datum) {
+      var saved;
+      saved = this.storedMarkerExists(datum.id);
       return new google.maps.Marker({
         position: new google.maps.LatLng(datum.lat, datum.lng),
         map: this.attr.gMap,
-        icon: this.iconBasedOnType(this.attr.mapPin, datum),
-        shadow: this.iconBasedOnType(this.attr.mapPinShadow, datum),
+        icon: this.iconBasedOnType(this.attr.mapPin, datum, saved),
+        shadow: this.iconBasedOnType(this.attr.mapPinShadow, datum, saved),
         title: this.markerTitle(datum),
-        datum: datum
+        datum: datum,
+        saveMarkerClick: this.attr.saveMarkerClick
       });
     };
     this.sendCustomMarkerTrigger = function(marker) {
@@ -157,9 +161,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
         return '';
       }
     };
-    this.iconBasedOnType = function(icon, datum) {
+    this.iconBasedOnType = function(icon, datum, saved) {
       if (typeof icon === "function") {
-        return icon(datum);
+        return icon(datum, saved);
       } else if (typeof this.attr.mapPin === "string") {
         return {
           url: this.deprecatedIconLogic(icon, datum)
@@ -176,5 +180,5 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return this.on(document, 'uiMapZoom', this.updateListingsCount);
     });
   };
-  return defineComponent(markersOverlay, clusters, mapUtils);
+  return defineComponent(markersOverlay, clusters, mapUtils, storedMarkers);
 });
