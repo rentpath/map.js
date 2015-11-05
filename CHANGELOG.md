@@ -1,3 +1,9 @@
+# v1.5.1
+* [optimization] Don't make data request when zooming in.
+  Was making request when zooming in or out, but we really only need to make the request when zooming out.
+
+[Compare v1.5.0..v1.5.1](https://github.com/RentPath/map.js/compare/v1.5.0...v1.5.1)
+
 # v1.5.0
 * [feature] When creating markers, you can pass in a function for `@attr.mapPin` and `@attr.mapPinShadow`. This allows the app to put conditional logic for different markers.
 * [deprecated] Passing a string (url) to `@attr.mapPin` and `@attr.mapPinFree` is deprecated in favor of passing in a function. The intent is to move app logic out of map.js.
