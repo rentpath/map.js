@@ -29,9 +29,9 @@ define [
       shouldCluster: (markers) ->
         true
 
-      mapPin: '' # can be either a function or url to the pin
-      mapPinFree: ''
-      mapPinShadow: '' # can be either a function or url to the pin
+      mapPin: ''       # can be either a function, Icon options, or url to the pin.
+      mapPinFree: ''   # DEPRECATED. See below.
+      mapPinShadow: '' # can be either a function, Icon options, or url to the pin.
 
     @prepend_origin = (value) ->
       value = "#{@assetOriginFromMetaTag()}#{value}"
@@ -78,13 +78,11 @@ define [
       gmarker = null
 
     @createMarker = (datum) ->
-      shadowPin = @shadowBasedOnType(datum)
-
       new google.maps.Marker(
         position: new google.maps.LatLng(datum.lat, datum.lng)
         map: @attr.gMap
-        icon: @iconBasedOnType(datum)
-        shadow: shadowPin
+        icon: @iconBasedOnType(@attr.mapPin, datum)
+        shadow: @iconBasedOnType(@attr.mapPinShadow, datum)
         title: @markerTitle(datum)
         datum: datum
       )
@@ -116,19 +114,24 @@ define [
       lCount = @attr.markers.length
       $(@attr.listingCountSelector).html(@attr.listingCountText + lCount)
 
-    @iconBasedOnType = (datum) ->
-      if typeof(@attr.mapPin) is "function"
-        @attr.mapPin(datum)
-      else
-        # DEPRECATED: Please pass in a function to `@attr.mapPin`
+    @deprecatedIconLogic = (icon, datum) ->
+      if icon == @attr.mapPin
         if datum.free then @attr.mapPinFree else @attr.mapPin
-
-    @shadowBasedOnType = (datum) ->
-      if typeof(@attr.mapPinShadow) is "function"
-        @attr.mapPinShadow(datum)
-      else
-        # DEPRECATED: Please pass in a function to `@attr.mapPinShadow`
+      else if icon == @attr.mapPinShadow
         if datum.free then "" else @attr.mapPinShadow
+      else
+        ''
+
+
+    @iconBasedOnType = (icon, datum) ->
+      if typeof(icon) is "function"
+        icon(datum)
+      else if typeof(@attr.mapPin) is "string"
+        # DEPRECATED: Please pass in a function or object to `@attr.mapPin`
+        #             and '@attr.mapPinShadow'.
+        { url: @deprecatedIconLogic(icon, datum) }
+      else
+        icon
 
     @after 'initialize', ->
       @on document, 'mapRenderedFirst', @initAttr
@@ -138,5 +141,4 @@ define [
       # TODO: put into it's own component.
       @on document, 'uiMapZoom', @updateListingsCount
 
-
-  return defineComponent(markersOverlay, clusters, mapUtils)
+  defineComponent(markersOverlay, clusters, mapUtils)
