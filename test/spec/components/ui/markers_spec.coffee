@@ -46,6 +46,14 @@ define [], () ->
           it "uses the return value from the function", ->
             expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual({ url: "/url/to/pin/from/func" })
 
+        describe "when given an object", ->
+          beforeEach ->
+            @setupComponent
+              mapPin: { foo: "/url/to/pin/from/func" }
+
+          it "uses the return value from the function", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual({ foo: "/url/to/pin/from/func" })
+
         describe "when given a url", ->
           beforeEach ->
             @setupComponent
