@@ -36,47 +36,56 @@ define [], () ->
         expect(@component.attr.markerOptions.fitBounds).toBe(true)
 
     describe "#iconBasedOnType", ->
-      describe "when given a function", ->
-        beforeEach ->
-          @setupComponent
-            mapPin: (datum) ->
-              "/url/to/pin/from/func"
+      describe "with arg mapPin", ->
+        describe "when given a function", ->
+          beforeEach ->
+            @setupComponent
+              mapPin: (datum) ->
+                { url: "/url/to/pin/from/func" }
 
-        it "uses the return value from the function", ->
-          expect(@component.iconBasedOnType({})).toEqual("/url/to/pin/from/func")
+          it "uses the return value from the function", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual({ url: "/url/to/pin/from/func" })
 
-      describe "when given a url", ->
-        beforeEach ->
-          @setupComponent
-            mapPin: "/url/to/pin"
-            mapPinFree: "/url/to/free/pin"
+        describe "when given an object", ->
+          beforeEach ->
+            @setupComponent
+              mapPin: { foo: "/url/to/pin/from/func" }
 
-        it "uses mapPin when not free", ->
-          expect(@component.iconBasedOnType({})).toEqual("/url/to/pin")
+          it "uses the return value from the function", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual({ foo: "/url/to/pin/from/func" })
 
-        it "uses mapPinFree when free", ->
-          expect(@component.iconBasedOnType(free: true)).toEqual("/url/to/free/pin")
+        describe "when given a url", ->
+          beforeEach ->
+            @setupComponent
+              mapPin: "/url/to/pin"
+              mapPinFree: "/url/to/free/pin"
 
-    describe "#shadowBasedOnType", ->
-      describe "when given a function", ->
-        beforeEach ->
-          @setupComponent
-            mapPinShadow: (datum) ->
-              "/url/to/pin/from/func"
+          it "uses mapPin when not free", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual({ url: "/url/to/pin" })
 
-        it "uses the return value from the function", ->
-          expect(@component.shadowBasedOnType({})).toEqual("/url/to/pin/from/func")
+          it "uses mapPinFree when free", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPin, { free: true })).toEqual({ url: "/url/to/free/pin" })
 
-      describe "when given a url", ->
-        beforeEach ->
-          @setupComponent
-            mapPinShadow: "/url/to/pin"
+      describe "with arg mapPinShadow", ->
+        describe "when given a function", ->
+          beforeEach ->
+            @setupComponent
+              mapPinShadow: (datum) ->
+                { url: "/url/to/pin/from/func" }
 
-        it "uses mapPinShadow when not free", ->
-          expect(@component.shadowBasedOnType({})).toEqual("/url/to/pin")
+          it "uses the return value from the function", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPinShadow, {})).toEqual({ url: "/url/to/pin/from/func" })
 
-        it "is blank when free", ->
-          expect(@component.shadowBasedOnType(free: true)).toEqual("")
+        describe "when given a url", ->
+          beforeEach ->
+            @setupComponent
+              mapPinShadow: "/url/to/pin"
+
+          it "uses mapPinShadow when not free", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPinShadow, {})).toEqual({ url: "/url/to/pin"})
+
+          it "is blank when free", ->
+            expect(@component.iconBasedOnType(@component.attr.mapPinShadow, { free: true })).toEqual({ url: "" })
 
     describe "#updateCluster", ->
       describe "when attr.shouldCluster is true", ->
