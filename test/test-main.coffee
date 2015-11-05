@@ -24,6 +24,7 @@ require.config
     primedia_events: 'app/bower_components/primedia_events/primedia-events'
     'marker-clusterer': 'app/bower_components/marker-clusterer/marker-clusterer'
     'image-helper': 'app/bower_components/image-helper/image-helper'
+    'map/marker_with_label': 'dist/marker_with_label'
   }
 
   # dynamically load all test files
