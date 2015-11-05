@@ -81,11 +81,29 @@ define [], () ->
             gMapEvents:
               'center_changed': true
               'zoom_changed': true
+              'zoomed_out': true
 
         it "should reset the map event hash", ->
           @component.resetOurEventHash()
           expect(@component.attr.gMapEvents.center_changed).toBe(false)
           expect(@component.attr.gMapEvents.zoom_changed).toBe(false)
+          expect(@component.attr.gMapEvents.zoomed_out).toBe(false)
+
+      describe "#checkForZoomOut", ->
+        beforeEach ->
+          @component.attr.minZoom = 10
+
+        describe "when current zoom greater than minimum zoom seen", ->
+          it "should not turn on zoomed_out in event hash", ->
+            spyOn(@component, "currentZoom").and.returnValue 11
+            @component.checkForZoomOut()
+            expect(@component.attr.gMapEvents.zoomed_out).toBe(false)
+
+        describe "when current zoom less than minimum zoom seen", ->
+          it "should turn on zoomed_out in event hash", ->
+            spyOn(@component, "currentZoom").and.returnValue 9
+            @component.checkForZoomOut()
+            expect(@component.attr.gMapEvents.zoomed_out).toBe(true)
 
       describe "#radiusToZoom", ->
         it "should return the correct radius when called with no value", ->
