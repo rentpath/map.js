@@ -35,6 +35,49 @@ define [], () ->
       it "should return the overriden markerOptions", ->
         expect(@component.attr.markerOptions.fitBounds).toBe(true)
 
+    describe "#iconBasedOnType", ->
+      describe "when given a function", ->
+        beforeEach ->
+          @setupComponent
+            mapPin: (datum) ->
+              "/url/to/pin/from/func"
+
+        it "uses the return value from the function", ->
+          expect(@component.iconBasedOnType({})).toEqual("/url/to/pin/from/func")
+
+      describe "when given a url", ->
+        beforeEach ->
+          @setupComponent
+            mapPin: "/url/to/pin"
+            mapPinFree: "/url/to/free/pin"
+
+        it "uses mapPin when not free", ->
+          expect(@component.iconBasedOnType({})).toEqual("/url/to/pin")
+
+        it "uses mapPinFree when free", ->
+          expect(@component.iconBasedOnType(free: true)).toEqual("/url/to/free/pin")
+
+    describe "#shadowBasedOnType", ->
+      describe "when given a function", ->
+        beforeEach ->
+          @setupComponent
+            mapPinShadow: (datum) ->
+              "/url/to/pin/from/func"
+
+        it "uses the return value from the function", ->
+          expect(@component.shadowBasedOnType({})).toEqual("/url/to/pin/from/func")
+
+      describe "when given a url", ->
+        beforeEach ->
+          @setupComponent
+            mapPinShadow: "/url/to/pin"
+
+        it "uses mapPinShadow when not free", ->
+          expect(@component.shadowBasedOnType({})).toEqual("/url/to/pin")
+
+        it "is blank when free", ->
+          expect(@component.shadowBasedOnType(free: true)).toEqual("")
+
     describe "#updateCluster", ->
       describe "when attr.shouldCluster is true", ->
         beforeEach ->
