@@ -1,3 +1,9 @@
+# v1.5.0
+* [feature] When creating markers, you can pass in a function for `@attr.mapPin` and `@attr.mapPinShadow`. This allows the app to put conditional logic for different markers.
+* [deprecated] Passing a string (url) to `@attr.mapPin` and `@attr.mapPinFree` is deprecated in favor of passing in a function. The intent is to move app logic out of map.js.
+
+[Compare v1.4.1..v1.5.0](https://github.com/RentPath/map.js/compare/v1.4.1...v1.5.0)
+
 # v1.4.1
 * [bugfix] Remove unused methods and ensure that the event listeners that were intended to be removed (presumably to free memory) actually are.
 
