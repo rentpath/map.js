@@ -13,12 +13,15 @@ define [
     @defaultAttrs
       storageKey: 'viewedMapMarkers'
 
+    @localStorageSupported = ->
+      Storage?
+
     @load = ->
-      return {} unless Storage?
+      return {} unless @localStorageSupported()
       JSON.parse(localStorage.getItem(@attr.storageKey)) || {}
 
     @save = (value) ->
-      return unless Storage?
+      return unless @localStorageSupported()
       localStorage.setItem(@attr.storageKey, JSON.stringify(value))
 
     @storedMarkerExists = (listingId) ->

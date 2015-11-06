@@ -5,14 +5,17 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
     this.defaultAttrs({
       storageKey: 'viewedMapMarkers'
     });
+    this.localStorageSupported = function() {
+      return typeof Storage !== "undefined" && Storage !== null;
+    };
     this.load = function() {
-      if (typeof Storage === "undefined" || Storage === null) {
+      if (!this.localStorageSupported()) {
         return {};
       }
       return JSON.parse(localStorage.getItem(this.attr.storageKey)) || {};
     };
     this.save = function(value) {
-      if (typeof Storage === "undefined" || Storage === null) {
+      if (!this.localStorageSupported()) {
         return;
       }
       return localStorage.setItem(this.attr.storageKey, JSON.stringify(value));
