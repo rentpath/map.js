@@ -23,7 +23,8 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
       return this.wireUpEvents();
     };
     this.closeOpenInfoWindow = function() {
-      if (this.currentOpenWindow && (this.currentOpenWindow.map !== void 0)) {
+      var ref;
+      if (((ref = this.currentOpenWindow) != null ? ref.map : void 0) != null) {
         this.currentOpenWindow.close();
         return $(document).trigger('uiInfoWindowClosed', {
           gMarker: this.attr.gMarker

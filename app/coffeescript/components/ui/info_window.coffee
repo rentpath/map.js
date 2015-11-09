@@ -28,7 +28,7 @@ define [
       @wireUpEvents()
 
     @closeOpenInfoWindow = ->
-      if @currentOpenWindow && (@currentOpenWindow.map != undefined)
+      if @currentOpenWindow?.map?
         @currentOpenWindow.close()
         $(document).trigger 'uiInfoWindowClosed', gMarker: @attr.gMarker
 
