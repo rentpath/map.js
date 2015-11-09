@@ -9,9 +9,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       gMapEvents: {
         'center_changed': false,
         'zoom_changed': false,
-        'zoomed_out': false
+        'max_bounds_changed': false
       },
-      minZoom: void 0,
+      maxBounds: void 0,
       infoWindowOpen: false,
       overlay: void 0,
       draggable: true,
@@ -52,9 +52,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.firstRender = function() {
       google.maps.visualRefresh = true;
       this.attr.gMap = new google.maps.Map(this.node, this.defineGoogleMapOptions());
-      this.attr.minZoom = this.currentZoom();
       google.maps.event.addListenerOnce(this.attr.gMap, 'idle', (function(_this) {
         return function() {
+          _this.attr.maxBounds = _this.currentBounds();
           _this.fireOurMapEventsOnce();
           return _this.handleOurMapEvents();
         };
@@ -71,8 +71,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.handleOurMapEvents = function() {
       google.maps.event.addListener(this.attr.gMap, 'zoom_changed', (function(_this) {
         return function() {
-          _this.storeEvent('zoom_changed');
-          return _this.checkForZoomOut();
+          return _this.storeEvent('zoom_changed');
         };
       })(this));
       google.maps.event.addListener(this.attr.gMap, 'center_changed', (function(_this) {
@@ -82,6 +81,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       })(this));
       return google.maps.event.addListener(this.attr.gMap, 'idle', (function(_this) {
         return function() {
+          _this.checkForMaxBoundsChange();
           return _this.fireOurMapEvents();
         };
       })(this));
@@ -89,12 +89,13 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.storeEvent = function(event) {
       return this.attr.gMapEvents[event] = true;
     };
-    this.checkForZoomOut = function() {
-      var newZoom;
-      newZoom = this.currentZoom();
-      if (newZoom < this.attr.minZoom) {
-        this.attr.minZoom = newZoom;
-        return this.storeEvent('zoomed_out');
+    this.checkForMaxBoundsChange = function() {
+      var newBounds, oldBounds;
+      newBounds = this.currentBounds();
+      oldBounds = this.attr.maxBounds;
+      if (!(oldBounds.contains(newBounds.getNorthEast()) && oldBounds.contains(newBounds.getSouthWest()))) {
+        this.attr.maxBounds = newBounds;
+        return this.storeEvent('max_bounds_changed');
       }
     };
     this.fireOurMapEvents = function() {
@@ -102,12 +103,10 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       eventsHash = this.attr.gMapEvents;
       if (this.attr.infoWindowOpen === true) {
         eventsHash['center_changed'] = false;
+        eventsHash['max_bounds_changed'] = false;
       }
       clearInterval(this.intervalId);
-      if (eventsHash['center_changed']) {
-        this.attr.minZoom = this.currentZoom();
-      }
-      if (eventsHash['center_changed'] || eventsHash['zoomed_out']) {
+      if (eventsHash['max_bounds_changed']) {
         this.trigger(document, 'uiMapZoomForListings', this.mapChangedData());
         this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
         this.trigger(document, 'mapRendered', this.mapChangedData());
@@ -118,7 +117,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.resetOurEventHash = function() {
       this.attr.gMapEvents['center_changed'] = false;
       this.attr.gMapEvents['zoom_changed'] = false;
-      this.attr.gMapEvents['zoomed_out'] = false;
+      this.attr.gMapEvents['max_bounds_changed'] = false;
       return this.attr.infoWindowOpen = false;
     };
     this.defineGoogleMapOptions = function() {
@@ -175,8 +174,8 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       var gLatLng;
       return gLatLng = this.attr.gMap.getCenter();
     };
-    this.currentZoom = function() {
-      return this.attr.gMap.getZoom();
+    this.currentBounds = function() {
+      return this.attr.gMap.getBounds();
     };
     this.addCustomMarker = function() {
       return this.customMarkerDialogClose();
