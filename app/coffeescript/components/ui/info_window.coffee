@@ -18,17 +18,19 @@ define [
       gMarker: {}
 
     @showInfoWindowOnMarkerClick = (ev, data) ->
+      @closeOpenInfoWindow()
       @attr.gMarker = data.gMarker
       @attr.gMap = data.gMap
       @trigger document, 'uiInfoWindowDataRequest', listingId: @attr.gMarker.datum.id
 
     @render = (ev, data) ->
-      @closeOpenInfoWindow()
       @openInfoWindow(data)
       @wireUpEvents()
 
     @closeOpenInfoWindow = ->
-      @currentOpenWindow.close() if @currentOpenWindow
+      if @currentOpenWindow && (@currentOpenWindow.map != undefined)
+        @currentOpenWindow.close()
+        $(document).trigger 'uiInfoWindowClosed', gMarker: @attr.gMarker
 
     @openInfoWindow = (data) ->
       @currentOpenWindow ?= new google.maps.InfoWindow()
@@ -37,8 +39,9 @@ define [
 
     @wireUpEvents = ->
       if @currentOpenWindow
-        google.maps.event.addListenerOnce @currentOpenWindow, 'closeclick', ->
-          $(document).trigger 'uiInfoWindowClosed'
+        google.maps.event.addListenerOnce @currentOpenWindow, 'closeclick', =>
+          $(document).trigger 'uiInfoWindowClosed', gMarker: @attr.gMarker
+
         google.maps.event.addListenerOnce @currentOpenWindow, 'domready', =>
           $(document).trigger 'uiInfoWindowRendered', listingId: @attr.gMarker.datumId, marker: @attr.gMarker, infoWindow: @currentOpenWindow
 

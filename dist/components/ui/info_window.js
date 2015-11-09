@@ -11,6 +11,7 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
       gMarker: {}
     });
     this.showInfoWindowOnMarkerClick = function(ev, data) {
+      this.closeOpenInfoWindow();
       this.attr.gMarker = data.gMarker;
       this.attr.gMap = data.gMap;
       return this.trigger(document, 'uiInfoWindowDataRequest', {
@@ -18,13 +19,15 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
       });
     };
     this.render = function(ev, data) {
-      this.closeOpenInfoWindow();
       this.openInfoWindow(data);
       return this.wireUpEvents();
     };
     this.closeOpenInfoWindow = function() {
-      if (this.currentOpenWindow) {
-        return this.currentOpenWindow.close();
+      if (this.currentOpenWindow && (this.currentOpenWindow.map !== void 0)) {
+        this.currentOpenWindow.close();
+        return $(document).trigger('uiInfoWindowClosed', {
+          gMarker: this.attr.gMarker
+        });
       }
     };
     this.openInfoWindow = function(data) {
@@ -36,9 +39,13 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
     };
     this.wireUpEvents = function() {
       if (this.currentOpenWindow) {
-        google.maps.event.addListenerOnce(this.currentOpenWindow, 'closeclick', function() {
-          return $(document).trigger('uiInfoWindowClosed');
-        });
+        google.maps.event.addListenerOnce(this.currentOpenWindow, 'closeclick', (function(_this) {
+          return function() {
+            return $(document).trigger('uiInfoWindowClosed', {
+              gMarker: _this.attr.gMarker
+            });
+          };
+        })(this));
         return google.maps.event.addListenerOnce(this.currentOpenWindow, 'domready', (function(_this) {
           return function() {
             return $(document).trigger('uiInfoWindowRendered', {
