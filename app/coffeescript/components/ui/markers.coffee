@@ -5,12 +5,14 @@ define [
   'flight/lib/component'
   'map/components/mixins/clusters'
   'map/components/mixins/map_utils'
+  'map/components/mixins/stored_markers'
   'primedia_events'
 ], (
   $
   defineComponent
   clusters
   mapUtils
+  storedMarkers
   events
 ) ->
 
@@ -32,6 +34,7 @@ define [
       mapPin: ''       # can be either a function, Icon options, or url to the pin.
       mapPinFree: ''   # DEPRECATED. See below.
       mapPinShadow: '' # can be either a function, Icon options, or url to the pin.
+      saveMarkerClick: false
 
     @prepend_origin = (value) ->
       value = "#{@assetOriginFromMetaTag()}#{value}"
@@ -78,13 +81,16 @@ define [
       gmarker = null
 
     @createMarker = (datum) ->
+      saved = @storedMarkerExists(datum.id)
+
       new google.maps.Marker(
         position: new google.maps.LatLng(datum.lat, datum.lng)
         map: @attr.gMap
-        icon: @iconBasedOnType(@attr.mapPin, datum)
-        shadow: @iconBasedOnType(@attr.mapPinShadow, datum)
+        icon: @iconBasedOnType(@attr.mapPin, datum, saved)
+        shadow: @iconBasedOnType(@attr.mapPinShadow, datum, saved)
         title: @markerTitle(datum)
         datum: datum
+        saveMarkerClick: @attr.saveMarkerClick
       )
 
     @sendCustomMarkerTrigger = (marker) ->
@@ -123,9 +129,9 @@ define [
         ''
 
 
-    @iconBasedOnType = (icon, datum) ->
+    @iconBasedOnType = (icon, datum, saved) ->
       if typeof(icon) is "function"
-        icon(datum)
+        icon(datum, saved)
       else if typeof(@attr.mapPin) is "string"
         # DEPRECATED: Please pass in a function or object to `@attr.mapPin`
         #             and '@attr.mapPinShadow'.
@@ -141,4 +147,4 @@ define [
       # TODO: put into it's own component.
       @on document, 'uiMapZoom', @updateListingsCount
 
-  defineComponent(markersOverlay, clusters, mapUtils)
+  defineComponent(markersOverlay, clusters, mapUtils, storedMarkers)

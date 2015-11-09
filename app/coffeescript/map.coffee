@@ -5,6 +5,7 @@ define [
   'map/components/ui/markers_info_window'
   'map/components/mixins/map_utils'
   'map/components/mixins/with_default_attributes'
+  'map/components/data/viewed_map_markers'
   'jquery.cookie'
 ], (
   $
@@ -13,6 +14,7 @@ define [
   markerInfoWindow
   mapUtils
   withDefaultAttrs
+  viewedMapMarkers
 ) ->
 
   initialize = ->
@@ -39,6 +41,7 @@ define [
 
     # instantiate a google map centered at lat, lng.
 
+    viewedMapMarkers.attachTo(document)
     baseMap.attachTo(@attr.map.canvasId, @attr.map)
     markerInfoWindow.attachTo(@attr.map.canvasId, @attr.markers)
 
