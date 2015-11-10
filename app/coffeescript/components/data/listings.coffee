@@ -24,6 +24,7 @@ define [
       priceRangeRefinements: {}
       possibleRefinements: ['min_price', 'max_price']
       sortByAttribute: 'distance'
+      pinLimit: undefined
 
     @mapConfig = ->
       executeOnce: @attr.executeOnce
@@ -47,6 +48,7 @@ define [
 
     @getMarkers = (ev, data) ->
       data.sort = @attr.sortByAttribute
+      data.limit = @attr.pinLimit
       @xhr = $.ajax
         url: "#{@attr.mapPinsRoute}?#{@decodedQueryData(data)}"
         success: (data) =>
@@ -71,7 +73,7 @@ define [
       @on document, 'uiMapZoomNoMarkers', @getListings
 
     @queryData = (data) ->
-      qData = {
+      qData =
         lat: data.latitude
         latitude: data.latitude
         lng: data.longitude
@@ -87,7 +89,8 @@ define [
         neighborhood: data.hood
         geoname: data.geoname
         sort: data.sort
-      }
+
+      qData.limit = data.limit if data.limit?
 
       refinements = @getRefinements()
       qData.refinements = encodeURIComponent(refinements) if refinements
