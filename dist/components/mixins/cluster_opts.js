@@ -9,7 +9,10 @@ define(['flight/lib/compose', 'map/components/mixins/map_utils'], function(compo
       clusterTextColor: 'black',
       clusterTextSize: 11,
       clusterFontWeight: 'bold',
-      clusterSize: 10
+      clusterSize: 10,
+      declusterAnimationDuration: 0,
+      declusterAnimationMarkerThreshold: 0,
+      declusterAnimationEasing: 'linear'
     });
     this._clusterStyles = function() {
       return {

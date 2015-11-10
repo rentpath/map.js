@@ -23,6 +23,9 @@ define [
       styles: @clusterStyleArray()
       minimumClusterSize: @clusterSize()
       batchSize: if @isMobile() then 200 else null
+      declusterAnimationDuration: @attr.declusterAnimationDuration
+      declusterAnimationMarkerThreshold: @attr.declusterAnimationMarkerThreshold
+      declusterAnimationEasing: @attr.declusterAnimationEasing
 
     @initClusterer = (gMap) ->
       return if @attr.markerClusterer

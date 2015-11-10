@@ -17,6 +17,10 @@ define [
       clusterTextSize: 11
       clusterFontWeight: 'bold'
       clusterSize: 10
+      declusterAnimationDuration: 0
+      declusterAnimationMarkerThreshold: 0
+      declusterAnimationEasing: 'linear'
+
 
     @_clusterStyles = ->
       url: @attr.mapPinCluster
