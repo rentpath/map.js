@@ -1,3 +1,16 @@
+# v1.6.1
+* [optimization] Don't make data request when the current bounds are contained by the original bounbds.
+
+[Compare v1.6.0..v1.6.1](https://github.com/RentPath/map.js/compare/v1.6.0...v1.6.1)
+
+# v1.6.0
+* [feature] Persist marker clicks to localStorage by saving the listing id.
+
+The default is off and the app must set saveMarkerClick to true
+in the markers options to enable it.
+
+[Compare v1.5.1..v1.6.0](https://github.com/RentPath/map.js/compare/v1.5.1...v1.6.0)
+
 # v1.5.1
 * [optimization] Don't make data request when zooming in.
   Was making request when zooming in or out, but we really only need to make the request when zooming out.
