@@ -11,14 +11,14 @@ define(['flight/lib/compose', 'marker-clusterer', 'map/components/mixins/mobile_
       return this.attr.markers.clearMarkers();
     };
     this.unbindMarkers = function() {
-      var marker, _i, _len, _ref, _results;
-      _ref = this.attr.markerClusterer;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        marker = _ref[_i];
-        _results.push(google.maps.event.clearListeners(marker, "click"));
+      var i, len, marker, ref, results;
+      ref = this.attr.markerClusterer;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        marker = ref[i];
+        results.push(google.maps.event.clearListeners(marker, "click"));
       }
-      return _results;
+      return results;
     };
     this.mapClusterOptions = function() {
       return {
@@ -28,8 +28,8 @@ define(['flight/lib/compose', 'marker-clusterer', 'map/components/mixins/mobile_
       };
     };
     this.initClusterer = function(gMap) {
-      var _base;
-      return (_base = this.attr).markerClusterer != null ? _base.markerClusterer : _base.markerClusterer = new MarkerClusterer(gMap, [], this.mapClusterOptions());
+      var base;
+      return (base = this.attr).markerClusterer != null ? base.markerClusterer : base.markerClusterer = new MarkerClusterer(gMap, [], this.mapClusterOptions());
     };
     this.setClusterImage = function(ev, data) {
       this.attr.mapPinCluster = data.pinsClusterImage;

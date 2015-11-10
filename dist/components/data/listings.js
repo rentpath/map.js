@@ -9,7 +9,8 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       hostname: 'www.apartmentguide.com',
       priceRangeRefinements: {},
       possibleRefinements: ['min_price', 'max_price'],
-      sortByAttribute: 'distance'
+      sortByAttribute: 'distance',
+      firstRender: false
     });
     this.mapConfig = function() {
       return {
@@ -77,7 +78,11 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       return this.on(document, 'uiMapZoomNoMarkers', this.getListings);
     });
     return this.queryData = function(data) {
-      var mgtcoid, name, priceRange, propertyName, qData, refinements, _i, _len, _ref;
+      var i, len, mgtcoid, name, priceRange, propertyName, qData, ref, refinements;
+      if (!this.attr.firstRender) {
+        delete data['sort'];
+        this.attr.firstRender = true;
+      }
       qData = {
         lat: data.latitude,
         latitude: data.latitude,
@@ -108,9 +113,9 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         qData.mgtcoid = encodeURIComponent(mgtcoid);
       }
       priceRange = this.getPriceRange(this.attr.priceRangeRefinements);
-      _ref = this.attr.possibleRefinements;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        name = _ref[_i];
+      ref = this.attr.possibleRefinements;
+      for (i = 0, len = ref.length; i < len; i++) {
+        name = ref[i];
         if (priceRange[name]) {
           qData[name] = priceRange[name];
         }

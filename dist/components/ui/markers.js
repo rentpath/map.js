@@ -47,16 +47,16 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       }
     };
     this.addMarkers = function(data) {
-      var all_markers, listing, m, _i, _len, _ref, _ref1;
-      if ((_ref = this.attr.markerClusterer) != null) {
-        _ref.clearMarkers();
+      var all_markers, i, len, listing, m, ref, ref1;
+      if ((ref = this.attr.markerClusterer) != null) {
+        ref.clearMarkers();
       }
       this.attr.markers = [];
       this.attr.markersIndex = {};
       all_markers = [];
-      _ref1 = data.listings;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        listing = _ref1[_i];
+      ref1 = data.listings;
+      for (i = 0, len = ref1.length; i < len; i++) {
+        listing = ref1[i];
         m = this.createMarker(listing);
         all_markers.push(m);
         this.sendCustomMarkerTrigger(m);

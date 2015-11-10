@@ -1,14 +1,14 @@
-var __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  __hasProp = {}.hasOwnProperty;
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 define(['jquery'], function($) {
   return {
     "class": function() {
-      return (function(_super) {
-        __extends(_Class, _super);
+      return (function(superClass) {
+        extend(_Class, superClass);
 
-        function _Class(_at_map) {
-          this.map = _at_map;
+        function _Class(map) {
+          this.map = map;
           this.mapDiv = $(this.map.getDiv());
         }
 
@@ -83,14 +83,14 @@ define(['jquery'], function($) {
         };
 
         _Class.prototype.clearListeners = function() {
-          var listener, _i, _len, _ref, _results;
-          _ref = this.listeners;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            listener = _ref[_i];
-            _results.push(google.maps.event.removeListener(listener));
+          var i, len, listener, ref, results;
+          ref = this.listeners;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            listener = ref[i];
+            results.push(google.maps.event.removeListener(listener));
           }
-          return _results;
+          return results;
         };
 
         _Class.prototype.getLeft = function(position) {

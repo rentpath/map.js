@@ -24,6 +24,7 @@ define [
       priceRangeRefinements: {}
       possibleRefinements: ['min_price', 'max_price']
       sortByAttribute: 'distance'
+      firstRender: false
 
     @mapConfig = ->
       executeOnce: @attr.executeOnce
@@ -71,6 +72,12 @@ define [
       @on document, 'uiMapZoomNoMarkers', @getListings
 
     @queryData = (data) ->
+      # we need this for the firt hybrid list query
+      # first query needs to be sorted by tears and points
+      unless @attr.firstRender
+        delete data['sort']
+        @attr.firstRender = true
+
       qData = {
         lat: data.latitude
         latitude: data.latitude
