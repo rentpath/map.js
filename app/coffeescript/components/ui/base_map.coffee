@@ -18,8 +18,8 @@ define [
       latitude: 33.9411
       longitude: -84.2136
       gMap: {}
-      gMapEvents: {'center_changed': false, 'zoom_changed': false, 'zoomed_out': false}
-      minZoom: undefined
+      gMapEvents: {'center_changed': false, 'zoom_changed': false, 'max_bounds_changed': false}
+      maxBounds: undefined
       infoWindowOpen: false
       overlay: undefined
       draggable: true
@@ -56,9 +56,8 @@ define [
 
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
 
-      @attr.minZoom = @currentZoom()
-
       google.maps.event.addListenerOnce @attr.gMap, 'idle', =>
+        @attr.maxBounds = @currentBounds()
         @fireOurMapEventsOnce()
         @handleOurMapEvents()
       @addCustomMarker()
@@ -74,31 +73,30 @@ define [
     @handleOurMapEvents = ->
       google.maps.event.addListener @attr.gMap, 'zoom_changed', =>
         @storeEvent('zoom_changed')
-        @checkForZoomOut()
       google.maps.event.addListener @attr.gMap, 'center_changed', =>
         @storeEvent('center_changed')
       google.maps.event.addListener @attr.gMap, 'idle', =>
+        @checkForMaxBoundsChange()
         @fireOurMapEvents()
 
     @storeEvent = (event) ->
       @attr.gMapEvents[event] = true
 
-    @checkForZoomOut = ->
-      newZoom = @currentZoom()
-      if newZoom < @attr.minZoom
-        @attr.minZoom = newZoom
-        @storeEvent('zoomed_out')
+    @checkForMaxBoundsChange = ->
+      newBounds = @currentBounds()
+      oldBounds = @attr.maxBounds
+      unless oldBounds.contains(newBounds.getNorthEast()) && oldBounds.contains(newBounds.getSouthWest())
+        @attr.maxBounds = newBounds
+        @storeEvent('max_bounds_changed')
 
     @fireOurMapEvents = () ->
       eventsHash = @attr.gMapEvents
-      eventsHash['center_changed'] = false if @attr.infoWindowOpen == true
+      if @attr.infoWindowOpen == true
+        eventsHash['center_changed'] = false
+        eventsHash['max_bounds_changed'] = false
       clearInterval(@intervalId)
 
-      if eventsHash['center_changed']
-        # Reset minZoom to the current zoom level.
-        @attr.minZoom = @currentZoom()
-
-      if eventsHash['center_changed'] || eventsHash['zoomed_out']
+      if eventsHash['max_bounds_changed']
         @trigger document, 'uiMapZoomForListings', @mapChangedData()
         @trigger document, 'uiInitMarkerCluster', @mapChangedData()
         @trigger document, 'mapRendered', @mapChangedData()
@@ -109,7 +107,7 @@ define [
     @resetOurEventHash = () ->
       @attr.gMapEvents['center_changed'] = false
       @attr.gMapEvents['zoom_changed'] = false
-      @attr.gMapEvents['zoomed_out'] = false
+      @attr.gMapEvents['max_bounds_changed'] = false
       @attr.infoWindowOpen = false
 
     @defineGoogleMapOptions = () ->
@@ -158,8 +156,8 @@ define [
     @mapCenter = ->
       gLatLng = @attr.gMap.getCenter()
 
-    @currentZoom = ->
-      @attr.gMap.getZoom()
+    @currentBounds = ->
+      @attr.gMap.getBounds()
 
     @addCustomMarker = ->
       @customMarkerDialogClose()

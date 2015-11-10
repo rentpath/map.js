@@ -81,29 +81,44 @@ define [], () ->
             gMapEvents:
               'center_changed': true
               'zoom_changed': true
-              'zoomed_out': true
+              'max_bounds_changed': true
 
         it "should reset the map event hash", ->
           @component.resetOurEventHash()
           expect(@component.attr.gMapEvents.center_changed).toBe(false)
           expect(@component.attr.gMapEvents.zoom_changed).toBe(false)
-          expect(@component.attr.gMapEvents.zoomed_out).toBe(false)
+          expect(@component.attr.gMapEvents.max_bounds_changed).toBe(false)
 
-      describe "#checkForZoomOut", ->
+      describe "#checkForMaxBoundsChange", ->
         beforeEach ->
-          @component.attr.minZoom = 10
+          swLat = 34.0
+          swLng = -84.0
+          neLat = 34.4
+          neLng = -84.4
+          @component.attr.maxBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(swLat, swLng)
+            new google.maps.LatLng(neLat, neLng)
+          )
+          @containedBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(swLat + 0.1, swLng + 0.1)
+            new google.maps.LatLng(neLat - 0.1, neLng - 0.1)
+          )
+          @uncontainedBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(swLat - 0.1, swLng - 0.1)
+            new google.maps.LatLng(neLat + 0.1, neLng + 0.1)
+          )
 
-        describe "when current zoom greater than minimum zoom seen", ->
-          it "should not turn on zoomed_out in event hash", ->
-            spyOn(@component, "currentZoom").and.returnValue 11
-            @component.checkForZoomOut()
-            expect(@component.attr.gMapEvents.zoomed_out).toBe(false)
+        describe "when current bounds contained by max bounds seen", ->
+          it "should not turn on max_bounds_changed in event hash", ->
+            spyOn(@component, "currentBounds").and.returnValue @containedBounds
+            @component.checkForMaxBoundsChange()
+            expect(@component.attr.gMapEvents.max_bounds_changed).toBe(false)
 
-        describe "when current zoom less than minimum zoom seen", ->
-          it "should turn on zoomed_out in event hash", ->
-            spyOn(@component, "currentZoom").and.returnValue 9
-            @component.checkForZoomOut()
-            expect(@component.attr.gMapEvents.zoomed_out).toBe(true)
+        describe "when current bounds not contained by max bounds seen", ->
+          it "should turn on max_bounds_changed in event hash", ->
+            spyOn(@component, "currentBounds").and.returnValue @uncontainedBounds
+            @component.checkForMaxBoundsChange()
+            expect(@component.attr.gMapEvents.max_bounds_changed).toBe(true)
 
       describe "#radiusToZoom", ->
         it "should return the correct radius when called with no value", ->
