@@ -10,7 +10,10 @@ define(['flight/lib/compose', 'marker-clusterer', 'map/components/mixins/mobile_
       return {
         styles: this.clusterStyleArray(),
         minimumClusterSize: this.clusterSize(),
-        batchSize: this.isMobile() ? 200 : null
+        batchSize: this.isMobile() ? 200 : null,
+        declusterAnimationDuration: this.attr.declusterAnimationDuration,
+        declusterAnimationMarkerThreshold: this.attr.declusterAnimationMarkerThreshold,
+        declusterAnimationEasing: this.attr.declusterAnimationEasing
       };
     };
     this.initClusterer = function(gMap) {
