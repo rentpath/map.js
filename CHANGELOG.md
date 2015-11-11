@@ -1,3 +1,8 @@
+# v1.7.0
+* [feature] Add new options for decluster animation.
+
+[Compare v1.6.1..v1.7.0](https://github.com/RentPath/map.js/compare/v1.6.1...v1.7.0)
+
 # v1.6.1
 * [optimization] Don't make data request when the current bounds are contained by the original bounbds.
 
