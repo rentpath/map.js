@@ -8,6 +8,7 @@ define(['flight/lib/compose', 'marker-clusterer', 'map/components/mixins/mobile_
     });
     this.mapClusterOptions = function() {
       return {
+        averageCenter: true,
         styles: this.clusterStyleArray(),
         minimumClusterSize: this.clusterSize(),
         batchSize: this.isMobile() ? 200 : null,
