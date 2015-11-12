@@ -6,11 +6,7 @@ requirejs.config
   paths:
     map: "../js"
     jquery: "jquery/jquery.min"
-    underscore: "underscore/underscore"
-    "jquery.cookie": "jquery.cookie/jquery.cookie"
-    primedia_events: "primedia_events/primedia-events"
     "marker-clusterer": "marker-clusterer/marker-clusterer"
-    "image-helper": "image-helper/image-helper"
 
 require [
   'jquery'
@@ -29,4 +25,3 @@ require [
   new Map(MapDemo.mapOptions)
 
   $(document).trigger('mapDataAvailable')
-

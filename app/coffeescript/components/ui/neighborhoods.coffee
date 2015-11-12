@@ -4,14 +4,12 @@ define [
   'jquery'
   'underscore'
   'flight/lib/component'
-  'accounting'
   'map/components/mixins/mobile_detection'
   'map/components/ui/tool_tip'
 ], (
-  $,
-  _,
+  $
+  _
   defineComponent
-  accounting
   mobileDetection
   toolTip
 ) ->
@@ -195,9 +193,9 @@ define [
     @formatValue = (key, value) ->
       switch key
         when 'median_income', 'average_income'
-          accounting.formatMoney(value)
+          "$#{parseInt(value, 10).toLocaleString()}.00"
         when 'population'
-          accounting.formatNumber(value)
+          parseInt(value, 10).toLocaleString()
         else
           value
 

@@ -16,13 +16,9 @@ module.exports = (config) ->
       {pattern: 'app/bower_components/jasmine-flight/lib/jasmine-flight.js', watched: false, served: true, included: true}
 
       {pattern: 'app/bower_components/require-cs/cs.js',included: false}
-      {pattern: 'app/bower_components/jquery.cookie/jquery.cookie.js', included: false}
       {pattern: 'app/bower_components/coffeescript/extras/coffee-script.js',included: false}
       {pattern: 'app/bower_components/flight/**/*.js', included: false}
-      {pattern: 'app/bower_components/primedia_events/primedia-events.js', included: false}
       {pattern: 'app/bower_components/marker-clusterer/marker-clusterer.js', included: false}
-      {pattern: 'app/bower_components/accounting/accounting.js', included: false}
-      {pattern: 'app/bower_components/image-helper/image-helper.js', included: false}
 
       {pattern: 'app/coffeescript/**/*.coffee', included: false}
 

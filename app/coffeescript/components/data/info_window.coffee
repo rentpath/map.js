@@ -2,11 +2,9 @@
 
 define [
   'jquery'
-  'underscore'
   'flight/lib/component'
 ], (
   $
-  _
   defineComponent
 ) ->
 

@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'underscore', 'flight/lib/component', 'accounting', 'map/components/mixins/mobile_detection', 'map/components/ui/tool_tip'], function($, _, defineComponent, accounting, mobileDetection, toolTip) {
+define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/mobile_detection', 'map/components/ui/tool_tip'], function($, _, defineComponent, mobileDetection, toolTip) {
   var neighborhoodsOverlay;
   _.templateSettings = {
     interpolate: /\{\{(.+?)\}\}/g,
@@ -224,9 +224,9 @@ define(['jquery', 'underscore', 'flight/lib/component', 'accounting', 'map/compo
       switch (key) {
         case 'median_income':
         case 'average_income':
-          return accounting.formatMoney(value);
+          return "$" + (parseInt(value, 10).toLocaleString()) + ".00";
         case 'population':
-          return accounting.formatNumber(value);
+          return parseInt(value, 10).toLocaleString();
         default:
           return value;
       }

@@ -7,7 +7,6 @@ define [
   'map/marker_with_label'
   'map/components/mixins/map_utils'
   'map/components/mixins/stored_markers'
-  'primedia_events'
 ], (
   $
   defineComponent
@@ -15,7 +14,6 @@ define [
   markerWithLabelFactory
   mapUtils
   storedMarkers
-  events
 ) ->
 
   markersOverlay = ->

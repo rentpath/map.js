@@ -6,7 +6,6 @@ define [
   'map/components/mixins/map_utils'
   'map/components/mixins/with_default_attributes'
   'map/components/data/viewed_map_markers'
-  'jquery.cookie'
 ], (
   $
   compose

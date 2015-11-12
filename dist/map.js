@@ -1,4 +1,4 @@
-define(['jquery', 'flight/lib/compose', 'map/components/ui/base_map', 'map/components/ui/markers_info_window', 'map/components/mixins/map_utils', 'map/components/mixins/with_default_attributes', 'map/components/data/viewed_map_markers', 'jquery.cookie'], function($, compose, baseMap, markerInfoWindow, mapUtils, withDefaultAttrs, viewedMapMarkers) {
+define(['jquery', 'flight/lib/compose', 'map/components/ui/base_map', 'map/components/ui/markers_info_window', 'map/components/mixins/map_utils', 'map/components/mixins/with_default_attributes', 'map/components/data/viewed_map_markers'], function($, compose, baseMap, markerInfoWindow, mapUtils, withDefaultAttrs, viewedMapMarkers) {
   var initialize;
   initialize = function() {
     this.attr = {
