@@ -1,5 +1,10 @@
 define [], () ->
   describeComponent 'map/components/ui/markers', ->
+    datum =
+      id: 1
+      name: "Foo Bar"
+      price: "$1,000"
+
     beforeEach ->
       @setupComponent()
 
@@ -86,6 +91,57 @@ define [], () ->
 
           it "is blank when free", ->
             expect(@component.iconBasedOnType(@component.attr.mapPinShadow, { free: true })).toEqual({ url: "" })
+
+    describe '#createMarker', ->
+      describe 'without label options', ->
+        beforeEach ->
+          @setupComponent()
+          @marker = @component.createMarker(datum)
+
+        it 'is a standard marker type', ->
+          expect(@marker.constructor).toEqual google.maps.Marker
+
+      describe 'with label options', ->
+        beforeEach ->
+          @setupComponent
+            markerLabelOptions: (datum) ->
+              content: datum.price
+          @marker = @component.createMarker(datum)
+
+        it 'is a marker with label type', ->
+          expect(@marker.constructor).toEqual @component.attr.MarkerWithLabel
+
+    describe '#markerOptions', ->
+      describe 'without label options', ->
+        beforeEach ->
+          @setupComponent()
+          @options = @component.markerOptions(datum)
+
+        it 'builds a list of options', ->
+          expect(@options.datum).toEqual datum
+          expect(@options.title).toEqual datum.name
+
+        it 'does not have a label', ->
+          expect(@options.labelContent).toEqual(undefined)
+
+      describe 'with label options', ->
+        beforeEach ->
+          @setupComponent
+            markerLabelOptions: (datum) ->
+              content: datum.price
+              cssClass: 'marker-label'
+              anchor:
+                x: 1
+                y: 2
+          @options = @component.markerOptions(datum)
+
+        it 'assigns label content and class', ->
+          expect(@options.labelContent).toEqual '$1,000'
+          expect(@options.labelClass).toEqual 'marker-label'
+
+        it 'builds an anchor', ->
+          expect(@options.labelAnchor.x).toEqual 1
+          expect(@options.labelAnchor.y).toEqual 2
 
     describe "#updateCluster", ->
       describe "when attr.shouldCluster is true", ->

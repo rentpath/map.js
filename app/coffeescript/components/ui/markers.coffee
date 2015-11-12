@@ -4,6 +4,7 @@ define [
   'jquery'
   'flight/lib/component'
   'map/components/mixins/clusters'
+  'map/marker_with_label'
   'map/components/mixins/map_utils'
   'map/components/mixins/stored_markers'
   'primedia_events'
@@ -11,13 +12,13 @@ define [
   $
   defineComponent
   clusters
+  markerWithLabelFactory
   mapUtils
   storedMarkers
   events
 ) ->
 
   markersOverlay = ->
-
     @defaultAttrs
       searchGeoData: {}
       listingCountSelector: '#mapview_listing_count'
@@ -26,6 +27,16 @@ define [
       markersIndex: {}
       gMap: undefined
       markerClusterer: undefined
+      MarkerWithLabel: undefined
+
+      # Example:
+      # (datum) ->
+      #    content: datum.price_range
+      #      anchor:
+      #        x: 27
+      #        y: 28
+      #      cssClass: 'my-map-pin-label'
+      markerLabelOptions: (datum) -> undefined
       markerOptions:
        fitBounds: false
       shouldCluster: (markers) ->
@@ -81,9 +92,15 @@ define [
       gmarker = null
 
     @createMarker = (datum) ->
-      saved = @storedMarkerExists(datum.id)
+      options = @markerOptions(datum)
+      if options.labelContent
+        new @attr.MarkerWithLabel(options)
+      else
+        new google.maps.Marker(options)
 
-      new google.maps.Marker(
+    @markerOptions = (datum) ->
+      saved = @storedMarkerExists(datum.id)
+      options =
         position: new google.maps.LatLng(datum.lat, datum.lng)
         map: @attr.gMap
         icon: @iconBasedOnType(@attr.mapPin, datum, saved)
@@ -91,7 +108,12 @@ define [
         title: @markerTitle(datum)
         datum: datum
         saveMarkerClick: @attr.saveMarkerClick
-      )
+
+      if label = @attr.markerLabelOptions(datum)
+        options.labelContent = label.content
+        options.labelAnchor = new google.maps.Point(label.anchor.x, label.anchor.y) if label.anchor
+        options.labelClass = label.cssClass
+      options
 
     @sendCustomMarkerTrigger = (marker) ->
       _this = this
@@ -128,7 +150,6 @@ define [
       else
         ''
 
-
     @iconBasedOnType = (icon, datum, saved) ->
       if typeof(icon) is "function"
         icon(datum, saved)
@@ -140,6 +161,8 @@ define [
         icon
 
     @after 'initialize', ->
+      @attr.MarkerWithLabel = markerWithLabelFactory()
+
       @on document, 'mapRenderedFirst', @initAttr
       @on document, 'markersUpdateAttr', @initAttr
       @on document, 'markersDataAvailable', @render

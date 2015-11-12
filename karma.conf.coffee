@@ -25,6 +25,9 @@ module.exports = (config) ->
       {pattern: 'app/bower_components/image-helper/image-helper.js', included: false}
 
       {pattern: 'app/coffeescript/**/*.coffee', included: false}
+
+      # Use amd-ified version
+      {pattern: 'dist/marker_with_label.js', included: false}
       {pattern: 'test/spec/**/*_spec.coffee', included: false}
       {pattern: 'test/spec/fixtures/**', watched: true, served: true, included: false}
 

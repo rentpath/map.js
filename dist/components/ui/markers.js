@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map/components/mixins/map_utils', 'map/components/mixins/stored_markers', 'primedia_events'], function($, defineComponent, clusters, mapUtils, storedMarkers, events) {
+define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map/marker_with_label', 'map/components/mixins/map_utils', 'map/components/mixins/stored_markers', 'primedia_events'], function($, defineComponent, clusters, markerWithLabelFactory, mapUtils, storedMarkers, events) {
   var markersOverlay;
   markersOverlay = function() {
     this.defaultAttrs({
@@ -10,6 +10,10 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       markersIndex: {},
       gMap: void 0,
       markerClusterer: void 0,
+      MarkerWithLabel: void 0,
+      markerLabelOptions: function(datum) {
+        return void 0;
+      },
       markerOptions: {
         fitBounds: false
       },
@@ -89,9 +93,18 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return gmarker = null;
     };
     this.createMarker = function(datum) {
-      var saved;
+      var options;
+      options = this.markerOptions(datum);
+      if (options.labelContent) {
+        return new this.attr.MarkerWithLabel(options);
+      } else {
+        return new google.maps.Marker(options);
+      }
+    };
+    this.markerOptions = function(datum) {
+      var label, options, saved;
       saved = this.storedMarkerExists(datum.id);
-      return new google.maps.Marker({
+      options = {
         position: new google.maps.LatLng(datum.lat, datum.lng),
         map: this.attr.gMap,
         icon: this.iconBasedOnType(this.attr.mapPin, datum, saved),
@@ -99,7 +112,15 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
         title: this.markerTitle(datum),
         datum: datum,
         saveMarkerClick: this.attr.saveMarkerClick
-      });
+      };
+      if (label = this.attr.markerLabelOptions(datum)) {
+        options.labelContent = label.content;
+        if (label.anchor) {
+          options.labelAnchor = new google.maps.Point(label.anchor.x, label.anchor.y);
+        }
+        options.labelClass = label.cssClass;
+      }
+      return options;
     };
     this.sendCustomMarkerTrigger = function(marker) {
       var _this;
@@ -173,6 +194,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       }
     };
     return this.after('initialize', function() {
+      this.attr.MarkerWithLabel = markerWithLabelFactory();
       this.on(document, 'mapRenderedFirst', this.initAttr);
       this.on(document, 'markersUpdateAttr', this.initAttr);
       this.on(document, 'markersDataAvailable', this.render);
