@@ -1,3 +1,19 @@
+# v1.8.0
+* [feature] Pass in `@attr.markerLabelOptions` which internally uses MarkerWithLabel. **Example:**
+```coffee
+    (datum) ->
+      content: datum.price_range
+      anchor:
+        x: 27
+        y: 28
+        cssClass: 'my-map-pin-label'
+```
+* [feature] Add option to `data/listings` to limit number of pins. `@attr.pinLimit`
+* [update] Bump `marker-clusterer.js` to `v2.1.1.rp.1.0.1`
+
+[Compare v1.7.1..v1.8.0](https://github.com/RentPath/map.js/compare/v1.7.1...v1.8.0)
+
+
 # v1.7.1
 * [bugfix] Set marker clusterer averageCenter=true so that clusters are centered based on the avg position of the clustered markers instead of the position of the first marker clustered.
 
