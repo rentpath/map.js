@@ -20,6 +20,7 @@ define [
       markerClusterer: undefined
 
     @mapClusterOptions = ->
+      averageCenter: true
       styles: @clusterStyleArray()
       minimumClusterSize: @clusterSize()
       batchSize: if @isMobile() then 200 else null
