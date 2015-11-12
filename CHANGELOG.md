@@ -1,3 +1,8 @@
+# v1.7.1
+* [bugfix] Set marker clusterer averageCenter=true so that clusters are centered based on the avg position of the clustered markers instead of the position of the first marker clustered.
+
+[Compare v1.7.0..v1.7.1](https://github.com/RentPath/map.js/compare/v1.7.0...v1.7.1)
+
 # v1.7.0
 * [feature] Add new options for decluster animation.
 
