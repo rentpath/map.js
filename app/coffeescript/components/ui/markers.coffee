@@ -97,12 +97,12 @@ define [
         new google.maps.Marker(options)
 
     @markerOptions = (datum) ->
-      saved = @storedMarkerExists(datum.id)
+      viewed = @storedMarkerExists(datum.id)
       options =
         position: new google.maps.LatLng(datum.lat, datum.lng)
         map: @attr.gMap
-        icon: @iconBasedOnType(@attr.mapPin, datum, saved)
-        shadow: @iconBasedOnType(@attr.mapPinShadow, datum, saved)
+        icon: @iconBasedOnType(@attr.mapPin, datum, viewed)
+        shadow: @iconBasedOnType(@attr.mapPinShadow, datum, viewed)
         title: @markerTitle(datum)
         datum: datum
         saveMarkerClick: @attr.saveMarkerClick
@@ -116,16 +116,16 @@ define [
     @sendCustomMarkerTrigger = (marker) ->
       _this = this
       google.maps.event.addListener marker, 'click', ->
-        $(document).trigger 'markerClicked', gMarker: @, gMap: _this.attr.gMap
+        $(document).trigger 'markerClicked', gMarker: @, gMap: _this.attr.gMap, viewed: _this.storedMarkerExists(@.datum.id)
 
       google.maps.event.addListener marker, 'mouseover', (marker) ->
-        $(document).trigger 'markerMousedOver', gMarker: @, gMap: _this.attr.gMap
+        $(document).trigger 'markerMousedOver', gMarker: @, gMap: _this.attr.gMap, viewed: _this.storedMarkerExists(@.datum.id)
 
       google.maps.event.addListener marker, 'mouseout', (marker) ->
-        $(document).trigger 'markerMousedOut', gMarker: @, gMap: _this.attr.gMap
+        $(document).trigger 'markerMousedOut', gMarker: @, gMap: _this.attr.gMap, viewed: _this.storedMarkerExists(@.datum.id)
 
     @markerTitle = (datum) ->
-      datum.name || ''
+      datum.name or ''
 
     @markerAnimation = (ev, data) ->
       return unless @attr.markersIndex
@@ -148,9 +148,9 @@ define [
       else
         ''
 
-    @iconBasedOnType = (icon, datum, saved) ->
+    @iconBasedOnType = (icon, datum, viewed) ->
       if typeof(icon) is "function"
-        icon(datum, saved)
+        icon(datum, viewed)
       else if typeof(@attr.mapPin) is "string"
         # DEPRECATED: Please pass in a function or object to `@attr.mapPin`
         #             and '@attr.mapPinShadow'.
