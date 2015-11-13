@@ -102,13 +102,13 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       }
     };
     this.markerOptions = function(datum) {
-      var label, options, saved;
-      saved = this.storedMarkerExists(datum.id);
+      var label, options, viewed;
+      viewed = this.storedMarkerExists(datum.id);
       options = {
         position: new google.maps.LatLng(datum.lat, datum.lng),
         map: this.attr.gMap,
-        icon: this.iconBasedOnType(this.attr.mapPin, datum, saved),
-        shadow: this.iconBasedOnType(this.attr.mapPinShadow, datum, saved),
+        icon: this.iconBasedOnType(this.attr.mapPin, datum, viewed),
+        shadow: this.iconBasedOnType(this.attr.mapPinShadow, datum, viewed),
         title: this.markerTitle(datum),
         datum: datum,
         saveMarkerClick: this.attr.saveMarkerClick
@@ -128,19 +128,22 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       google.maps.event.addListener(marker, 'click', function() {
         return $(document).trigger('markerClicked', {
           gMarker: this,
-          gMap: _this.attr.gMap
+          gMap: _this.attr.gMap,
+          viewed: _this.storedMarkerExists(this.datum.id)
         });
       });
       google.maps.event.addListener(marker, 'mouseover', function(marker) {
         return $(document).trigger('markerMousedOver', {
           gMarker: this,
-          gMap: _this.attr.gMap
+          gMap: _this.attr.gMap,
+          viewed: _this.storedMarkerExists(this.datum.id)
         });
       });
       return google.maps.event.addListener(marker, 'mouseout', function(marker) {
         return $(document).trigger('markerMousedOut', {
           gMarker: this,
-          gMap: _this.attr.gMap
+          gMap: _this.attr.gMap,
+          viewed: _this.storedMarkerExists(this.datum.id)
         });
       });
     };
@@ -182,9 +185,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
         return '';
       }
     };
-    this.iconBasedOnType = function(icon, datum, saved) {
+    this.iconBasedOnType = function(icon, datum, viewed) {
       if (typeof icon === "function") {
-        return icon(datum, saved);
+        return icon(datum, viewed);
       } else if (typeof this.attr.mapPin === "string") {
         return {
           url: this.deprecatedIconLogic(icon, datum)
