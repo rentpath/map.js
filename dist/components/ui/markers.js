@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map/marker_with_label', 'map/components/mixins/map_utils', 'map/components/mixins/stored_markers', 'primedia_events'], function($, defineComponent, clusters, markerWithLabelFactory, mapUtils, storedMarkers, events) {
+define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map/marker_with_label', 'map/components/mixins/map_utils', 'map/components/mixins/stored_markers'], function($, defineComponent, clusters, markerWithLabelFactory, mapUtils, storedMarkers) {
   var markersOverlay;
   markersOverlay = function() {
     this.defaultAttrs({

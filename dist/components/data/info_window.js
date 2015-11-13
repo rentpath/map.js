@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'underscore', 'flight/lib/component'], function($, _, defineComponent) {
+define(['jquery', 'flight/lib/component'], function($, defineComponent) {
   var infoWindowData;
   infoWindowData = function() {
     this.defaultAttrs({

@@ -2,15 +2,13 @@
 
 define [
   'jquery'
-  'underscore'
   'flight/lib/component'
   'map/components/mixins/map_utils'
   "map/components/mixins/distance_conversion"
 ], (
-  $,
-  _
-  defineComponent,
-  mapUtils,
+  $
+  defineComponent
+  mapUtils
   distanceConversion
 ) ->
 

@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/map_utils', "map/components/mixins/distance_conversion"], function($, _, defineComponent, mapUtils, distanceConversion) {
+define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', "map/components/mixins/distance_conversion"], function($, defineComponent, mapUtils, distanceConversion) {
   var listingsData;
   listingsData = function() {
     this.defaultAttrs({
