@@ -1,3 +1,8 @@
+# v1.9.1
+* [update] Bump `marker-clusterer.js` to `v2.1.1.rp.1.0.2` (off-by-one fix)
+
+[Compare v1.9.0..v1.9.1](https://github.com/RentPath/map.js/compare/v1.9.0...v1.9.1)
+
 # v1.9.0
 * [feature] `markerClicked`, `markerMousedOver`, and `markerMousedOut` now send `viewed: true/false` in the event data.
 
