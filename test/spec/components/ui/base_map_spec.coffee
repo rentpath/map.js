@@ -125,3 +125,26 @@ define [], () ->
           expect(@component.radiusToZoom()).toBe(12)
         it "should return the correct radius based on value passed to it", ->
           expect(@component.radiusToZoom(5)).toBe(13)
+
+      describe '#fireOurMapEvents', ->
+        beforeEach ->
+          spyOn @component, 'mapChangedData'
+          spyOn @component, 'mapChangedDataBase'
+
+        it 'triggers when max_bounds_change', ->
+          spyEvent = spyOnEvent(document, 'uiMapZoomForListings')
+          @component.storeEvent 'max_bounds_change'
+          @component.fireOurMapEvents()
+          expect(spyEvent.calls.length).toEqual 1
+
+        it 'triggers when zoom_changed', ->
+          spyEvent = spyOnEvent(document, 'uiMapZoom')
+          @component.storeEvent 'zoom_changed'
+          @component.fireOurMapEvents()
+          expect(spyEvent.calls.length).toEqual 1
+
+        it 'triggers when center_changed', ->
+          spyEvent = spyOnEvent(document, 'uiMapCenter')
+          @component.storeEvent 'center_changed'
+          @component.fireOurMapEvents()
+          expect(spyEvent.calls.length).toEqual 1

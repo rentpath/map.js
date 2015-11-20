@@ -25,7 +25,6 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
     this.data = {};
     this.after('initialize', function() {
       this.on(document, 'mapDataAvailable', this.initBaseMap);
-      this.on(document, 'mapRendered', this.consolidateMapChangeEvents);
       return this.on(document, 'uiInfoWindowDataRequest', (function(_this) {
         return function() {
           return _this.attr.infoWindowOpen = true;
@@ -36,19 +35,6 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       this.data = data || {};
       return this.firstRender();
     };
-    this.consolidateMapChangeEvents = function(ev, data) {
-      google.maps.event.addListenerOnce(data.gMap, 'zoom_changed', (function(_this) {
-        return function() {
-          return _this.trigger(document, 'uiMapZoom', _this.mapChangedData());
-        };
-      })(this));
-      return google.maps.event.addListenerOnce(data.gMap, 'dragend', (function(_this) {
-        return function() {
-          return _this.trigger(document, 'uiMapDrag', _this.mapChangedData());
-        };
-      })(this));
-    };
-    this.intervalId = null;
     this.firstRender = function() {
       google.maps.visualRefresh = true;
       this.attr.gMap = new google.maps.Map(this.node, this.defineGoogleMapOptions());
@@ -62,7 +48,6 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       return this.addCustomMarker();
     };
     this.fireOurMapEventsOnce = function() {
-      clearInterval(this.intervalId);
       this.trigger(document, 'mapRenderedFirst', this.mapRenderedFirstData());
       this.trigger(document, 'mapRendered', this.mapRenderedFirstData());
       this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
@@ -105,12 +90,17 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
         eventsHash['center_changed'] = false;
         eventsHash['max_bounds_changed'] = false;
       }
-      clearInterval(this.intervalId);
       if (eventsHash['max_bounds_changed']) {
         this.trigger(document, 'uiMapZoomForListings', this.mapChangedData());
         this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
         this.trigger(document, 'mapRendered', this.mapChangedData());
         this.trigger(document, 'uiNeighborhoodDataRequest', this.mapChangedDataBase());
+      }
+      if (eventsHash['zoom_changed']) {
+        this.trigger(document, 'uiMapZoom', this.mapChangedData());
+      }
+      if (eventsHash['center_changed']) {
+        this.trigger(document, 'uiMapCenter', this.mapChangedData());
       }
       return this.resetOurEventHash();
     };
