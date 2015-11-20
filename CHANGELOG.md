@@ -1,3 +1,8 @@
+# v1.9.2
+* [update] Bump `marker-clusterer.js` to `v2.1.1.rp.1.0.3` (avoid animations that aren't visible)
+
+[Compare v1.9.1..v1.9.2](https://github.com/RentPath/map.js/compare/v1.9.1...v1.9.2)
+
 # v1.9.1
 * [update] Bump `marker-clusterer.js` to `v2.1.1.rp.1.0.2` (off-by-one fix)
 
