@@ -63,13 +63,9 @@ define [], () ->
           beforeEach ->
             @setupComponent
               mapPin: "/url/to/pin"
-              mapPinFree: "/url/to/free/pin"
 
-          it "uses mapPin when not free", ->
+          it "uses mapPin", ->
             expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual({ url: "/url/to/pin" })
-
-          it "uses mapPinFree when free", ->
-            expect(@component.iconBasedOnType(@component.attr.mapPin, { free: true })).toEqual({ url: "/url/to/free/pin" })
 
       describe "with arg mapPinShadow", ->
         describe "when given a function", ->
@@ -86,11 +82,8 @@ define [], () ->
             @setupComponent
               mapPinShadow: "/url/to/pin"
 
-          it "uses mapPinShadow when not free", ->
+          it "uses mapPinShadow", ->
             expect(@component.iconBasedOnType(@component.attr.mapPinShadow, {})).toEqual({ url: "/url/to/pin"})
-
-          it "is blank when free", ->
-            expect(@component.iconBasedOnType(@component.attr.mapPinShadow, { free: true })).toEqual({ url: "" })
 
     describe '#createMarker', ->
       describe 'without label options', ->
