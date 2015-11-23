@@ -1,3 +1,8 @@
+# v1.10.0
+* [feature] Emit `uiMapZoom` and `uiMapCenter` events when zoom and/or center changes.
+
+[Compare v1.9.2..v1.10.0](https://github.com/RentPath/map.js/compare/v1.9.2...v1.10.0)
+
 # v1.9.2
 * [update] Bump `marker-clusterer.js` to `v2.1.1.rp.1.0.3` (avoid animations that aren't visible)
 
