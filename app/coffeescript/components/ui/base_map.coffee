@@ -33,7 +33,6 @@ define [
 
     @after 'initialize', ->
       @on document, 'mapDataAvailable', @initBaseMap
-      @on document, 'mapRendered', @consolidateMapChangeEvents
       @on document, 'uiInfoWindowDataRequest', =>
         @attr.infoWindowOpen = true
 
@@ -41,17 +40,7 @@ define [
       @data = data || {}
       @firstRender()
 
-    @consolidateMapChangeEvents = (ev, data) ->
-      google.maps.event.addListenerOnce data.gMap, 'zoom_changed', =>
-        @trigger document, 'uiMapZoom', @mapChangedData()
-      google.maps.event.addListenerOnce data.gMap, 'dragend', =>
-        @trigger document, 'uiMapDrag', @mapChangedData()
-
-    @intervalId = null
-
     @firstRender = ->
-      # new version of gmap api 3.14 is the next stable version
-      # it inludes visualRefresh
       google.maps.visualRefresh = true
 
       @attr.gMap = new google.maps.Map(@node, @defineGoogleMapOptions())
@@ -63,12 +52,10 @@ define [
       @addCustomMarker()
 
     @fireOurMapEventsOnce = () ->
-      clearInterval(@intervalId)
       @trigger document, 'mapRenderedFirst', @mapRenderedFirstData()
       @trigger document, 'mapRendered',  @mapRenderedFirstData()
       @trigger document, 'uiInitMarkerCluster', @mapChangedData()
       @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
-
 
     @handleOurMapEvents = ->
       google.maps.event.addListener @attr.gMap, 'zoom_changed', =>
@@ -91,16 +78,20 @@ define [
 
     @fireOurMapEvents = () ->
       eventsHash = @attr.gMapEvents
-      if @attr.infoWindowOpen == true
+      if @attr.infoWindowOpen is true
         eventsHash['center_changed'] = false
         eventsHash['max_bounds_changed'] = false
-      clearInterval(@intervalId)
 
       if eventsHash['max_bounds_changed']
         @trigger document, 'uiMapZoomForListings', @mapChangedData()
         @trigger document, 'uiInitMarkerCluster', @mapChangedData()
         @trigger document, 'mapRendered', @mapChangedData()
         @trigger document, 'uiNeighborhoodDataRequest', @mapChangedDataBase()
+
+      if eventsHash['zoom_changed']
+        @trigger document, 'uiMapZoom', @mapChangedData()
+      if eventsHash['center_changed']
+        @trigger document, 'uiMapCenter', @mapChangedData()
 
       @resetOurEventHash()
 

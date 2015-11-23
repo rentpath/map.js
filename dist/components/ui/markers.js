@@ -21,7 +21,6 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
         return true;
       },
       mapPin: '',
-      mapPinFree: '',
       mapPinShadow: '',
       saveMarkerClick: false
     });
@@ -34,9 +33,6 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       }
       if (data.mapPin) {
         this.attr.mapPin = data.mapPin;
-      }
-      if (data.mapPinFree) {
-        this.attr.mapPinFree = data.mapPinFree;
       }
       if (data.mapPinShadow) {
         return this.attr.mapPinShadow = data.mapPinShadow;
@@ -170,17 +166,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
     };
     this.deprecatedIconLogic = function(icon, datum) {
       if (icon === this.attr.mapPin) {
-        if (datum.free) {
-          return this.attr.mapPinFree;
-        } else {
-          return this.attr.mapPin;
-        }
+        return this.attr.mapPin;
       } else if (icon === this.attr.mapPinShadow) {
-        if (datum.free) {
-          return "";
-        } else {
-          return this.attr.mapPinShadow;
-        }
+        return this.attr.mapPinShadow;
       } else {
         return '';
       }

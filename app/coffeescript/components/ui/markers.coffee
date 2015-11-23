@@ -41,7 +41,6 @@ define [
         true
 
       mapPin: ''       # can be either a function, Icon options, or url to the pin.
-      mapPinFree: ''   # DEPRECATED. See below.
       mapPinShadow: '' # can be either a function, Icon options, or url to the pin.
       saveMarkerClick: false
 
@@ -51,7 +50,6 @@ define [
     @initAttr = (ev, data) ->
       @attr.gMap = data.gMap if data.gMap
       @attr.mapPin = data.mapPin if data.mapPin
-      @attr.mapPinFree = data.mapPinFree if data.mapPinFree
       @attr.mapPinShadow = data.mapPinShadow if data.mapPinShadow
 
     @render = (ev, data) ->
@@ -142,9 +140,9 @@ define [
 
     @deprecatedIconLogic = (icon, datum) ->
       if icon == @attr.mapPin
-        if datum.free then @attr.mapPinFree else @attr.mapPin
+        @attr.mapPin
       else if icon == @attr.mapPinShadow
-        if datum.free then "" else @attr.mapPinShadow
+        @attr.mapPinShadow
       else
         ''
 
