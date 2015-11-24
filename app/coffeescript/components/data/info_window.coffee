@@ -3,9 +3,11 @@
 define [
   'jquery'
   'flight/lib/component'
+  'map/components/mixins/map_utils'
 ], (
   $
   defineComponent
+  mapUtils
 ) ->
 
   infoWindowData = ->
@@ -16,7 +18,7 @@ define [
 
     @getData = (ev, data) ->
       @xhr = $.ajax
-        url: "#{@attr.pinRoute}#{data.listingId}"
+        url: "#{@attr.pinRoute}#{data.listingId}?refinements=#{@getRefinements()}"
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->
@@ -24,4 +26,4 @@ define [
     @after 'initialize', ->
       @on document, 'uiInfoWindowDataRequest', @getData
 
-  return defineComponent(infoWindowData)
+  return defineComponent(infoWindowData, mapUtils)
