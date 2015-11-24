@@ -2,11 +2,13 @@
 
 define [
   'jquery'
+  'underscore'
   'flight/lib/component'
   'map/components/mixins/map_utils'
   'map/components/mixins/distance_conversion'
 ], (
   $
+  _
   defineComponent
   mapUtils
   distanceConversion
@@ -48,7 +50,7 @@ define [
       google.maps.event.addListenerOnce @attr.gMap, 'idle', =>
         @attr.maxBounds = @currentBounds()
         @fireOurMapEventsOnce()
-        @handleOurMapEvents()
+        @attachEventListeners()
       @addCustomMarker()
 
     @fireOurMapEventsOnce = () ->
@@ -57,14 +59,18 @@ define [
       @trigger document, 'uiInitMarkerCluster', @mapChangedData()
       @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
 
-    @handleOurMapEvents = ->
-      google.maps.event.addListener @attr.gMap, 'zoom_changed', =>
+    @attachEventListeners = (duration = 250) ->
+      google.maps.event.addListener @attr.gMap, 'zoom_changed', _.debounce(=>
         @storeEvent('zoom_changed')
-      google.maps.event.addListener @attr.gMap, 'center_changed', =>
-        @storeEvent('center_changed')
-      google.maps.event.addListener @attr.gMap, 'idle', =>
         @checkForMaxBoundsChange()
         @fireOurMapEvents()
+      , duration)
+
+      google.maps.event.addListener @attr.gMap, 'center_changed', _.debounce(=>
+        @storeEvent('center_changed')
+        @checkForMaxBoundsChange()
+        @fireOurMapEvents()
+      , duration)
 
     @storeEvent = (event) ->
       @attr.gMapEvents[event] = true
@@ -76,7 +82,7 @@ define [
         @attr.maxBounds = newBounds
         @storeEvent('max_bounds_changed')
 
-    @fireOurMapEvents = () ->
+    @fireOurMapEvents = ->
       eventsHash = @attr.gMapEvents
       if @attr.infoWindowOpen is true
         eventsHash['center_changed'] = false
