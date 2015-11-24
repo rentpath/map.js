@@ -1,5 +1,5 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'map/components/mixins/distance_conversion'], function($, defineComponent, mapUtils, distanceConversion) {
+define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/map_utils', 'map/components/mixins/distance_conversion'], function($, _, defineComponent, mapUtils, distanceConversion) {
   var defaultMap;
   defaultMap = function() {
     this.defaultAttrs({
@@ -42,7 +42,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
         return function() {
           _this.attr.maxBounds = _this.currentBounds();
           _this.fireOurMapEventsOnce();
-          return _this.handleOurMapEvents();
+          return _this.attachEventListeners();
         };
       })(this));
       return this.addCustomMarker();
@@ -53,23 +53,24 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', 'ma
       this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
       return this.trigger(document, "uiNeighborhoodDataRequest", this.mapChangedDataBase());
     };
-    this.handleOurMapEvents = function() {
-      google.maps.event.addListener(this.attr.gMap, 'zoom_changed', (function(_this) {
+    this.attachEventListeners = function(duration) {
+      if (duration == null) {
+        duration = 250;
+      }
+      google.maps.event.addListener(this.attr.gMap, 'zoom_changed', _.debounce((function(_this) {
         return function() {
-          return _this.storeEvent('zoom_changed');
-        };
-      })(this));
-      google.maps.event.addListener(this.attr.gMap, 'center_changed', (function(_this) {
-        return function() {
-          return _this.storeEvent('center_changed');
-        };
-      })(this));
-      return google.maps.event.addListener(this.attr.gMap, 'idle', (function(_this) {
-        return function() {
+          _this.storeEvent('zoom_changed');
           _this.checkForMaxBoundsChange();
           return _this.fireOurMapEvents();
         };
-      })(this));
+      })(this), duration));
+      return google.maps.event.addListener(this.attr.gMap, 'center_changed', _.debounce((function(_this) {
+        return function() {
+          _this.storeEvent('center_changed');
+          _this.checkForMaxBoundsChange();
+          return _this.fireOurMapEvents();
+        };
+      })(this), duration));
     };
     this.storeEvent = function(event) {
       return this.attr.gMapEvents[event] = true;
