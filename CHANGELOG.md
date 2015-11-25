@@ -1,3 +1,8 @@
+# v1.11.0
+* [feature] Attach refinements to pin URLs
+
+[Compare v1.10.0..v1.11.0](https://github.com/RentPath/map.js/compare/v1.10.0...v1.11.0)
+
 # v1.10.0
 * [feature] Emit `uiMapZoom` and `uiMapCenter` events when zoom and/or center changes.
 
