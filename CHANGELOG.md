@@ -1,3 +1,8 @@
+# v1.12.0
+* [feature] Add clusterFontFamily option
+
+[Compare v1.11.0..v1.12.0](https://github.com/RentPath/map.js/compare/v1.11.0...v1.12.0)
+
 # v1.11.0
 * [feature] Attach refinements to pin URLs
 
