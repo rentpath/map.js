@@ -8,6 +8,7 @@ define(['flight/lib/compose', 'map/components/mixins/map_utils'], function(compo
       clusterWidth: 46,
       clusterTextColor: 'black',
       clusterTextSize: 11,
+      clusterFontFamily: 'Arial,sans-serif',
       clusterFontWeight: 'bold',
       clusterSize: 10,
       declusterAnimationDuration: 0,
@@ -21,7 +22,8 @@ define(['flight/lib/compose', 'map/components/mixins/map_utils'], function(compo
         width: this.attr.clusterWidth,
         textColor: this.attr.clusterTextColor,
         textSize: this.attr.clusterTextSize,
-        fontWeight: this.attr.clusterFontWeight
+        fontWeight: this.attr.clusterFontWeight,
+        fontFamily: this.attr.clusterFontFamily
       };
     };
     this.clusterStyleArray = function() {

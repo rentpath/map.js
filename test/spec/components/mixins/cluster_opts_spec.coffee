@@ -32,6 +32,9 @@ define [ ], () ->
         it "should return the preset font weight", ()->
           expect(styles.fontWeight).toBe('bold')
 
+        it "should return the preset font family", ()->
+          expect(styles.fontFamily).toBe('Arial,sans-serif')
+
       describe "with override values", ->
         beforeEach ->
           @setupComponent(@fixture,
@@ -42,6 +45,7 @@ define [ ], () ->
               clusterTextColor: 'red'
               clusterTextSize: 14
               clusterFontWeight: 'normal'
+              clusterFontFamily: 'Helvetica'
               clusterSize: 5
             })
 
@@ -65,6 +69,9 @@ define [ ], () ->
 
         it "should return the overridden font weight", ()->
           expect(@styles.fontWeight).toBe('normal')
+
+        it "should return the overridden font family", ()->
+          expect(@styles.fontFamily).toBe('Helvetica')
 
     describe "#clusterSize", ->
       describe "with preset value", ->
