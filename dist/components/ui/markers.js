@@ -115,7 +115,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
         datum: datum,
         saveMarkerClick: this.attr.saveMarkerClick
       };
-      if (label = this.attr.markerLabelOptions(datum)) {
+      if (label = this.attr.markerLabelOptions(datum, viewed)) {
         options.labelContent = label.content;
         if (label.anchor) {
           options.labelAnchor = new google.maps.Point(label.anchor.x, label.anchor.y);

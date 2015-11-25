@@ -111,7 +111,7 @@ define [
         datum: datum
         saveMarkerClick: @attr.saveMarkerClick
 
-      if label = @attr.markerLabelOptions(datum)
+      if label = @attr.markerLabelOptions(datum, viewed)
         options.labelContent = label.content
         options.labelAnchor = new google.maps.Point(label.anchor.x, label.anchor.y) if label.anchor
         options.labelClass = label.cssClass
