@@ -15,6 +15,7 @@ define [
       clusterWidth: 46
       clusterTextColor: 'black'
       clusterTextSize: 11
+      clusterFontFamily: 'Arial,sans-serif'
       clusterFontWeight: 'bold'
       clusterSize: 10
       declusterAnimationDuration: 0
@@ -29,6 +30,7 @@ define [
       textColor: @attr.clusterTextColor
       textSize: @attr.clusterTextSize
       fontWeight: @attr.clusterFontWeight
+      fontFamily: @attr.clusterFontFamily
 
     @clusterStyleArray = ->
       [@_clusterStyles(), @_clusterStyles(), @_clusterStyles(), @_clusterStyles(), @_clusterStyles()]
