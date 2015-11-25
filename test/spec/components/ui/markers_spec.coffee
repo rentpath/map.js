@@ -65,7 +65,7 @@ define [], () ->
               mapPin: "/url/to/pin"
 
           it "uses mapPin", ->
-            expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual({ url: "/url/to/pin" })
+            expect(@component.iconBasedOnType(@component.attr.mapPin, {})).toEqual("/url/to/pin")
 
       describe "with arg mapPinShadow", ->
         describe "when given a function", ->
@@ -83,7 +83,7 @@ define [], () ->
               mapPinShadow: "/url/to/pin"
 
           it "uses mapPinShadow", ->
-            expect(@component.iconBasedOnType(@component.attr.mapPinShadow, {})).toEqual({ url: "/url/to/pin"})
+            expect(@component.iconBasedOnType(@component.attr.mapPinShadow, {})).toEqual("/url/to/pin")
 
     describe '#createMarker', ->
       describe 'without label options', ->

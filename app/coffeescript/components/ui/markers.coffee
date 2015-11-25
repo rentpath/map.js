@@ -62,28 +62,34 @@ define [
         @attr.markerClusterer.fitMapToMarkers() if @attr.markerOptions.fitBounds
 
     @addMarkers = (data) ->
+      previousMarkersIndex = @attr.markersIndex
       @clearAllMarkers()
-      all_markers = []
+      allMarkers = []
 
       for listing in data.listings
-        m = @createMarker(listing)
-        all_markers.push(m)
-        @sendCustomMarkerTrigger(m)
-        @attr.markers.push {googleMarker: m, markerData: listing}
-        @attr.markersIndex[listing.id] = @attr.markers.length - 1
+        m = previousMarkersIndex[listing.id] or @createMarker(listing)
+        delete previousMarkersIndex[listing.id]
 
-      @updateCluster(all_markers)
+        allMarkers.push(m)
+        @sendCustomMarkerTrigger(m)
+        @attr.markers.push googleMarker: m, markerData: listing
+        @attr.markersIndex[listing.id] = m
+
+      @removeGoogleMarker(marker) for id, marker of previousMarkersIndex
+      previousMarkersIndex = null
+
+      @updateCluster(allMarkers)
       @updateListingsCount()
       @trigger 'uiSetMarkerInfoWindow'
 
     @clearAllMarkers = ->
       @attr.markerClusterer?.clearMarkers()
-      @removeGoogleMarker(marker.googleMarker) for marker in @attr.markers
       @attr.markers = []
       @attr.markersIndex = {}
 
     @removeGoogleMarker = (gmarker) ->
       google.maps.event.clearListeners gmarker, "click"
+      @attr.markerClusterer?.removeMarker(gmarker)
       gmarker.setMap(null)
       gmarker = null
 
@@ -138,21 +144,9 @@ define [
       lCount = @attr.markers.length
       $(@attr.listingCountSelector).html(@attr.listingCountText + lCount)
 
-    @deprecatedIconLogic = (icon, datum) ->
-      if icon == @attr.mapPin
-        @attr.mapPin
-      else if icon == @attr.mapPinShadow
-        @attr.mapPinShadow
-      else
-        ''
-
     @iconBasedOnType = (icon, datum, viewed) ->
       if typeof(icon) is "function"
         icon(datum, viewed)
-      else if typeof(@attr.mapPin) is "string"
-        # DEPRECATED: Please pass in a function or object to `@attr.mapPin`
-        #             and '@attr.mapPinShadow'.
-        { url: @deprecatedIconLogic(icon, datum) }
       else
         icon
 

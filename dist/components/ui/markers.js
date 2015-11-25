@@ -51,40 +51,46 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       }
     };
     this.addMarkers = function(data) {
-      var all_markers, i, len, listing, m, ref;
+      var allMarkers, i, id, len, listing, m, marker, previousMarkersIndex, ref;
+      previousMarkersIndex = this.attr.markersIndex;
       this.clearAllMarkers();
-      all_markers = [];
+      allMarkers = [];
       ref = data.listings;
       for (i = 0, len = ref.length; i < len; i++) {
         listing = ref[i];
-        m = this.createMarker(listing);
-        all_markers.push(m);
+        m = previousMarkersIndex[listing.id] || this.createMarker(listing);
+        delete previousMarkersIndex[listing.id];
+        allMarkers.push(m);
         this.sendCustomMarkerTrigger(m);
         this.attr.markers.push({
           googleMarker: m,
           markerData: listing
         });
-        this.attr.markersIndex[listing.id] = this.attr.markers.length - 1;
+        this.attr.markersIndex[listing.id] = m;
       }
-      this.updateCluster(all_markers);
+      for (id in previousMarkersIndex) {
+        marker = previousMarkersIndex[id];
+        this.removeGoogleMarker(marker);
+      }
+      previousMarkersIndex = null;
+      this.updateCluster(allMarkers);
       this.updateListingsCount();
       return this.trigger('uiSetMarkerInfoWindow');
     };
     this.clearAllMarkers = function() {
-      var i, len, marker, ref, ref1;
+      var ref;
       if ((ref = this.attr.markerClusterer) != null) {
         ref.clearMarkers();
-      }
-      ref1 = this.attr.markers;
-      for (i = 0, len = ref1.length; i < len; i++) {
-        marker = ref1[i];
-        this.removeGoogleMarker(marker.googleMarker);
       }
       this.attr.markers = [];
       return this.attr.markersIndex = {};
     };
     this.removeGoogleMarker = function(gmarker) {
+      var ref;
       google.maps.event.clearListeners(gmarker, "click");
+      if ((ref = this.attr.markerClusterer) != null) {
+        ref.removeMarker(gmarker);
+      }
       gmarker.setMap(null);
       return gmarker = null;
     };
@@ -164,22 +170,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       lCount = this.attr.markers.length;
       return $(this.attr.listingCountSelector).html(this.attr.listingCountText + lCount);
     };
-    this.deprecatedIconLogic = function(icon, datum) {
-      if (icon === this.attr.mapPin) {
-        return this.attr.mapPin;
-      } else if (icon === this.attr.mapPinShadow) {
-        return this.attr.mapPinShadow;
-      } else {
-        return '';
-      }
-    };
     this.iconBasedOnType = function(icon, datum, viewed) {
       if (typeof icon === "function") {
         return icon(datum, viewed);
-      } else if (typeof this.attr.mapPin === "string") {
-        return {
-          url: this.deprecatedIconLogic(icon, datum)
-        };
       } else {
         return icon;
       }
