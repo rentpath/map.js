@@ -2,7 +2,10 @@ define(function(require,exports,module){
 
 return function () {
 /**
- * NOTE:  Patched on line 143 according to https://code.google.com/p/google-maps-utility-library-v3/issues/detail?id=24#c28
+ * CHANGELOG
+ * - Remove global events that watch for dragging and mouse movement.
+ * - Removed MsFilter attributes. Set opacity to 0 instead of 0.01
+ * - Patched on line 143 according to https://code.google.com/p/google-maps-utility-library-v3/issues/detail?id=24#c28
  *
  * @name MarkerWithLabel for V3
  * @version 1.1.10 [April 8, 2014]
@@ -180,76 +183,7 @@ MarkerLabel_.prototype.onAdd = function () {
         cAbortEvent(e); // Prevent map pan when starting a drag on a label
       }
     }),
-    google.maps.event.addDomListener(document, "mouseup", function (mEvent) {
-      var position;
-      if (cMouseIsDown) {
-        cMouseIsDown = false;
-        me.eventDiv_.style.cursor = "pointer";
-        google.maps.event.trigger(me.marker_, "mouseup", mEvent);
-      }
-      if (cDraggingLabel) {
-        if (cRaiseEnabled) { // Lower the marker & label
-          position = me.getProjection().fromLatLngToDivPixel(me.marker_.getPosition());
-          position.y += cRaiseOffset;
-          me.marker_.setPosition(me.getProjection().fromDivPixelToLatLng(position));
-          // This is not the same bouncing style as when the marker portion is dragged,
-          // but it will have to do:
-          try { // Will fail if running Google Maps API earlier than V3.3
-            me.marker_.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(cStopBounce, 1406);
-          } catch (e) {}
-        }
-        me.crossDiv_.style.display = "none";
-        me.marker_.setZIndex(cSavedZIndex);
-        cIgnoreClick = true; // Set flag to ignore the click event reported after a label drag
-        cDraggingLabel = false;
-        mEvent.latLng = me.marker_.getPosition();
-        google.maps.event.trigger(me.marker_, "dragend", mEvent);
-      }
-    }),
-    google.maps.event.addListener(me.marker_.getMap(), "mousemove", function (mEvent) {
-      var position;
-      if (cMouseIsDown) {
-        if (cDraggingLabel) {
-          // Change the reported location from the mouse position to the marker position:
-          mEvent.latLng = new google.maps.LatLng(mEvent.latLng.lat() - cLatOffset, mEvent.latLng.lng() - cLngOffset);
-          position = me.getProjection().fromLatLngToDivPixel(mEvent.latLng);
-          if (cRaiseEnabled) {
-            me.crossDiv_.style.left = position.x + "px";
-            me.crossDiv_.style.top = position.y + "px";
-            me.crossDiv_.style.display = "";
-            position.y -= cRaiseOffset;
-          }
-          me.marker_.setPosition(me.getProjection().fromDivPixelToLatLng(position));
-          if (cRaiseEnabled) { // Don't raise the veil; this hack needed to make MSIE act properly
-            me.eventDiv_.style.top = (position.y + cRaiseOffset) + "px";
-          }
-          google.maps.event.trigger(me.marker_, "drag", mEvent);
-        } else {
-          // Calculate offsets from the click point to the marker position:
-          cLatOffset = mEvent.latLng.lat() - me.marker_.getPosition().lat();
-          cLngOffset = mEvent.latLng.lng() - me.marker_.getPosition().lng();
-          cSavedZIndex = me.marker_.getZIndex();
-          cStartPosition = me.marker_.getPosition();
-          cStartCenter = me.marker_.getMap().getCenter();
-          cRaiseEnabled = me.marker_.get("raiseOnDrag");
-          cDraggingLabel = true;
-          me.marker_.setZIndex(1000000); // Moves the marker & label to the foreground during a drag
-          mEvent.latLng = me.marker_.getPosition();
-          google.maps.event.trigger(me.marker_, "dragstart", mEvent);
-        }
-      }
-    }),
-    google.maps.event.addDomListener(document, "keydown", function (e) {
-      if (cDraggingLabel) {
-        if (e.keyCode === 27) { // Esc key
-          cRaiseEnabled = false;
-          me.marker_.setPosition(cStartPosition);
-          me.marker_.getMap().setCenter(cStartCenter);
-          google.maps.event.trigger(document, "mouseup", e);
-        }
-      }
-    }),
+
     google.maps.event.addDomListener(this.eventDiv_, "click", function (e) {
       if (me.marker_.getDraggable() || me.marker_.getClickable()) {
         if (cIgnoreClick) { // Ignore the click reported when a label drag ends
@@ -264,30 +198,6 @@ MarkerLabel_.prototype.onAdd = function () {
       if (me.marker_.getDraggable() || me.marker_.getClickable()) {
         google.maps.event.trigger(me.marker_, "dblclick", e);
         cAbortEvent(e); // Prevent map zoom when double-clicking on a label
-      }
-    }),
-    google.maps.event.addListener(this.marker_, "dragstart", function (mEvent) {
-      if (!cDraggingLabel) {
-        cRaiseEnabled = this.get("raiseOnDrag");
-      }
-    }),
-    google.maps.event.addListener(this.marker_, "drag", function (mEvent) {
-      if (!cDraggingLabel) {
-        if (cRaiseEnabled) {
-          me.setPosition(cRaiseOffset);
-          // During a drag, the marker's z-index is temporarily set to 1000000 to
-          // ensure it appears above all other markers. Also set the label's z-index
-          // to 1000000 (plus or minus 1 depending on whether the label is supposed
-          // to be above or below the marker).
-          me.labelDiv_.style.zIndex = 1000000 + (this.get("labelInBackground") ? -1 : +1);
-        }
-      }
-    }),
-    google.maps.event.addListener(this.marker_, "dragend", function (mEvent) {
-      if (!cDraggingLabel) {
-        if (cRaiseEnabled) {
-          me.setPosition(0); // Also restores z-index of label
-        }
       }
     }),
     google.maps.event.addListener(this.marker_, "position_changed", function () {
