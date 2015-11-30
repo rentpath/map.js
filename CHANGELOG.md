@@ -1,3 +1,14 @@
+# v2.0.0
+* [breaking change] `uiMapZoom` and `uiMapCenter` will no longer fire if `uiMapZoomForListings` fires.
+* [feature] `mixins/stored_markers` keeps a hash in memory (rather than parsing JSON when each marker is created).
+* [feature] `ui/markers` re-uses existing markers rather than deleting all then adding all.
+* [feature] Passing in a url rather than `{ url: 'url' }` as an icon is more performant (?!). This un-deprecates the feature.
+* [deprecate] Remove `MarkerWithLabel` `MsFilter` attributes
+* [deprecate] Remove unnecessary `MarkerWithLabel` global drag events
+* [feature] Pass viewed state into `markerLabelOptions`
+
+[Compare v1.12.0..v2.0.0](https://github.com/RentPath/map.js/compare/v1.12.0...v2.0.0)
+
 # v1.12.0
 * [feature] Add clusterFontFamily option
 
