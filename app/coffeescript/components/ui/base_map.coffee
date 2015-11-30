@@ -93,10 +93,9 @@ define [
         @trigger document, 'uiInitMarkerCluster', @mapChangedData()
         @trigger document, 'mapRendered', @mapChangedData()
         @trigger document, 'uiNeighborhoodDataRequest', @mapChangedDataBase()
-
-      if eventsHash['zoom_changed']
+      else if eventsHash['zoom_changed']
         @trigger document, 'uiMapZoom', @mapChangedData()
-      if eventsHash['center_changed']
+      else if eventsHash['center_changed']
         @trigger document, 'uiMapCenter', @mapChangedData()
 
       @resetOurEventHash()
