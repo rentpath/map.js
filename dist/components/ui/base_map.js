@@ -96,11 +96,9 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
         this.trigger(document, 'mapRendered', this.mapChangedData());
         this.trigger(document, 'uiNeighborhoodDataRequest', this.mapChangedDataBase());
-      }
-      if (eventsHash['zoom_changed']) {
+      } else if (eventsHash['zoom_changed']) {
         this.trigger(document, 'uiMapZoom', this.mapChangedData());
-      }
-      if (eventsHash['center_changed']) {
+      } else if (eventsHash['center_changed']) {
         this.trigger(document, 'uiMapCenter', this.mapChangedData());
       }
       return this.resetOurEventHash();

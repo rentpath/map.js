@@ -131,9 +131,9 @@ define [], () ->
           spyOn @component, 'mapChangedData'
           spyOn @component, 'mapChangedDataBase'
 
-        it 'triggers when max_bounds_change', ->
+        it 'triggers when max_bounds_changed', ->
           spyEvent = spyOnEvent(document, 'uiMapZoomForListings')
-          @component.storeEvent 'max_bounds_change'
+          @component.storeEvent 'max_bounds_changed'
           @component.fireOurMapEvents()
           expect(spyEvent.calls.length).toEqual 1
 
@@ -148,3 +148,12 @@ define [], () ->
           @component.storeEvent 'center_changed'
           @component.fireOurMapEvents()
           expect(spyEvent.calls.length).toEqual 1
+
+        it 'does not trigger uiMapCenter and uiMapZoomForListings together', ->
+          zoomSpyEvent = spyOnEvent(document, 'uiMapZoomForListings')
+          centerSpyEvent = spyOnEvent(document, 'uiMapCenter')
+          @component.storeEvent 'max_bounds_changed'
+          @component.storeEvent 'center_changed'
+          @component.fireOurMapEvents()
+          expect(zoomSpyEvent.calls.length).toEqual 1
+          expect(centerSpyEvent.calls.length).toEqual 0
