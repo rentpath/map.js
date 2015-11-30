@@ -3,7 +3,7 @@ define [ ], () ->
   describeMixin 'map/components/mixins/stored_markers', ->
     beforeEach ->
       @setupComponent()
-      localStorage.removeItem(@component.attr.storageKey)
+      @component.reset()
 
     describe 'storage key', ->
       it "has a default for the storage key", () ->

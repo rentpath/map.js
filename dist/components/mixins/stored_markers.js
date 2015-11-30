@@ -1,9 +1,8 @@
 'use strict';
 define(['jquery', 'flight/lib/component'], function($, defineComponent) {
-  var storedMarkers;
+  var store, storedMarkers;
+  store = void 0;
   return storedMarkers = function() {
-    var store;
-    store = void 0;
     this.defaultAttrs({
       storageKey: 'viewedMapMarkers'
     });
@@ -12,29 +11,33 @@ define(['jquery', 'flight/lib/component'], function($, defineComponent) {
     };
     this.load = function() {
       if (this.localStorageSupported()) {
-        if (this.store == null) {
-          this.store = JSON.parse(localStorage.getItem(this.attr.storageKey)) || {};
+        if (store == null) {
+          store = JSON.parse(localStorage.getItem(this.attr.storageKey)) || {};
         }
       }
-      return this.store;
+      return store;
     };
     this.save = function(values) {
       if (!this.localStorageSupported()) {
         return;
       }
-      this.store = values;
-      return localStorage.setItem(this.attr.storageKey, JSON.stringify(this.store));
+      store = values;
+      return localStorage.setItem(this.attr.storageKey, JSON.stringify(store));
     };
     this.storedMarkerExists = function(listingId) {
       return this.load()[listingId] != null;
     };
-    return this.recordMarkerClick = function(listingId) {
+    this.recordMarkerClick = function(listingId) {
       var viewedListingIds;
       viewedListingIds = this.load();
       if (viewedListingIds[listingId] == null) {
         viewedListingIds[listingId] = true;
         return this.save(viewedListingIds);
       }
+    };
+    return this.reset = function() {
+      store = void 0;
+      return localStorage.removeItem(this.attr.storageKey);
     };
   };
 });
