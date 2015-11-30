@@ -7,8 +7,9 @@ define [
   $
   defineComponent
 ) ->
-
   storedMarkers = ->
+
+    store = undefined
 
     @defaultAttrs
       storageKey: 'viewedMapMarkers'
@@ -17,20 +18,20 @@ define [
       Storage?
 
     @load = ->
-      return {} unless @localStorageSupported()
-      JSON.parse(localStorage.getItem(@attr.storageKey)) || {}
+      if @localStorageSupported()
+        @store ?= JSON.parse(localStorage.getItem(@attr.storageKey)) || {}
+      @store
 
-    @save = (value) ->
+    @save = (values) ->
       return unless @localStorageSupported()
-      localStorage.setItem(@attr.storageKey, JSON.stringify(value))
+      @store = values
+      localStorage.setItem(@attr.storageKey, JSON.stringify(@store))
 
     @storedMarkerExists = (listingId) ->
       @load()[listingId]?
 
     @recordMarkerClick = (listingId) ->
       viewedListingIds = @load()
-      return if viewedListingIds[listingId]?
-
-      viewedListingIds[listingId] = true
-      @save(viewedListingIds)
-
+      unless viewedListingIds[listingId]?
+        viewedListingIds[listingId] = true
+        @save(viewedListingIds)
