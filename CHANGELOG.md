@@ -1,3 +1,9 @@
+# v2.0.1
+* [bugfix] Stored markers now keep a cache outside the components.
+* [bugfix] Fix marker animation.
+
+[Compare v2.0.0..v2.0.1](https://github.com/RentPath/map.js/compare/v2.0.0...v2.0.1)
+
 # v2.0.0
 * [breaking change] `uiMapZoom` and `uiMapCenter` will no longer fire if `uiMapZoomForListings` fires.
 * [feature] `mixins/stored_markers` keeps a hash in memory (rather than parsing JSON when each marker is created).
