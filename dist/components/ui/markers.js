@@ -153,16 +153,9 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       return datum.name || '';
     };
     this.markerAnimation = function(ev, data) {
-      var markerIndex, markerObject;
-      if (!this.attr.markersIndex) {
-        return;
-      }
-      markerIndex = this.attr.markersIndex[data.id.slice(7)];
-      if (this.attr.markers[markerIndex]) {
-        markerObject = this.attr.markers[markerIndex].googleMarker;
-      }
-      if (markerObject != null) {
-        return markerObject.setAnimation(data.animation);
+      var marker, ref;
+      if (marker = (ref = this.attr.markersIndex) != null ? ref[data.id.slice(7)] : void 0) {
+        return marker.setAnimation(data.animation);
       }
     };
     this.updateListingsCount = function() {
