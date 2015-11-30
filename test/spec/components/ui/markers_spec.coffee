@@ -156,3 +156,13 @@ define [], () ->
         it "should not init markerClusterer", ->
           @component.updateCluster([])
           expect(@component.attr.markerClusterer).not.toBeDefined()
+
+    describe '#markerAnimation', ->
+      beforeEach ->
+        @setupComponent()
+        @marker = jasmine.createSpyObj('marker', ['setAnimation'])
+        @component.attr.markersIndex['1234567'] = @marker
+
+      it 'animates the marker', ->
+        @component.markerAnimation undefined, id: "result_1234567", animation: 'bounce'
+        expect(@marker.setAnimation).toHaveBeenCalledWith('bounce')

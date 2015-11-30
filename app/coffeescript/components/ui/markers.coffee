@@ -132,12 +132,8 @@ define [
       datum.name or ''
 
     @markerAnimation = (ev, data) ->
-      return unless @attr.markersIndex
-
-      markerIndex = @attr.markersIndex[data.id.slice(7)]
-      markerObject = @attr.markers[markerIndex].googleMarker if @attr.markers[markerIndex]
-
-      markerObject.setAnimation(data.animation) if markerObject?
+      if marker = @attr.markersIndex?[data.id.slice(7)]
+        marker.setAnimation(data.animation)
 
     # TODO: Move to it's own component. Maybe this is application's responsibility?
     @updateListingsCount = ->
