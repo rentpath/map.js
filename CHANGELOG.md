@@ -1,3 +1,9 @@
+# v2.1.0
+* [feature] List of listings only sorts by distance after the user interacts with the map.
+* [deprecate] Removed `sortByAttribute` attribute in `data/listings.coffee`
+
+[Compare v2.0.1..v2.1.0](https://github.com/RentPath/map.js/compare/v2.0.1...v2.1.0)
+
 # v2.0.1
 * [bugfix] Stored markers now keep a cache outside the components.
 * [bugfix] Fix marker animation.
