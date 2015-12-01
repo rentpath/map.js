@@ -1,3 +1,8 @@
+# v2.1.1
+* [bugfix] Trigger request for hybrid listings when map zooms/pans
+
+[Compare v2.1.0..v2.1.1](https://github.com/RentPath/map.js/compare/v2.1.0...v2.1.1)
+
 # v2.1.0
 * [feature] List of listings only sorts by distance after the user interacts with the map.
 * [deprecate] Removed `sortByAttribute` attribute in `data/listings.coffee`
