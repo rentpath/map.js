@@ -100,8 +100,10 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         this.trigger(document, 'uiNeighborhoodDataRequest', this.mapState());
       } else if (eventsHash['zoom_changed']) {
         this.trigger(document, 'uiMapZoom', this.mapState());
+        this.trigger(document, 'uiListingDataRequest', this.mapState());
       } else if (eventsHash['center_changed']) {
         this.trigger(document, 'uiMapCenter', this.mapState());
+        this.trigger(document, 'uiListingDataRequest', this.mapState());
       }
       return this.resetOurEventHash();
     };
