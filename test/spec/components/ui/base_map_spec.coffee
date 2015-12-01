@@ -1,5 +1,4 @@
 define [], () ->
-
   describeComponent 'map/components/ui/base_map', ->
     describe 'non-fixture testing', ->
       beforeEach ->
@@ -128,8 +127,7 @@ define [], () ->
 
       describe '#fireOurMapEvents', ->
         beforeEach ->
-          spyOn @component, 'mapChangedData'
-          spyOn @component, 'mapChangedDataBase'
+          spyOn @component, 'mapState'
 
         it 'triggers when max_bounds_changed', ->
           spyEvent = spyOnEvent(document, 'uiMapZoomForListings')
@@ -157,3 +155,31 @@ define [], () ->
           @component.fireOurMapEvents()
           expect(zoomSpyEvent.calls.length).toEqual 1
           expect(centerSpyEvent.calls.length).toEqual 0
+
+    describe '#mapState', ->
+      latLngMock =
+        lat: -> 0
+        lng: -> 0
+
+      gMapMock =
+        getCenter: -> latLngMock
+        getBounds: ->
+          getNorthEast: -> latLngMock
+          getSouthWest: -> latLngMock
+
+      describe 'when user has not changed the map', ->
+        beforeEach ->
+          @setupComponent
+            gMap: gMapMock
+
+        it 'uses an empty sort', ->
+          expect(@component.mapState().sort).toEqual ''
+
+      describe 'when user has changed the map', ->
+        beforeEach ->
+          @setupComponent
+            userChangedMap: true
+            gMap: gMapMock
+
+        it 'uses a distance based sort', ->
+          expect(@component.mapState().sort).toEqual 'distance'

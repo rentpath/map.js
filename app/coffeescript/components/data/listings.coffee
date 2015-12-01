@@ -21,7 +21,6 @@ define [
       hostname: 'www.apartmentguide.com'
       priceRangeRefinements: {}
       possibleRefinements: ['min_price', 'max_price']
-      sortByAttribute: 'distance'
       pinLimit: undefined
 
     @mapConfig = ->
@@ -31,7 +30,6 @@ define [
       hostname: @attr.hostname
       priceRangeRefinements: @attr.priceRangeRefinements
       possibleRefinements: @attr.possibleRefinements
-      sortByAttribute: @attr.sortByAttribute
 
     @getListings = (ev, queryData) ->
       @xhr = $.ajax
@@ -45,7 +43,6 @@ define [
       decodeURIComponent($.param(@queryData(data)))
 
     @getMarkers = (ev, data) ->
-      data.sort = @attr.sortByAttribute
       data.limit = @attr.pinLimit
       @xhr = $.ajax
         url: "#{@attr.mapPinsRoute}?#{@decodedQueryData(data)}"

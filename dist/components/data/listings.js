@@ -9,7 +9,6 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', "ma
       hostname: 'www.apartmentguide.com',
       priceRangeRefinements: {},
       possibleRefinements: ['min_price', 'max_price'],
-      sortByAttribute: 'distance',
       pinLimit: void 0
     });
     this.mapConfig = function() {
@@ -19,8 +18,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', "ma
         mapPinsRoute: this.attr.mapPinsRoute,
         hostname: this.attr.hostname,
         priceRangeRefinements: this.attr.priceRangeRefinements,
-        possibleRefinements: this.attr.possibleRefinements,
-        sortByAttribute: this.attr.sortByAttribute
+        possibleRefinements: this.attr.possibleRefinements
       };
     };
     this.getListings = function(ev, queryData) {
@@ -45,7 +43,6 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', "ma
       return decodeURIComponent($.param(this.queryData(data)));
     };
     this.getMarkers = function(ev, data) {
-      data.sort = this.attr.sortByAttribute;
       data.limit = this.attr.pinLimit;
       return this.xhr = $.ajax({
         url: this.attr.mapPinsRoute + "?" + (this.decodedQueryData(data)),

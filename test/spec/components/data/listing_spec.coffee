@@ -29,9 +29,6 @@ define [], () ->
       it 'should return the valid possible refinements', ->
         expect(config.possibleRefinements).toEqual([ 'min_price', 'max_price' ])
 
-      it 'should return an attribute for the default sort order', ->
-        expect(config.sortByAttribute).toEqual('distance')
-
     describe 'with override values', ->
       config = {}
       beforeEach ->
@@ -43,7 +40,6 @@ define [], () ->
             hostname: '/foo'
             priceRangeRefinements: {}
             possibleRefinements: [ 'foo' ]
-            sortByAttribute: 'test'
           })
         config = @component.mapConfig()
 
@@ -64,6 +60,3 @@ define [], () ->
 
       it 'should return the valid possible refinements', ->
         expect(config.possibleRefinements).toEqual([ 'foo' ])
-
-      it 'should return an attribute for the default sort order', ->
-        expect(config.sortByAttribute).toEqual('test')
