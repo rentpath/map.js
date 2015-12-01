@@ -20,7 +20,8 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         draggable: void 0
       },
       pinControlsSelector: '#pin_search_controls',
-      pinControlsCloseIconSelector: 'a.icon_close'
+      pinControlsCloseIconSelector: 'a.icon_close',
+      userChangedMap: false
     });
     this.data = {};
     this.after('initialize', function() {
@@ -48,10 +49,10 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       return this.addCustomMarker();
     };
     this.fireOurMapEventsOnce = function() {
-      this.trigger(document, 'mapRenderedFirst', this.mapRenderedFirstData());
-      this.trigger(document, 'mapRendered', this.mapRenderedFirstData());
-      this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
-      return this.trigger(document, "uiNeighborhoodDataRequest", this.mapChangedDataBase());
+      this.trigger(document, 'mapRenderedFirst', this.mapState());
+      this.trigger(document, 'mapRendered', this.mapState());
+      this.trigger(document, 'uiInitMarkerCluster', this.mapState());
+      return this.trigger(document, "uiNeighborhoodDataRequest", this.mapState());
     };
     this.attachEventListeners = function(duration) {
       if (duration == null) {
@@ -73,6 +74,7 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       })(this), duration));
     };
     this.storeEvent = function(event) {
+      this.attr.userChangedMap = true;
       return this.attr.gMapEvents[event] = true;
     };
     this.checkForMaxBoundsChange = function() {
@@ -92,14 +94,14 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         eventsHash['max_bounds_changed'] = false;
       }
       if (eventsHash['max_bounds_changed']) {
-        this.trigger(document, 'uiMapZoomForListings', this.mapChangedData());
-        this.trigger(document, 'uiInitMarkerCluster', this.mapChangedData());
-        this.trigger(document, 'mapRendered', this.mapChangedData());
-        this.trigger(document, 'uiNeighborhoodDataRequest', this.mapChangedDataBase());
+        this.trigger(document, 'uiMapZoomForListings', this.mapState());
+        this.trigger(document, 'uiInitMarkerCluster', this.mapState());
+        this.trigger(document, 'mapRendered', this.mapState());
+        this.trigger(document, 'uiNeighborhoodDataRequest', this.mapState());
       } else if (eventsHash['zoom_changed']) {
-        this.trigger(document, 'uiMapZoom', this.mapChangedData());
+        this.trigger(document, 'uiMapZoom', this.mapState());
       } else if (eventsHash['center_changed']) {
-        this.trigger(document, 'uiMapCenter', this.mapChangedData());
+        this.trigger(document, 'uiMapCenter', this.mapState());
       }
       return this.resetOurEventHash();
     };
@@ -160,8 +162,7 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       return radiusInMeters = Math.max(longitudinalDistance, latitudinalDistance);
     };
     this.mapCenter = function() {
-      var gLatLng;
-      return gLatLng = this.attr.gMap.getCenter();
+      return this.attr.gMap.getCenter();
     };
     this.currentBounds = function() {
       return this.attr.gMap.getBounds();
@@ -176,22 +177,7 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         };
       })(this));
     };
-    this.mapRenderedFirstData = function() {
-      var data;
-      data = this.mapChangedData();
-      data.zip = this.geoData().zip;
-      data.city = this.geoData().city;
-      data.state = this.geoData().state;
-      data.hood = this.geoData().hood;
-      return data;
-    };
-    this.mapChangedData = function() {
-      var data;
-      data = this.mapChangedDataBase();
-      data.sort = 'distance';
-      return data;
-    };
-    this.mapChangedDataBase = function() {
+    this.mapState = function() {
       return {
         gMap: this.attr.gMap,
         latitude: this.limitScaleOf(this.latitude()),
@@ -205,7 +191,8 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         city: this.geoData().city,
         state: this.geoData().state,
         hood: this.geoData().hood,
-        hoodDisplayName: this.geoData().hood_display_name
+        hoodDisplayName: this.geoData().hood_display_name,
+        sort: this.attr.userChangedMap ? 'distance' : ''
       };
     };
     this.zoomCircle = function() {

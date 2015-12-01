@@ -30,6 +30,7 @@ define [
         draggable: undefined
       pinControlsSelector: '#pin_search_controls'
       pinControlsCloseIconSelector: 'a.icon_close'
+      userChangedMap: false # if the user has panned/zoomed/modified the map
 
     @data = {}
 
@@ -54,10 +55,10 @@ define [
       @addCustomMarker()
 
     @fireOurMapEventsOnce = () ->
-      @trigger document, 'mapRenderedFirst', @mapRenderedFirstData()
-      @trigger document, 'mapRendered',  @mapRenderedFirstData()
-      @trigger document, 'uiInitMarkerCluster', @mapChangedData()
-      @trigger document, "uiNeighborhoodDataRequest", @mapChangedDataBase()
+      @trigger document, 'mapRenderedFirst', @mapState()
+      @trigger document, 'mapRendered',  @mapState()
+      @trigger document, 'uiInitMarkerCluster', @mapState()
+      @trigger document, "uiNeighborhoodDataRequest", @mapState()
 
     @attachEventListeners = (duration = 250) ->
       google.maps.event.addListener @attr.gMap, 'zoom_changed', _.debounce(=>
@@ -73,6 +74,7 @@ define [
       , duration)
 
     @storeEvent = (event) ->
+      @attr.userChangedMap = true
       @attr.gMapEvents[event] = true
 
     @checkForMaxBoundsChange = ->
@@ -89,14 +91,14 @@ define [
         eventsHash['max_bounds_changed'] = false
 
       if eventsHash['max_bounds_changed']
-        @trigger document, 'uiMapZoomForListings', @mapChangedData()
-        @trigger document, 'uiInitMarkerCluster', @mapChangedData()
-        @trigger document, 'mapRendered', @mapChangedData()
-        @trigger document, 'uiNeighborhoodDataRequest', @mapChangedDataBase()
+        @trigger document, 'uiMapZoomForListings', @mapState()
+        @trigger document, 'uiInitMarkerCluster', @mapState()
+        @trigger document, 'mapRendered', @mapState()
+        @trigger document, 'uiNeighborhoodDataRequest', @mapState()
       else if eventsHash['zoom_changed']
-        @trigger document, 'uiMapZoom', @mapChangedData()
+        @trigger document, 'uiMapZoom', @mapState()
       else if eventsHash['center_changed']
-        @trigger document, 'uiMapCenter', @mapChangedData()
+        @trigger document, 'uiMapCenter', @mapState()
 
       @resetOurEventHash()
 
@@ -150,7 +152,7 @@ define [
       radiusInMeters = Math.max(longitudinalDistance, latitudinalDistance)
 
     @mapCenter = ->
-      gLatLng = @attr.gMap.getCenter()
+      @attr.gMap.getCenter()
 
     @currentBounds = ->
       @attr.gMap.getBounds()
@@ -162,20 +164,7 @@ define [
       $("#{@attr.pinControlsSelector} #{@attr.pinControlsCloseIconSelector}").click =>
         $(@attr.pinControlsSelector).remove()
 
-    @mapRenderedFirstData = ->
-      data = @mapChangedData()
-      data.zip = @geoData().zip
-      data.city = @geoData().city
-      data.state = @geoData().state
-      data.hood = @geoData().hood
-      data
-
-    @mapChangedData = ->
-      data = @mapChangedDataBase()
-      data.sort = 'distance'
-      data
-
-    @mapChangedDataBase = ->
+    @mapState = ->
       gMap: @attr.gMap
       latitude: @limitScaleOf(@latitude())
       longitude: @limitScaleOf(@longitude())
@@ -189,6 +178,9 @@ define [
       state: @geoData().state
       hood: @geoData().hood
       hoodDisplayName: @geoData().hood_display_name
+
+      # an empty sort gives control to the app, which is typically tiers and points
+      sort: if @attr.userChangedMap then 'distance' else ''
 
     @zoomCircle = ->
       radius = @convertMilesToMeters(@geoDataRadiusMiles())
