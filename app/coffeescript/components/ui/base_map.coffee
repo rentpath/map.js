@@ -97,8 +97,10 @@ define [
         @trigger document, 'uiNeighborhoodDataRequest', @mapState()
       else if eventsHash['zoom_changed']
         @trigger document, 'uiMapZoom', @mapState()
+        @trigger document, 'uiListingDataRequest', @mapState()
       else if eventsHash['center_changed']
         @trigger document, 'uiMapCenter', @mapState()
+        @trigger document, 'uiListingDataRequest', @mapState()
 
       @resetOurEventHash()
 
