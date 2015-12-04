@@ -6,7 +6,7 @@ define ['jquery'], ($) ->
       @setupComponent()
       @listingId = 1111
       @ev = {}
-      @data = 
+      @data =
         listingId: @listingId
 
     it 'should be defined', ->
@@ -15,7 +15,7 @@ define ['jquery'], ($) ->
     describe '#getData', ->
       it 'creates a url', ->
         xhrSpy = spyOn($, 'ajax')
-        spyOn(@component, 'getRefinements').and.callFake( -> 'foo_bar_baz-1')
+        spyOn(@component, 'getPinRefinements').and.callFake( -> 'refinements=foo_bar_baz-1')
         expectedUrl = "#{@component.attr.pinRoute}#{@listingId}?refinements=foo_bar_baz-1"
         @component.getData(@ev, @data)
         expect(xhrSpy.calls.mostRecent().args[0]['url']).toEqual expectedUrl

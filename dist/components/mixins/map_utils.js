@@ -6,16 +6,17 @@ define(['jquery'], function($) {
       assetHostSelector: 'meta[name="asset_host"]',
       spinnerSelector: '.spinner',
       refinementsSelector: '.pageInfo[name="refinements"]',
+      pinRefinementsSelector: '.pageInfo[name="pin_search_refinements"]',
       propertyNameParam: 'propertyname',
       mgtcoidParam: 'mgtcoid',
       propertyManagementRE: 'property-management'
     });
     this._extractParamFromUrl = function(key) {
-      var i, len, param, queryParams, regex, value;
+      var param, queryParams, regex, value, _i, _len;
       queryParams = location.search.split('&') || [];
       regex = key + '=(.*)';
-      for (i = 0, len = queryParams.length; i < len; i++) {
-        param = queryParams[i];
+      for (_i = 0, _len = queryParams.length; _i < _len; _i++) {
+        param = queryParams[_i];
         if (param.match(regex)) {
           value = param.match(regex);
         }
@@ -44,6 +45,9 @@ define(['jquery'], function($) {
     };
     this.getRefinements = function() {
       return $(this.attr.refinementsSelector).attr("content") || '';
+    };
+    this.getPinRefinements = function() {
+      return $(this.attr.pinRefinementsSelector).attr("content") || '';
     };
     this.getPropertyName = function() {
       return this._extractParamFromUrl(this.attr.propertyNameParam);

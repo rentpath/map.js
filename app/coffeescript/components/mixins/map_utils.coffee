@@ -3,12 +3,13 @@ define [ 'jquery' ], ( $ ) ->
   mapUtils = ->
     @defaultAttrs
       assetUrl: undefined
-      assetHostSelector:    'meta[name="asset_host"]'      
-      spinnerSelector:      '.spinner'
-      refinementsSelector:  '.pageInfo[name="refinements"]'
-      propertyNameParam:    'propertyname'
-      mgtcoidParam:         'mgtcoid'
-      propertyManagementRE: 'property-management'
+      assetHostSelector:      'meta[name="asset_host"]'
+      spinnerSelector:        '.spinner'
+      refinementsSelector:    '.pageInfo[name="refinements"]'
+      pinRefinementsSelector: '.pageInfo[name="pin_search_refinements"]'
+      propertyNameParam:      'propertyname'
+      mgtcoidParam:           'mgtcoid'
+      propertyManagementRE:   'property-management'
 
     @_extractParamFromUrl = (key)->
       queryParams = location.search.split('&') or []
@@ -32,6 +33,9 @@ define [ 'jquery' ], ( $ ) ->
 
     @getRefinements = ->
       $(@attr.refinementsSelector).attr("content") or ''
+
+    @getPinRefinements = ->
+      $(@attr.pinRefinementsSelector).attr("content") or ''
 
     @getPropertyName = ->
       @_extractParamFromUrl(@attr.propertyNameParam)

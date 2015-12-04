@@ -7,7 +7,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils'], fu
     });
     this.getData = function(ev, data) {
       return this.xhr = $.ajax({
-        url: "" + this.attr.pinRoute + data.listingId + "?refinements=" + (this.getRefinements()),
+        url: "" + this.attr.pinRoute + data.listingId + "?" + (this.getPinRefinements()),
         success: (function(_this) {
           return function(ajaxData) {
             return $(document).trigger("infoWindowDataAvailable", ajaxData);

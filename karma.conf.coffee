@@ -11,7 +11,7 @@ module.exports = (config) ->
       'http://maps.googleapis.com/maps/api/js?libraries=geometry,places&sensor=false'
 
       {pattern: 'app/bower_components/underscore/*.js', watched: false, served: true, included: true}
-      {pattern: 'app/bower_components/jquery/jquery.js', watched: false, served: true, included: true}
+      {pattern: 'app/bower_components/jquery/dist/jquery.js', watched: false, served: true, included: true}
       {pattern: 'app/bower_components/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true}
       {pattern: 'app/bower_components/jasmine-flight/lib/jasmine-flight.js', watched: false, served: true, included: true}
 

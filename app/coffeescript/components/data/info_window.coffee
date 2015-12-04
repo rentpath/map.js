@@ -18,7 +18,7 @@ define [
 
     @getData = (ev, data) ->
       @xhr = $.ajax
-        url: "#{@attr.pinRoute}#{data.listingId}?refinements=#{@getRefinements()}"
+        url: "#{@attr.pinRoute}#{data.listingId}?#{@getPinRefinements()}"
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->
