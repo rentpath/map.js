@@ -1,14 +1,14 @@
 'use strict';
-define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils'], function($, defineComponent, mapUtils) {
+define(['jquery', 'flight/lib/component'], function($, defineComponent) {
   var infoWindowData;
   infoWindowData = function() {
     this.defaultAttrs({
-      pinRoute: "/map/pin/",
-      pinRefinements: ''
+      route: "/map/pin/",
+      refinements: ''
     });
     this.getData = function(ev, data) {
       return this.xhr = $.ajax({
-        url: "" + this.attr.pinRoute + data.listingId + "?" + this.attr.pinRefinements,
+        url: "" + this.attr.route + data.listingId + "?" + this.attr.refinements,
         success: (function(_this) {
           return function(ajaxData) {
             return $(document).trigger("infoWindowDataAvailable", ajaxData);
@@ -21,5 +21,5 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils'], fu
       return this.on(document, 'uiInfoWindowDataRequest', this.getData);
     });
   };
-  return defineComponent(infoWindowData, mapUtils);
+  return defineComponent(infoWindowData);
 });

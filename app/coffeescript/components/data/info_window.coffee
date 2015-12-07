@@ -11,12 +11,12 @@ define [
   infoWindowData = ->
 
     @defaultAttrs
-      pinRoute: "/map/pin/"
-      pinRefinements: ''
+      route: "/map/pin/"
+      refinements: ''
 
     @getData = (ev, data) ->
       @xhr = $.ajax
-        url: "#{@attr.pinRoute}#{data.listingId}?#{@attr.pinRefinements}"
+        url: "#{@attr.route}#{data.listingId}?#{@attr.refinements}"
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->

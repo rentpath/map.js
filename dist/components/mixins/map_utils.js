@@ -6,7 +6,6 @@ define(['jquery'], function($) {
       assetHostSelector: 'meta[name="asset_host"]',
       spinnerSelector: '.spinner',
       refinementsSelector: '.pageInfo[name="refinements"]',
-      pinRefinementsSelector: '.pageInfo[name="pin_search_refinements"]',
       propertyNameParam: 'propertyname',
       mgtcoidParam: 'mgtcoid',
       propertyManagementRE: 'property-management'
@@ -45,9 +44,6 @@ define(['jquery'], function($) {
     };
     this.getRefinements = function() {
       return $(this.attr.refinementsSelector).attr("content") || '';
-    };
-    this.getPinRefinements = function() {
-      return $(this.attr.pinRefinementsSelector).attr("content") || '';
     };
     this.getPropertyName = function() {
       return this._extractParamFromUrl(this.attr.propertyNameParam);
