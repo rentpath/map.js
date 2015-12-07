@@ -3,7 +3,7 @@ define ['jquery'], ($) ->
   describeComponent 'map/components/data/info_window', ->
 
     beforeEach ->
-      @setupComponent()
+      @setupComponent(pinRefinements: 'refinements=foo_bar_baz-1')
       @listingId = 1111
       @ev = {}
       @data =
@@ -15,7 +15,6 @@ define ['jquery'], ($) ->
     describe '#getData', ->
       it 'creates a url', ->
         xhrSpy = spyOn($, 'ajax')
-        spyOn(@component, 'getPinRefinements').and.callFake( -> 'refinements=foo_bar_baz-1')
         expectedUrl = "#{@component.attr.pinRoute}#{@listingId}?refinements=foo_bar_baz-1"
         @component.getData(@ev, @data)
         expect(xhrSpy.calls.mostRecent().args[0]['url']).toEqual expectedUrl

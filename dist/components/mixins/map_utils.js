@@ -12,11 +12,11 @@ define(['jquery'], function($) {
       propertyManagementRE: 'property-management'
     });
     this._extractParamFromUrl = function(key) {
-      var param, queryParams, regex, value, _i, _len;
+      var i, len, param, queryParams, regex, value;
       queryParams = location.search.split('&') || [];
       regex = key + '=(.*)';
-      for (_i = 0, _len = queryParams.length; _i < _len; _i++) {
-        param = queryParams[_i];
+      for (i = 0, len = queryParams.length; i < len; i++) {
+        param = queryParams[i];
         if (param.match(regex)) {
           value = param.match(regex);
         }

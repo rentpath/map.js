@@ -3,11 +3,12 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils'], fu
   var infoWindowData;
   infoWindowData = function() {
     this.defaultAttrs({
-      pinRoute: "/map/pin/"
+      pinRoute: "/map/pin/",
+      pinRefinements: ''
     });
     this.getData = function(ev, data) {
       return this.xhr = $.ajax({
-        url: "" + this.attr.pinRoute + data.listingId + "?" + (this.getPinRefinements()),
+        url: "" + this.attr.pinRoute + data.listingId + "?" + this.attr.pinRefinements,
         success: (function(_this) {
           return function(ajaxData) {
             return $(document).trigger("infoWindowDataAvailable", ajaxData);
