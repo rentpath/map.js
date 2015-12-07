@@ -3,20 +3,33 @@
 define [
   'jquery'
   'flight/lib/component'
+  'underscore'
 ], (
   $
   defineComponent
+  _
 ) ->
 
   infoWindowData = ->
 
     @defaultAttrs
       route: "/map/pin/"
-      refinements: ''
+      min_and_max: ['min_price', 'max_price']
+      refinements: {}
+
+    @queryParams = ->
+      return '' if _.isEmpty(@attr.refinements)
+      results = []
+      for name, obj of @attr.refinements
+        if _.contains(@attr.min_and_max, name)
+          results.push "#{obj.dim_id}=#{obj.value}"
+        else
+          results.push "refinements=#{obj.dim_name}-#{obj.dim_id}"
+      "?" + results.join("&")
 
     @getData = (ev, data) ->
       @xhr = $.ajax
-        url: "#{@attr.route}#{data.listingId}?#{@attr.refinements}"
+        url: "#{@attr.route}#{data.listingId}#{@queryParams()}"
         success: (ajaxData) =>
           $(document).trigger "infoWindowDataAvailable", ajaxData
         complete: ->

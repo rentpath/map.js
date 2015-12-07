@@ -3,7 +3,10 @@ define ['jquery'], ($) ->
   describeComponent 'map/components/data/info_window', ->
 
     beforeEach ->
-      @setupComponent(refinements: 'refinements=foo_bar_baz-1')
+      @setupComponent(refinements:
+                        '123xyz':
+                          dim_name: '2-beds'
+                          dim_id: '123xyz')
       @listingId = 1111
       @ev = {}
       @data =
@@ -12,10 +15,41 @@ define ['jquery'], ($) ->
     it 'should be defined', ->
       expect(@component).toBeDefined()
 
+    describe '#queryParams', ->
+      it 'creates a query string with beds', ->
+        @setupComponent(refinements:
+                          '123xyz':
+                            dim_name: '2-beds'
+                            dim_id: '123xyz')
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-123xyz')
+
+      it 'creates a query string with beds and price', ->
+        @setupComponent(refinements:
+                          '123xyz':
+                            dim_name: '2-beds'
+                            dim_id: '123xyz'
+                          'max_price':
+                            dim_id: 'max_price'
+                            dim_name: 'max_price'
+                            value: '1500')
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-123xyz&max_price=1500')
+
+      it 'creates a query string with price', ->
+        @setupComponent(refinements:
+                          'max_price':
+                            dim_id: 'max_price'
+                            dim_name: 'max_price'
+                            value: '1500')
+        expect(@component.queryParams()).toEqual('?max_price=1500')
+
+      it 'returns an empty string when no refinements are present', ->
+        @setupComponent(refinements: {})
+        expect(@component.queryParams()).toEqual('')
+
     describe '#getData', ->
       it 'creates a url', ->
         xhrSpy = spyOn($, 'ajax')
-        expectedUrl = "#{@component.attr.route}#{@listingId}?refinements=foo_bar_baz-1"
+        expectedUrl = "#{@component.attr.route}#{@listingId}?refinements=2-beds-123xyz"
         @component.getData(@ev, @data)
         expect(xhrSpy.calls.mostRecent().args[0]['url']).toEqual expectedUrl
 
