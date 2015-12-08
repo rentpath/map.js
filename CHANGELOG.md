@@ -1,3 +1,24 @@
+# v3.0.0
+* [feature] More flexible API for building info window query params.
+Instead of querying the DOM for the query string, data/info_window now accepts a refinements object, which must adhere to the following format:
+
+```javascript
+1z141y7: Object
+  dim_id: "1z141y7"
+  dim_name: "2-baths"
+  dim_text: "2 Baths"
+max_price: Object
+  dim_id: "max_price"
+  dim_name: "max_price"
+  dim_text: "Max $1500"
+  value: "1500"
+min_price: Object
+  dim_id: "min_price"
+  dim_name: "min_price"
+  dim_text: "Min $1300"
+  value: "1300"
+```
+
 # v2.1.1
 * [bugfix] Trigger request for hybrid listings when map zooms/pans
 
