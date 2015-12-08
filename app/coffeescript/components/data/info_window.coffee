@@ -28,7 +28,7 @@ define [
     @queryParams = ->
       return "" if _.isEmpty(@attr.refinements)
       results = {names: [], ids: [], filters: []}
-      for name, obj of @attr.refinements
+      for own name, obj of @attr.refinements
         if _.contains(@attr.allowed_filters, name)
           results.filters.push "#{obj.dim_id}=#{obj.value}"
         else

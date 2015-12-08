@@ -1,4 +1,6 @@
 'use strict';
+var hasProp = {}.hasOwnProperty;
+
 define(['jquery', 'flight/lib/component', 'underscore'], function($, defineComponent, _) {
   var infoWindowData;
   infoWindowData = function() {
@@ -24,7 +26,7 @@ define(['jquery', 'flight/lib/component', 'underscore'], function($, defineCompo
       }
     };
     this.queryParams = function() {
-      var name, obj, results, _ref;
+      var name, obj, ref, results;
       if (_.isEmpty(this.attr.refinements)) {
         return "";
       }
@@ -33,9 +35,10 @@ define(['jquery', 'flight/lib/component', 'underscore'], function($, defineCompo
         ids: [],
         filters: []
       };
-      _ref = this.attr.refinements;
-      for (name in _ref) {
-        obj = _ref[name];
+      ref = this.attr.refinements;
+      for (name in ref) {
+        if (!hasProp.call(ref, name)) continue;
+        obj = ref[name];
         if (_.contains(this.attr.allowed_filters, name)) {
           results.filters.push(obj.dim_id + "=" + obj.value);
         } else {
