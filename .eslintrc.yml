@@ -15,4 +15,4 @@ rules:
     - 1
 env:
   browser: true
-extends: 'eslint:recommended'
+extends: 'eslint:airbnb'
