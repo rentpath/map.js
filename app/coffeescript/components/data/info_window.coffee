@@ -14,14 +14,14 @@ define [
 
     @defaultAttrs
       route: "/map/pin/"
-      min_and_max: ['min_price', 'max_price']
+      allowed_filters: ['min_price', 'max_price']
       refinements: {}
 
     @queryParams = ->
       return '' if _.isEmpty(@attr.refinements)
       results = []
       for name, obj of @attr.refinements
-        if _.contains(@attr.min_and_max, name)
+        if _.contains(@attr.allowed_filters, name)
           results.push "#{obj.dim_id}=#{obj.value}"
         else
           results.push "refinements=#{obj.dim_name}-#{obj.dim_id}"

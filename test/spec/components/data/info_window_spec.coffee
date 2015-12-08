@@ -23,6 +23,18 @@ define ['jquery'], ($) ->
                             dim_id: '123xyz')
         expect(@component.queryParams()).toEqual('?refinements=2-beds-123xyz')
 
+      it 'creates a query string with beds and baths', ->
+        @setupComponent(refinements:
+                          {
+                            '1z141y7':
+                              dim_name: '2-baths'
+                              dim_id: '1z141y7',
+                            '123xyz':
+                                dim_name: '2-beds'
+                                dim_id: '123xyz'
+                          })
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-2-baths-1z141y8+1z141y')
+
       it 'creates a query string with beds and price', ->
         @setupComponent(refinements:
                           '123xyz':
