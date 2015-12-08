@@ -20,7 +20,7 @@ define [
     @queryParams = ->
       return '' if _.isEmpty(@attr.refinements)
       results = []
-      for name, obj of @attr.refinements
+      for own name, obj of @attr.refinements
         if _.contains(@attr.allowed_filters, name)
           results.push "#{obj.dim_id}=#{obj.value}"
         else
