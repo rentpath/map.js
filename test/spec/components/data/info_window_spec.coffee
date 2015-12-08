@@ -18,39 +18,39 @@ define ['jquery'], ($) ->
     describe '#queryParams', ->
       it 'creates a query string with beds', ->
         @setupComponent(refinements:
-                          '123xyz':
+                          '1z141y8':
                             dim_name: '2-beds'
-                            dim_id: '123xyz')
-        expect(@component.queryParams()).toEqual('?refinements=2-beds-123xyz')
+                            dim_id: '1z141y8')
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-1z141y8')
 
       it 'creates a query string with beds and baths', ->
         @setupComponent(refinements:
                           {
+                            '1z141y8':
+                                dim_name: '2-beds'
+                                dim_id: '1z141y8'
                             '1z141y7':
                               dim_name: '2-baths'
                               dim_id: '1z141y7',
-                            '123xyz':
-                                dim_name: '2-beds'
-                                dim_id: '123xyz'
                           })
-        expect(@component.queryParams()).toEqual('?refinements=2-beds-2-baths-1z141y8+1z141y')
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-2-baths-1z141y8+1z141y7')
 
       it 'creates a query string with beds and price', ->
         @setupComponent(refinements:
-                          '123xyz':
+                          '1z141y8':
                             dim_name: '2-beds'
-                            dim_id: '123xyz'
+                            dim_id: '1z141y8'
                           'max_price':
-                            dim_id: 'max_price'
                             dim_name: 'max_price'
+                            dim_id: 'max_price'
                             value: '1500')
-        expect(@component.queryParams()).toEqual('?refinements=2-beds-123xyz&max_price=1500')
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-1z141y8&max_price=1500')
 
       it 'creates a query string with price', ->
         @setupComponent(refinements:
                           'max_price':
-                            dim_id: 'max_price'
                             dim_name: 'max_price'
+                            dim_id: 'max_price'
                             value: '1500')
         expect(@component.queryParams()).toEqual('?max_price=1500')
 

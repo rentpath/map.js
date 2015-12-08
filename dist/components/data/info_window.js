@@ -7,22 +7,43 @@ define(['jquery', 'flight/lib/component', 'underscore'], function($, defineCompo
       allowed_filters: ['min_price', 'max_price'],
       refinements: {}
     });
-    this.queryParams = function() {
-      var name, obj, ref, results;
-      if (_.isEmpty(this.attr.refinements)) {
-        return '';
+    this.formatRefinements = function(results) {
+      if (_.isEmpty(results.names)) {
+        return "";
       }
-      results = [];
-      ref = this.attr.refinements;
-      for (name in ref) {
-        obj = ref[name];
+      return "refinements=" + (results.names.join('-')) + "-" + (results.ids.join('+'));
+    };
+    this.formatFilters = function(filters, names) {
+      if (_.isEmpty(filters)) {
+        return "";
+      }
+      if (_.isEmpty(names)) {
+        return filters.join('&');
+      } else {
+        return "&" + (filters.join('&'));
+      }
+    };
+    this.queryParams = function() {
+      var name, obj, results, _ref;
+      if (_.isEmpty(this.attr.refinements)) {
+        return "";
+      }
+      results = {
+        names: [],
+        ids: [],
+        filters: []
+      };
+      _ref = this.attr.refinements;
+      for (name in _ref) {
+        obj = _ref[name];
         if (_.contains(this.attr.allowed_filters, name)) {
-          results.push(obj.dim_id + "=" + obj.value);
+          results.filters.push(obj.dim_id + "=" + obj.value);
         } else {
-          results.push("refinements=" + obj.dim_name + "-" + obj.dim_id);
+          results.names.push(obj.dim_name);
+          results.ids.push(obj.dim_id);
         }
       }
-      return "?" + results.join("&");
+      return "?" + (this.formatRefinements(results)) + (this.formatFilters(results.filters, results.names));
     };
     this.getData = function(ev, data) {
       return this.xhr = $.ajax({

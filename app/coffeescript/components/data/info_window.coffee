@@ -17,15 +17,24 @@ define [
       allowed_filters: ['min_price', 'max_price']
       refinements: {}
 
+    @formatRefinements = (results) ->
+      return "" if _.isEmpty(results.names)
+      "refinements=#{results.names.join('-')}-#{results.ids.join('+')}"
+
+    @formatFilters = (filters, names) ->
+      return "" if _.isEmpty(filters)
+      if _.isEmpty(names) then filters.join('&') else "&#{filters.join('&')}"
+
     @queryParams = ->
-      return '' if _.isEmpty(@attr.refinements)
-      results = []
+      return "" if _.isEmpty(@attr.refinements)
+      results = {names: [], ids: [], filters: []}
       for name, obj of @attr.refinements
         if _.contains(@attr.allowed_filters, name)
-          results.push "#{obj.dim_id}=#{obj.value}"
+          results.filters.push "#{obj.dim_id}=#{obj.value}"
         else
-          results.push "refinements=#{obj.dim_name}-#{obj.dim_id}"
-      "?" + results.join("&")
+          results.names.push obj.dim_name
+          results.ids.push obj.dim_id
+      "?#{@formatRefinements(results)}#{@formatFilters(results.filters, results.names)}"
 
     @getData = (ev, data) ->
       @xhr = $.ajax
