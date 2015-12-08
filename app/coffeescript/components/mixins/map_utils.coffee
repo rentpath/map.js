@@ -3,7 +3,7 @@ define [ 'jquery' ], ( $ ) ->
   mapUtils = ->
     @defaultAttrs
       assetUrl: undefined
-      assetHostSelector:    'meta[name="asset_host"]'      
+      assetHostSelector:    'meta[name="asset_host"]'
       spinnerSelector:      '.spinner'
       refinementsSelector:  '.pageInfo[name="refinements"]'
       propertyNameParam:    'propertyname'

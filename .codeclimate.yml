@@ -1,0 +1,17 @@
+engines:
+  coffeelint:
+    enabled: true
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+ratings:
+   paths:
+   - app/coffeescript/**
+   - app/js/**
+   - app/css/**
+exclude_paths:
+- app/bower_components/**
+- dist/**/*
+- test/**/*
+- node_modules/**/*

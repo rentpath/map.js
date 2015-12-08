@@ -3,20 +3,65 @@ define ['jquery'], ($) ->
   describeComponent 'map/components/data/info_window', ->
 
     beforeEach ->
-      @setupComponent()
+      @setupComponent(refinements:
+                        '123xyz':
+                          dim_name: '2-beds'
+                          dim_id: '123xyz')
       @listingId = 1111
       @ev = {}
-      @data = 
+      @data =
         listingId: @listingId
 
     it 'should be defined', ->
       expect(@component).toBeDefined()
 
+    describe '#queryParams', ->
+      it 'creates a query string with beds', ->
+        @setupComponent(refinements:
+                          '1z141y8':
+                            dim_name: '2-beds'
+                            dim_id: '1z141y8')
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-1z141y8')
+
+      it 'creates a query string with beds and baths', ->
+        @setupComponent(refinements:
+                          {
+                            '1z141y8':
+                                dim_name: '2-beds'
+                                dim_id: '1z141y8'
+                            '1z141y7':
+                              dim_name: '2-baths'
+                              dim_id: '1z141y7',
+                          })
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-2-baths-1z141y8+1z141y7')
+
+      it 'creates a query string with beds and price', ->
+        @setupComponent(refinements:
+                          '1z141y8':
+                            dim_name: '2-beds'
+                            dim_id: '1z141y8'
+                          'max_price':
+                            dim_name: 'max_price'
+                            dim_id: 'max_price'
+                            value: '1500')
+        expect(@component.queryParams()).toEqual('?refinements=2-beds-1z141y8&max_price=1500')
+
+      it 'creates a query string with price', ->
+        @setupComponent(refinements:
+                          'max_price':
+                            dim_name: 'max_price'
+                            dim_id: 'max_price'
+                            value: '1500')
+        expect(@component.queryParams()).toEqual('?max_price=1500')
+
+      it 'returns an empty string when no refinements are present', ->
+        @setupComponent(refinements: {})
+        expect(@component.queryParams()).toEqual('')
+
     describe '#getData', ->
       it 'creates a url', ->
         xhrSpy = spyOn($, 'ajax')
-        spyOn(@component, 'getRefinements').and.callFake( -> 'foo_bar_baz-1')
-        expectedUrl = "#{@component.attr.pinRoute}#{@listingId}?refinements=foo_bar_baz-1"
+        expectedUrl = "#{@component.attr.route}#{@listingId}?refinements=2-beds-123xyz"
         @component.getData(@ev, @data)
         expect(xhrSpy.calls.mostRecent().args[0]['url']).toEqual expectedUrl
 
