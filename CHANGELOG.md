@@ -19,6 +19,8 @@ min_price: Object
   value: "1300"
 ```
 
+[Compare v2.1.1..v3.0.0] [https://github.com/RentPath/map.js/compare/v2.1.1...v3.0.0]
+
 # v2.1.1
 * [bugfix] Trigger request for hybrid listings when map zooms/pans
 
