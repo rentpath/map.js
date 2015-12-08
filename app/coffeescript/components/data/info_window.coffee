@@ -25,8 +25,7 @@ define [
       return "" if _.isEmpty(filters)
       if _.isEmpty(names) then filters.join('&') else "&#{filters.join('&')}"
 
-    @queryParams = ->
-      return "" if _.isEmpty(@attr.refinements)
+    @paramData = ->
       results = {names: [], ids: [], filters: []}
       for own name, obj of @attr.refinements
         if _.contains(@attr.allowed_filters, name)
@@ -34,9 +33,17 @@ define [
         else
           results.names.push obj.dim_name
           results.ids.push obj.dim_id
+      results
+
+    @queryString = (results) ->
       "?#{@formatRefinements(results)}#{@formatFilters(results.filters, results.names)}"
 
+    @queryParams = () ->
+      return "" if _.isEmpty(@attr.refinements)
+      @queryString(@paramData())
+
     @getData = (ev, data) ->
+      paramData = @paramData()
       @xhr = $.ajax
         url: "#{@attr.route}#{data.listingId}#{@queryParams()}"
         success: (ajaxData) =>
