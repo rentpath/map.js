@@ -1,3 +1,8 @@
+# v3.1.0
+* [feature] Allow propertyname in refinements for info window query params.
+
+[Compare v3.0.0..v3.1.0](https://github.com/RentPath/map.js/compare/v3.0.0...v3.1.0)
+
 # v3.0.0
 * [feature] More flexible API for building info window query params.
 Instead of querying the DOM for the query string, `data/info_window` now accepts a refinements object, which must adhere to the following format:

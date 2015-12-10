@@ -1,6 +1,6 @@
 {
   "name": "map",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "main": "dist/map.js",
   "dependencies": {
     "flight": "1.x.x",
