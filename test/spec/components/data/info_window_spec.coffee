@@ -54,6 +54,14 @@ define ['jquery'], ($) ->
                             value: '1500')
         expect(@component.queryParams()).toEqual('?max_price=1500')
 
+      it 'creates a query string with propertyname', ->
+        @setupComponent(refinements:
+                          'propertyname':
+                            dim_name: 'propertyname'
+                            dim_id: 'propertyname'
+                            value: 'amli')
+        expect(@component.queryParams()).toEqual('?propertyname=amli')
+
       it 'returns an empty string when no refinements are present', ->
         @setupComponent(refinements: {})
         expect(@component.queryParams()).toEqual('')

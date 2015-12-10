@@ -14,7 +14,7 @@ define [
 
     @defaultAttrs
       route: "/map/pin/"
-      allowed_filters: ['min_price', 'max_price']
+      allowed_filters: ['propertyname', 'min_price', 'max_price']
       refinements: {}
 
     @formatRefinements = (results) ->
