@@ -131,9 +131,23 @@ define [
     @markerTitle = (datum) ->
       datum.name or ''
 
+    @findMarker = (id) ->
+      @attr.markersIndex?[id]
+
     @markerAnimation = (ev, data) ->
-      if marker = @attr.markersIndex?[data.id.slice(7)]
+      if marker = @findMarker(data.id)
         marker.setAnimation(data.animation)
+
+    @lookupAndDeliverMarker = (ev, data) ->
+      marker = @findMarker(data.id)
+      data.viewed = @storedMarkerExists(data.id)
+
+      if marker?
+        data.gMarker = marker
+      else
+        data.error = "id '#{data.id}' not found in marker list"
+
+      $(document).trigger('dataMapMarker', data)
 
     # TODO: Move to it's own component. Maybe this is application's responsibility?
     @updateListingsCount = ->
@@ -153,6 +167,7 @@ define [
       @on document, 'markersUpdateAttr', @initAttr
       @on document, 'markersDataAvailable', @render
       @on document, 'animatePin', @markerAnimation
+      @on document, 'uiWantsMapMarker', @lookupAndDeliverMarker
       # TODO: put into it's own component.
       @on document, 'uiMapZoom', @updateListingsCount
 

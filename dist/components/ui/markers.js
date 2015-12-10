@@ -152,11 +152,26 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
     this.markerTitle = function(datum) {
       return datum.name || '';
     };
+    this.findMarker = function(id) {
+      var ref;
+      return (ref = this.attr.markersIndex) != null ? ref[id] : void 0;
+    };
     this.markerAnimation = function(ev, data) {
-      var marker, ref;
-      if (marker = (ref = this.attr.markersIndex) != null ? ref[data.id.slice(7)] : void 0) {
+      var marker;
+      if (marker = this.findMarker(data.id)) {
         return marker.setAnimation(data.animation);
       }
+    };
+    this.lookupAndDeliverMarker = function(ev, data) {
+      var marker;
+      marker = this.findMarker(data.id);
+      data.viewed = this.storedMarkerExists(data.id);
+      if (marker != null) {
+        data.gMarker = marker;
+      } else {
+        data.error = "id '" + data.id + "' not found in marker list";
+      }
+      return $(document).trigger('dataMapMarker', data);
     };
     this.updateListingsCount = function() {
       var lCount;
@@ -176,6 +191,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/clusters', 'map
       this.on(document, 'markersUpdateAttr', this.initAttr);
       this.on(document, 'markersDataAvailable', this.render);
       this.on(document, 'animatePin', this.markerAnimation);
+      this.on(document, 'uiWantsMapMarker', this.lookupAndDeliverMarker);
       return this.on(document, 'uiMapZoom', this.updateListingsCount);
     });
   };
