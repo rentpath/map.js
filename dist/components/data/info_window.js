@@ -6,7 +6,7 @@ define(['jquery', 'flight/lib/component', 'underscore'], function($, defineCompo
   infoWindowData = function() {
     this.defaultAttrs({
       route: "/map/pin/",
-      allowed_filters: ['min_price', 'max_price'],
+      allowed_filters: ['propertyname', 'min_price', 'max_price'],
       refinements: {}
     });
     this.formatRefinements = function(results) {
