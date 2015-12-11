@@ -1,5 +1,5 @@
 'use strict';
-var __hasProp = {}.hasOwnProperty;
+var hasProp = {}.hasOwnProperty;
 
 define(['jquery', 'flight/lib/component', 'underscore'], function($, defineComponent, _) {
   var infoWindowData;
@@ -26,16 +26,16 @@ define(['jquery', 'flight/lib/component', 'underscore'], function($, defineCompo
       }
     };
     this.paramData = function() {
-      var name, obj, results, _ref;
+      var name, obj, ref, results;
       results = {
         names: [],
         ids: [],
         filters: []
       };
-      _ref = this.attr.refinements;
-      for (name in _ref) {
-        if (!__hasProp.call(_ref, name)) continue;
-        obj = _ref[name];
+      ref = this.attr.refinements;
+      for (name in ref) {
+        if (!hasProp.call(ref, name)) continue;
+        obj = ref[name];
         if (_.contains(this.attr.allowed_filters, name)) {
           results.filters.push(obj.dim_id + "=" + obj.value);
         } else {

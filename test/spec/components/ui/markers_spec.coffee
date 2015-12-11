@@ -164,5 +164,15 @@ define [], () ->
         @component.attr.markersIndex['1234567'] = @marker
 
       it 'animates the marker', ->
-        @component.markerAnimation undefined, id: "result_1234567", animation: 'bounce'
+        @component.markerAnimation undefined, id: "1234567", animation: 'bounce'
         expect(@marker.setAnimation).toHaveBeenCalledWith('bounce')
+
+    describe '#lookupAndDeliverMarker', ->
+      beforeEach ->
+        @setupComponent()
+
+      it 'triggers an event', ->
+        id = -1
+        spyOnEvent(document, 'dataMapMarker')
+        @component.lookupAndDeliverMarker null, { id }
+        expect('dataMapMarker').toHaveBeenTriggeredOnAndWith document, id: id, viewed: false, error: "id '#{id}' not found in marker list"
