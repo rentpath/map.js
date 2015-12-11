@@ -1,3 +1,9 @@
+# v4.0.0
+* [breaking change] `animatePin` event now accepts just an ID and does not strip out the first 7 characters. The app is now responsible for removing them. (e.g. change `result_123` to `123`).
+* [feature] Apps now have access a marker if they emit `uiWantsMapMarker`. The data component responds with `dataMapMarker` which includes the marker and if it was viewed.
+
+[Compare v3.1.0..v4.0.0](https://github.com/RentPath/map.js/compare/v3.1.0...v4.0.0)
+
 # v3.1.0
 * [feature] Allow propertyname in refinements for info window query params.
 
