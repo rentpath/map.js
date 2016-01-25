@@ -46,7 +46,6 @@
     "clean": "rm -rf app/bower_components node_modules",
     "prereset": "npm run clean",
     "reset": "npm install",
-    "postinstall": "bower install",
     "preversion": "npm run reset && npm test && npm run build"
   },
   "dependencies": {
