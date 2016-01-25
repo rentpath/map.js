@@ -1,3 +1,8 @@
+# v4.0.1
+* [change] Remove `postinstall` script (runs `bower install`) because apps that depend on `map.js` end up running it.
+
+[Compare v4.0.0..v4.0.1](https://github.com/RentPath/map.js/compare/v4.0.0...v4.0.1)
+
 # v4.0.0
 * [breaking change] `animatePin` event now accepts just an ID and does not strip out the first 7 characters. The app is now responsible for removing them. (e.g. change `result_123` to `123`).
 * [feature] Apps now have access a marker if they emit `uiWantsMapMarker`. The data component responds with `dataMapMarker` which includes the marker and if it was viewed.
