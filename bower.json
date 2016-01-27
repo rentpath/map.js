@@ -20,6 +20,7 @@
     "requirejs": "~2.1.17"
   },
   "resolutions": {
-    "jquery": "1.8.3"
+    "jquery": "1.8.3",
+    "jasmine-jquery": "~2.1.1"
   }
 }
