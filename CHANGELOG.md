@@ -1,3 +1,13 @@
+# v5.0.0
+* [breaking change] Lat/lng params are no longer sent on requests to get listings until the user interacts with the map.
+
+[Compare v4.0.2..v5.0.0](https://github.com/RentPath/map.js/compare/v4.0.2...v5.0.0)
+
+# v4.0.2
+* [chore] Resolve `jasmine-jquery` version
+
+[Compare v4.0.1..v4.0.2](https://github.com/RentPath/map.js/compare/v4.0.1...v4.0.2)
+
 # v4.0.1
 * [change] Remove `postinstall` script (runs `bower install`) because apps that depend on `map.js` end up running it.
 
