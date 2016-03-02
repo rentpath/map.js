@@ -69,21 +69,29 @@ define [
 
     @queryData = (data) ->
       qData =
-        lat: data.latitude
-        latitude: data.latitude
-        lng: data.longitude
-        longitude: data.longitude
         miles: Math.round(@convertMetersToMiles(data.radius))
-        lat1: data.lat1
-        lng1: data.lng1
-        lat2: data.lat2
-        lng2: data.lng2
         city: data.city
         state: data.state
         zip: data.zip
         neighborhood: data.hood
         geoname: data.geoname
         sort: data.sort
+
+      if data.latitude?
+        qData.lat = data.latitude
+        qData.latitude = data.latitude
+
+      if data.longitude?
+        qData.lng = data.longitude
+        qData.longitude = data.longitude
+
+      if data.lat1 or data.lng1
+        qData.lat1 = data.lat1
+        qData.lng1 = data.lng1
+
+      if data.lat2 or data.lng2
+        qData.lat2 = data.lat2
+        qData.lng2 = data.lng2
 
       qData.limit = data.limit if data.limit?
 

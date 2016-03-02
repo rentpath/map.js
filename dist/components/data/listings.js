@@ -78,15 +78,7 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', "ma
     return this.queryData = function(data) {
       var i, len, mgtcoid, name, priceRange, propertyName, qData, ref, refinements;
       qData = {
-        lat: data.latitude,
-        latitude: data.latitude,
-        lng: data.longitude,
-        longitude: data.longitude,
         miles: Math.round(this.convertMetersToMiles(data.radius)),
-        lat1: data.lat1,
-        lng1: data.lng1,
-        lat2: data.lat2,
-        lng2: data.lng2,
         city: data.city,
         state: data.state,
         zip: data.zip,
@@ -94,6 +86,22 @@ define(['jquery', 'flight/lib/component', 'map/components/mixins/map_utils', "ma
         geoname: data.geoname,
         sort: data.sort
       };
+      if (data.latitude != null) {
+        qData.lat = data.latitude;
+        qData.latitude = data.latitude;
+      }
+      if (data.longitude != null) {
+        qData.lng = data.longitude;
+        qData.longitude = data.longitude;
+      }
+      if (data.lat1 || data.lng1) {
+        qData.lat1 = data.lat1;
+        qData.lng1 = data.lng1;
+      }
+      if (data.lat2 || data.lng2) {
+        qData.lat2 = data.lat2;
+        qData.lng2 = data.lng2;
+      }
       if (data.limit != null) {
         qData.limit = data.limit;
       }

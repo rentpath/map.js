@@ -167,23 +167,33 @@ define [
         $(@attr.pinControlsSelector).remove()
 
     @mapState = ->
-      gMap: @attr.gMap
-      latitude: @limitScaleOf(@latitude())
-      longitude: @limitScaleOf(@longitude())
-      radius: @radius()
-      lat1: @limitScaleOf(@southWestLatitude())
-      lng1: @limitScaleOf(@southWestLongitude())
-      lat2: @limitScaleOf(@northEastLatitude())
-      lng2: @limitScaleOf(@northEastLongitude())
-      zip: @geoData().zip
-      city: @geoData().city
-      state: @geoData().state
-      hood: @geoData().hood
-      hoodDisplayName: @geoData().hood_display_name
+      base =
+        gMap: @attr.gMap
+        latitude: @limitScaleOf(@latitude())
+        longitude: @limitScaleOf(@longitude())
+        radius: @radius()
+        lat1: @limitScaleOf(@southWestLatitude())
+        lng1: @limitScaleOf(@southWestLongitude())
+        lat2: @limitScaleOf(@northEastLatitude())
+        lng2: @limitScaleOf(@northEastLongitude())
+        zip: @geoData().zip
+        city: @geoData().city
+        state: @geoData().state
+        hood: @geoData().hood
+        hoodDisplayName: @geoData().hood_display_name
+        sort: 'distance'
 
-      # an empty sort gives control to the app, which is typically tiers and points
-      sort: if @attr.userChangedMap then 'distance' else ''
+      # an empty sort/lat/lng gives control to the app, which is typically tiers and points
+      unless @attr.userChangedMap
+        delete base.latitude
+        delete base.longitude
+        delete base.lat1
+        delete base.lng1
+        delete base.lat2
+        delete base.lng2
+        delete base.sort
 
+      base
     @zoomCircle = ->
       radius = @convertMilesToMeters(@geoDataRadiusMiles())
       circleOptions =

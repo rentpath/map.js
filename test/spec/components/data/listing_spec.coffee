@@ -60,3 +60,43 @@ define [], () ->
 
       it 'should return the valid possible refinements', ->
         expect(config.possibleRefinements).toEqual([ 'foo' ])
+
+    describe '#queryData', ->
+      beforeEach ->
+        @setupComponent('')
+
+      it 'includes lat/lng data when given', ->
+        data = @component.queryData
+          latitude: 1
+          longitude: 2
+          lat1: 3
+          lng1: 4
+          lat2: 5
+          lng2: 6
+
+        expect(data.lat).toBe 1
+        expect(data.latitude).toBe 1
+
+        expect(data.lng).toBe 2
+        expect(data.longitude).toBe 2
+
+        expect(data.lat1).toBe 3
+        expect(data.lng1).toBe 4
+
+        expect(data.lat2).toBe 5
+        expect(data.lng2).toBe 6
+
+      it 'does not include lat/lng data when missing', ->
+        data = @component.queryData({})
+
+        expect(data.hasOwnProperty('lat')).toEqual false
+        expect(data.hasOwnProperty('latitude')).toEqual false
+
+        expect(data.hasOwnProperty('lng')).toEqual false
+        expect(data.hasOwnProperty('longitude')).toEqual false
+
+        expect(data.hasOwnProperty('lat1')).toEqual false
+        expect(data.hasOwnProperty('lng2')).toEqual false
+
+        expect(data.hasOwnProperty('lat2')).toEqual false
+        expect(data.hasOwnProperty('lng2')).toEqual false
