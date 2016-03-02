@@ -172,8 +172,16 @@ define [], () ->
           @setupComponent
             gMap: gMapMock
 
-        it 'uses an empty sort', ->
-          expect(@component.mapState().sort).toEqual ''
+        it 'does not include a sort', ->
+          expect(@component.mapState().sort).toEqual undefined
+
+        it 'does not include lat/lng', ->
+          expect(@component.mapState().hasOwnProperty('latitude')).toEqual false
+          expect(@component.mapState().hasOwnProperty('longitude')).toEqual false
+          expect(@component.mapState().hasOwnProperty('lat1')).toEqual false
+          expect(@component.mapState().hasOwnProperty('lng1')).toEqual false
+          expect(@component.mapState().hasOwnProperty('lat2')).toEqual false
+          expect(@component.mapState().hasOwnProperty('lng2')).toEqual false
 
       describe 'when user has changed the map', ->
         beforeEach ->
@@ -183,3 +191,11 @@ define [], () ->
 
         it 'uses a distance based sort', ->
           expect(@component.mapState().sort).toEqual 'distance'
+
+        it 'includes lat/lng', ->
+          expect(@component.mapState().latitude).toEqual '0.0000'
+          expect(@component.mapState().longitude).toEqual '0.0000'
+          expect(@component.mapState().lat1).toEqual '0.0000'
+          expect(@component.mapState().lng1).toEqual '0.0000'
+          expect(@component.mapState().lat2).toEqual '0.0000'
+          expect(@component.mapState().lng2).toEqual '0.0000'

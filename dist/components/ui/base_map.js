@@ -180,7 +180,8 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
       })(this));
     };
     this.mapState = function() {
-      return {
+      var base;
+      base = {
         gMap: this.attr.gMap,
         latitude: this.limitScaleOf(this.latitude()),
         longitude: this.limitScaleOf(this.longitude()),
@@ -194,8 +195,18 @@ define(['jquery', 'underscore', 'flight/lib/component', 'map/components/mixins/m
         state: this.geoData().state,
         hood: this.geoData().hood,
         hoodDisplayName: this.geoData().hood_display_name,
-        sort: this.attr.userChangedMap ? 'distance' : ''
+        sort: 'distance'
       };
+      if (!this.attr.userChangedMap) {
+        delete base.latitude;
+        delete base.longitude;
+        delete base.lat1;
+        delete base.lng1;
+        delete base.lat2;
+        delete base.lng2;
+        delete base.sort;
+      }
+      return base;
     };
     this.zoomCircle = function() {
       var circle, circleOptions, radius;
